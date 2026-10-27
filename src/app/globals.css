@@ -1,26 +1,301 @@
 @import "tailwindcss";
 
+/*
+ * Honey by Abdul Sami Enterprises — design tokens.
+ * Warm & premium: honey yellow as a *surface*, dark brown ink, cream sections.
+ *
+ * Contrast rules (WCAG 2.2 AA) baked into the palette:
+ * - Never white text on honey (#FFB800 is 1.73:1 with white) and never honey
+ *   text/icons on white. Text on honey is always brown ink (9.42:1).
+ * - Amber text on light surfaces uses --color-primary-ink (5.93:1 on white).
+ * - Focus rings are brown on light/honey surfaces and honey on brown bands.
+ * Ratios below were computed with the WCAG relative-luminance formula.
+ */
+@theme {
+  /* Fonts (wired to next/font CSS variables in app/layout.tsx).
+     heading: Fraunces (warm soft serif) for h1–h3 and large display copy.
+     sans/display: Inter for body and every UI label (nav, buttons, prices).
+     script: Parisienne, reserved for the logo wordmark and rare ≥28px accents. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
+  /* Legacy alias: blog quotes and the about page signature use font-serif. */
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-script: var(--font-parisienne), cursive;
+
+  /* Honey surfaces. primary = honey, used as a fill with brown text on it. */
+  --color-primary: #ffb800; /* brown-950 on it: 9.42:1 */
+  --color-primary-hover: #f2a900; /* brown-950 on it: 8.6:1 */
+  --color-primary-tint: #fff3d6; /* brown-950 on it: 14.82:1; primary-ink: 5.37:1 */
+  /* Accessible amber for links, prices and small icons on light surfaces:
+     5.93:1 on white, 5.61:1 on ivory, 5.28:1 on cream. */
+  --color-primary-ink: #8a5a00;
+  /* Hero gradient stops (surfaces only; text on them is brown-950, >= 7.1:1). */
+  --color-honey-300: #f7c948; /* brown-950: 10.43:1 */
+  --color-honey-500: #f5a800;
+  --color-amber-600: #e89b0c; /* brown-950: 7.10:1 */
+
+  --color-ivory: #fffaf0;
+  --color-cream: #fbf1dc;
+  --color-surface: #ffffff;
+  /* Placeholder/photo tiles. */
+  --color-tile: #fdf6e9;
+  --color-border: #efe3cf;
+  /* Sidebar title bars. */
+  --color-panel: #fbf1dc;
+  /* Form-control outlines need 3:1 against the background (WCAG 1.4.11): 3.49:1 on white. */
+  --color-border-strong: #9a8670;
+
+  /* Dark brown bands (replace the old forest/navy). */
+  --color-brown-800: #4a331a;
+  --color-brown-900: #3d2a14; /* honey on it: 7.86:1 */
+  --color-brown-950: #2b1d0e; /* honey on it: 9.42:1; ivory on it: 15.48:1 */
+
+  /* Ink */
+  --color-strong: #2b1d0e; /* 16.34:1 on white */
+  --color-body: #5c4a36; /* 8.44:1 on white, 7.52:1 on cream */
+  --color-muted: #75604a; /* 5.95:1 on white, 5.30:1 on cream */
+  /* Stars are non-text graphics: 3.29:1 on white (>= 3:1). Pure honey would be 1.7:1. */
+  --color-star: #c47f00;
+  --color-on-dark: #fff8ec; /* 15.48:1 on brown-950 */
+  --color-on-dark-muted: #e6d3b3; /* 11.16:1 on brown-950 */
+  --color-danger: #b42318; /* 6.57:1 on white, 5.86:1 on cream */
+  --color-focus: #2b1d0e;
+
+  /* Type scale (desktop values; mobile overrides via responsive variants) */
+  --text-display: 3.75rem;
+  --text-display--line-height: 4.25rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display-sm: 2.375rem;
+  --text-display-sm--line-height: 2.875rem;
+  --text-h2: 2.5rem;
+  --text-h2--line-height: 3rem;
+  --text-h2-sm: 1.875rem;
+  --text-h2-sm--line-height: 2.375rem;
+  --text-h3: 2rem;
+  --text-h3--line-height: 2.5rem;
+  --text-h4: 1.125rem;
+  --text-h4--line-height: 1.625rem;
+  --text-promo: 1.5rem;
+  --text-promo--line-height: 2rem;
+  --text-promo-lg: 2.25rem;
+  --text-promo-lg--line-height: 2.75rem;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1rem;
+  --text-eyebrow--letter-spacing: 0.14em;
+  --text-copy: 0.9375rem;
+  --text-copy--line-height: 1.625rem;
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.25rem;
+  --text-button: 0.8125rem;
+  --text-button--line-height: 1rem;
+  --text-button--letter-spacing: 0.06em;
+  --text-price: 1rem;
+  --text-price--line-height: 1.5rem;
+  --text-price-lg: 2.25rem;
+  --text-price-lg--line-height: 2.75rem;
+  --text-price-old: 0.875rem;
+  --text-price-old--line-height: 1.25rem;
+  --text-badge: 0.6875rem;
+  --text-badge--line-height: 1rem;
+  --text-logo: 1.75rem;
+  --text-logo--line-height: 1;
+  --text-cta: 2.75rem;
+  --text-cta--line-height: 3.25rem;
+  --text-stat: 3rem;
+  --text-stat--line-height: 3.5rem;
+
+  /* Layout: 1170px content + 24px gutters */
+  --container-page: 76.125rem;
+  /* Footer + features strip run wider than the content column. */
+  --container-wide: 107.5rem;
+
+  /* Radius: softer than before for a warmer feel. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1.25rem;
+
+  /* Elevation: warm-tinted shadows instead of neutral black. */
+  --shadow-card: 0 6px 24px rgb(74 51 26 / 0.08);
+  --shadow-card-hover: 0 12px 32px rgb(74 51 26 / 0.14);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-fade-up: fade-up 600ms var(--ease-out-soft) both;
+}
+
+/*
+ * Motif masks (see src/components/motifs). Kept as custom properties so the
+ * SVG lives in one place. The drip tile is 480x72 with preserveAspectRatio
+ * "none" + `mask-repeat: round`: whole tiles always fit, so drops are never
+ * cut at the edge and only stretch a few percent horizontally.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --mask-honey-drip: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22480%22%20height%3D%2272%22%20viewBox%3D%220%200%20480%2072%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200H480V18Q472.8%2020.5%20465.5%2018C457.3%2018%20455.3%2021%20455.3%2034C455.3%2045.7%20458.5%2048.3%20458.5%2053.5A6.5%206.5%200%200%201%20445.5%2053.5C445.5%2048.3%20448.8%2045.7%20448.8%2034C448.8%2021%20446.8%2018%20438.5%2018Q427%2020.5%20415.5%2018C408.3%2018%20406.3%2021%20406.3%2023.2C406.3%2024.1%20408.5%2025.9%20408.5%2029.5A4.5%204.5%200%200%201%20399.5%2029.5C399.5%2025.9%20401.8%2024.1%20401.8%2023.2C401.8%2021%20399.8%2018%20392.5%2018Q378.8%2020.5%20365%2018C357%2018%20355%2021%20355%2029.7C355%2036.8%20358%2039.2%20358%2044A6%206%200%200%201%20346%2044C346%2039.2%20349%2036.8%20349%2029.7C349%2021%20347%2018%20339%2018Q326.5%2020.5%20314%2018C305.5%2018%20303.5%2021%20303.5%2037.4C303.5%2052.6%20307%2055.4%20307%2061A7%207%200%200%201%20293%2061C293%2055.4%20296.5%2052.6%20296.5%2037.4C296.5%2021%20294.5%2018%20286%2018Q274%2020.5%20262%2018C254.5%2018%20252.5%2021%20252.5%2024.8C252.5%2027%20255%2029%20255%2033A5%205%200%200%201%20245%2033C245%2029%20247.5%2027%20247.5%2024.8C247.5%2021%20245.5%2018%20238%2018Q223.8%2020.5%20209.5%2018C201.3%2018%20199.3%2021%20199.3%2032.2C199.3%2041.7%20202.5%2044.3%20202.5%2049.5A6.5%206.5%200%200%201%20189.5%2049.5C189.5%2044.3%20192.8%2041.7%20192.8%2032.2C192.8%2021%20190.8%2018%20182.5%2018Q169.8%2020.5%20157%2018C150%2018%20148%2021%20148%2021.6C148%2021.2%20150%2022.8%20150%2026A4%204%200%200%201%20142%2026C142%2022.8%20144%2021.2%20144%2021.6C144%2021%20142%2018%20135%2018Q122.5%2020.5%20110%2018C101.5%2018%2099.5%2021%2099.5%2035.5C99.5%2048.6%20103%2051.4%20103%2057A7%207%200%200%201%2089%2057C89%2051.4%2092.5%2048.6%2092.5%2035.5C92.5%2021%2090.5%2018%2082%2018Q67.3%2020.5%2052.5%2018C44.8%2018%2042.8%2021%2042.8%2027.2C42.8%2031.9%2045.5%2034.1%2045.5%2038.5A5.5%205.5%200%200%201%2034.5%2038.5C34.5%2034.1%2037.3%2031.9%2037.3%2027.2C37.3%2021%2035.3%2018%2027.5%2018Q13.8%2020.5%200%2018Z%22%2F%3E%3C%2Fsvg%3E");
+  --mask-honeycomb: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24.25'%20height%3D'42'%20viewBox%3D'0%200%2024.25%2042'%3E%3Cpath%20d%3D'M0%20-14L12.12%20-7L12.12%207L0%2014L-12.12%207L-12.12%20-7ZM24.25%20-14L36.37%20-7L36.37%207L24.25%2014L12.12%207L12.12%20-7ZM12.12%207L24.25%2014L24.25%2028L12.12%2035L0%2028L0%2014ZM0%2028L12.12%2035L12.12%2049L0%2056L-12.12%2049L-12.12%2035ZM24.25%2028L36.37%2035L36.37%2049L24.25%2056L12.12%2049L12.12%2035Z'%20fill%3D'none'%20stroke%3D'black'%20stroke-width%3D'1.25'%2F%3E%3C%2Fsvg%3E");
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Declared outside @theme so the scroll-driven .reveal utility can use it too. */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-surface);
+    color: var(--color-body);
+    font-family: var(--font-sans);
+    font-size: var(--text-copy);
+    line-height: var(--text-copy--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-strong);
+    font-family: var(--font-heading);
+    text-wrap: balance;
+  }
+
+  /* Fraunces' SOFT axis rounds the terminals: warmer, less editorial. */
+  .font-heading,
+  .font-serif,
+  :is(h1, h2, h3, h4):not(.font-sans, .font-display) {
+    font-variation-settings: "SOFT" 100;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  /* Brown bands swap the focus ring to honey (9.42:1 on brown-950). */
+  .on-dark {
+    --color-focus: #ffb800;
+  }
+  /* Light surfaces nested inside a dark band (menus, drawers) switch back. */
+  .on-light {
+    --color-focus: #2b1d0e;
+  }
+
+  [id] {
+    scroll-margin-top: 6rem;
+  }
+
+  dialog::backdrop {
+    background: rgb(43 29 14 / 0.7);
+  }
+}
+
+@layer components {
+  /* Two overlaid native range inputs make the dual-thumb price slider.
+     Only the thumbs take pointer events so both stay draggable. */
+  .dual-range input[type="range"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    appearance: none;
+    background: transparent;
+    pointer-events: none;
+  }
+  .dual-range input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    pointer-events: auto;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    background: var(--color-primary);
+    border: 3px solid var(--color-surface);
+    box-shadow: 0 0 0 1px var(--color-strong);
+    cursor: pointer;
+  }
+  .dual-range input[type="range"]::-moz-range-thumb {
+    pointer-events: auto;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    background: var(--color-primary);
+    border: 3px solid var(--color-surface);
+    box-shadow: 0 0 0 1px var(--color-strong);
+    cursor: pointer;
+  }
+  .dual-range input[type="range"]:focus-visible {
+    outline: none;
+  }
+  .dual-range input[type="range"]:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  .dual-range input[type="range"]:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  /* Sections fade up 16px as they scroll into view.
+     Scroll-driven, so no JS; skipped when unsupported or reduced motion. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        animation: fade-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 60%;
+      }
+    }
+  }
+
+  /* Honey drip edge: paints currentColor through the tiled drip mask. */
+  .mask-honey-drip {
+    background-color: currentColor;
+    -webkit-mask: var(--mask-honey-drip) 0 0 / auto 100% round no-repeat;
+    mask: var(--mask-honey-drip) 0 0 / auto 100% round no-repeat;
+  }
+
+  /* Hexagon outline texture in currentColor. */
+  .mask-honeycomb {
+    background-color: currentColor;
+    -webkit-mask: var(--mask-honeycomb) 0 0 / 1.75rem auto repeat;
+    mask: var(--mask-honeycomb) 0 0 / 1.75rem auto repeat;
+  }
+  /* Same texture, faded towards the left so copy on that side stays clean. */
+  .mask-honeycomb-fade {
+    background-color: currentColor;
+    -webkit-mask:
+      var(--mask-honeycomb) 0 0 / 1.75rem auto repeat,
+      linear-gradient(to right, transparent 25%, #000 85%);
+    -webkit-mask-composite: source-in;
+    mask:
+      var(--mask-honeycomb) 0 0 / 1.75rem auto repeat,
+      linear-gradient(to right, transparent 25%, #000 85%);
+    mask-composite: intersect;
+  }
+
+  /* Full-bleed scroller whose first item lines up with the 1170px column. */
+  .bleed-inline {
+    padding-inline: max(1rem, calc((100% - 73.125rem) / 2));
+    scroll-padding-inline: max(1rem, calc((100% - 73.125rem) / 2));
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
