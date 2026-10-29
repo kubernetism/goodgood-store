@@ -1,5 +1,6 @@
 "use client";
 
+import { StarButton } from "@/components/ui/star-controls";
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "@/lib/cx";
 
@@ -41,12 +42,12 @@ export function ProductTabs({ tabs, label }: { tabs: ReadonlyArray<Tab>; label: 
         role="tablist"
         aria-label={label}
         onKeyDown={onKeyDown}
-        className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 py-1 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0"
+        className="scrollbar-none mx-auto flex w-full max-w-page gap-2 overflow-x-auto px-4 py-1 sm:flex-wrap sm:justify-center sm:px-6"
       >
         {tabs.map((tab, index) => {
           const isActive = index === activeIndex;
           return (
-            <button
+            <StarButton
               key={tab.id}
               ref={(node) => {
                 tabRefs.current[index] = node;
@@ -66,7 +67,7 @@ export function ProductTabs({ tabs, label }: { tabs: ReadonlyArray<Tab>; label: 
               )}
             >
               {tab.label}
-            </button>
+            </StarButton>
           );
         })}
       </div>

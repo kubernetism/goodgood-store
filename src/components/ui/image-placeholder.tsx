@@ -2,7 +2,7 @@ import { HoneyJarIcon, type IconComponent } from "@/components/icons/honey-icons
 import { HoneycombPattern } from "@/components/motifs/honeycomb-pattern";
 import { cx } from "@/lib/cx";
 
-type ImagePlaceholderProps = {
+export type ImagePlaceholderProps = {
   /**
    * When set, the box is exposed as an image with this accessible name
    * (use for content images). Omit for decorative slots: it is then hidden
@@ -47,7 +47,7 @@ const textures = {
   dark: "text-primary/[0.08]",
 } as const;
 
-const radii = { none: "", sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", full: "rounded-full" } as const;
+export const radii = { none: "", sm: "rounded-sm", md: "rounded-md", lg: "rounded-lg", full: "rounded-full" } as const;
 const iconSizes = { sm: "size-5", md: "size-8", lg: "size-12", xl: "size-20" } as const;
 
 /**

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { defaultShopQuery, parseShopQuery, shopHref, shopParams } from "./shop-query";
+import { defaultShopQuery, parseShopQuery as parseWithCategories, shopHref, shopParams } from "./shop-query";
+
+const slugs = ["sidr", "acacia", "wildflower"];
+const parseShopQuery = (raw: Parameters<typeof parseWithCategories>[0]) => parseWithCategories(raw, slugs);
 
 describe("parseShopQuery", () => {
   it("returns defaults for empty params", () => {
@@ -34,6 +37,11 @@ describe("parseShopQuery", () => {
     expect(
       parseShopQuery({ category: "vegetables", tag: "Juice", sort: "random", view: "table", page: "-3", min: "abc" }),
     ).toEqual(defaultShopQuery);
+  });
+
+  it("only accepts categories that exist right now", () => {
+    expect(parseWithCategories({ category: "sidr" }, []).category).toBeNull();
+    expect(parseWithCategories({ category: "new-harvest" }, ["new-harvest"]).category).toBe("new-harvest");
   });
 
   it("uses the first value when a param is repeated", () => {

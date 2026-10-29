@@ -1,18 +1,26 @@
+import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
 import { ArrowRight, Calendar, Eye, MessageSquare, User } from "lucide-react";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
+import type { ImageAsset } from "@/features/products/types";
 import { formatDate } from "@/lib/format";
-import type { BlogPost } from "../data";
+import { blogAuthor, type BlogPost } from "../data";
 import { getBlogCategoryName } from "../queries";
 
 /** Blog listing entry (mockup: Blog Right Sidebar). */
-export function BlogListCard({ post }: { post: BlogPost }) {
+type BlogListCardProps = { post: BlogPost; cover: ImageAsset | null; authorPhoto: ImageAsset | null };
+
+export function BlogListCard({ post, cover, authorPhoto }: BlogListCardProps) {
   return (
     <article className="group relative border border-border">
       <div className="relative">
         <div className="overflow-hidden">
-          <ImagePlaceholder
+          <MediaImage
+            image={cover}
+            alt=""
+            sizes="(min-width: 1024px) 770px, 100vw"
             icon={HoneyDipperIcon}
             iconSize="lg"
             aspect="aspect-[5/3]"
@@ -46,16 +54,20 @@ export function BlogListCard({ post }: { post: BlogPost }) {
         <p className="mt-5 text-strong">{post.excerpt}</p>
         <div className="mt-6 flex items-center justify-between gap-4">
           <p className="flex items-center gap-2 font-display text-meta font-semibold text-strong">
-            <ImagePlaceholder icon={User} iconSize="sm" rounded="full" className="size-7" />
+            {post.author === blogAuthor.name ? (
+              <MediaImage image={authorPhoto} alt="" sizes="28px" icon={User} iconSize="sm" rounded="full" className="size-7" />
+            ) : (
+              <ImagePlaceholder icon={User} iconSize="sm" rounded="full" className="size-7" />
+            )}
             By: {post.author}
           </p>
-          <Link
+          <StarLink
             href={`/blog/${post.slug}`}
             className="flex min-h-11 items-center gap-2 font-display text-meta font-semibold text-strong transition-colors duration-200 hover:text-primary-ink"
           >
             <ArrowRight className="size-4" aria-hidden="true" />
             Read more<span className="sr-only">: {post.title}</span>
-          </Link>
+          </StarLink>
         </div>
       </div>
     </article>

@@ -1,0 +1,109 @@
+.star-border:not(.star-border--native) {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.875rem 1.5rem;
+  border: 0;
+  border-radius: var(--star-border-radius);
+  background: var(--star-border-surface);
+  color: var(--star-border-text);
+  font: inherit;
+  font-weight: 500;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.star-border:not(.star-border--native)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--star-border-thickness) var(--star-border-track);
+  pointer-events: none;
+}
+
+.star-border__light {
+  position: absolute;
+  top: -48px;
+  left: -48px;
+  z-index: -1;
+  width: calc(100% + 96px);
+  height: calc(100% + 96px);
+  pointer-events: none;
+}
+
+button.star-border:not(.star-border--native),
+a.star-border:not(.star-border--native) {
+  cursor: pointer;
+}
+
+.star-border:not(.star-border--native):focus-visible {
+  outline: 2px solid var(--star-border-track);
+  outline-offset: 3px;
+}
+
+.star-border:not(.star-border--native):disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+:where(.star-border--native) {
+  position: relative;
+  isolation: isolate;
+}
+
+.star-border__clip {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.star-border__clip .star-border__light {
+  z-index: auto;
+}
+
+/* Hero buttons keep the store's existing pill size, typography and colours. */
+.star-border.hero-star-button {
+  height: 3rem;
+  padding: 0 1.75rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-button);
+  font-weight: 600;
+  line-height: var(--text-button--line-height);
+  letter-spacing: var(--text-button--letter-spacing);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
+}
+
+.star-border.hero-star-button--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.star-border.hero-star-button--outline:hover {
+  background: var(--color-on-dark);
+  color: var(--color-strong);
+}
+
+.star-border.hero-star-button:focus-visible {
+  outline: 2px solid var(--color-on-dark);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .star-border__light {
+    display: none;
+  }
+
+  .star-border.hero-star-button {
+    transition: none;
+  }
+}

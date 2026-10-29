@@ -61,3 +61,17 @@ export function DiscountBadge({ percent, className }: { percent: number; classNa
     </span>
   );
 }
+
+/** "Sold out" chip in the same slot as the discount badge (brown on ivory, 15.48:1). */
+export function SoldOutBadge({ className }: { className?: string }) {
+  return (
+    <span
+      className={cx(
+        "inline-flex h-7 items-center rounded-full bg-strong px-3 font-display text-badge font-bold tracking-wide text-on-dark uppercase",
+        className,
+      )}
+    >
+      Sold out
+    </span>
+  );
+}

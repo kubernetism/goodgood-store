@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   FREE_SHIPPING_THRESHOLD,
+  findStockIssues,
   MAX_LINE_QUANTITY,
   SHIPPING_FEE,
   parseCartLines,
@@ -8,9 +9,18 @@ import {
   type CartProduct,
 } from "./pricing";
 
+const product = (overrides: Partial<CartProduct> & Pick<CartProduct, "slug" | "price">): CartProduct => ({
+  name: overrides.slug,
+  category: "acacia",
+  unit: "250 g",
+  stock: 10,
+  image: null,
+  ...overrides,
+});
+
 const catalog = new Map<string, CartProduct>([
-  ["acacia", { slug: "acacia", name: "Acacia Honey", price: 115_000, category: "acacia", unit: "250 g" }],
-  ["sidr", { slug: "sidr", name: "Sidr Honey", price: 465_000, category: "sidr", unit: "500 g" }],
+  ["acacia", product({ slug: "acacia", name: "Acacia Honey", price: 115_000 })],
+  ["sidr", product({ slug: "sidr", name: "Sidr Honey", price: 465_000, category: "sidr", unit: "500 g" })],
 ]);
 
 describe("parseCartLines", () => {
@@ -66,7 +76,7 @@ describe("priceCart", () => {
 
   it("treats exactly Rs 5,000 as free shipping", () => {
     const exact = new Map<string, CartProduct>([
-      ["box", { slug: "box", name: "Box", price: 250_000, category: "gift-sets", unit: "1 box" }],
+      ["box", product({ slug: "box", name: "Box", price: 250_000, category: "gift-sets", unit: "1 box" })],
     ]);
     expect(priceCart([{ slug: "box", quantity: 2 }], exact).shipping).toBe(0);
     expect(priceCart([{ slug: "box", quantity: 1 }], exact).shipping).toBe(SHIPPING_FEE);
@@ -75,5 +85,33 @@ describe("priceCart", () => {
   it("ignores lines for unknown products and charges nothing for an empty cart", () => {
     const totals = priceCart([{ slug: "ghost", quantity: 3 }], catalog);
     expect(totals).toEqual({ lines: [], itemCount: 0, subtotal: 0, shipping: 0, total: 0 });
+  });
+});
+
+describe("findStockIssues", () => {
+  const stocked = new Map([
+    ["acacia", { name: "Acacia Honey", stock: 3 }],
+    ["sidr", { name: "Sidr Honey", stock: 0 }],
+  ]);
+
+  it("passes lines that fit the available stock", () => {
+    expect(findStockIssues([{ slug: "acacia", quantity: 3 }], stocked)).toEqual([]);
+  });
+
+  it("reports lines over stock, sold-out lines and unknown products", () => {
+    expect(
+      findStockIssues(
+        [
+          { slug: "acacia", quantity: 5 },
+          { slug: "sidr", quantity: 1 },
+          { slug: "ghost", quantity: 2 },
+        ],
+        stocked,
+      ),
+    ).toEqual([
+      { slug: "acacia", name: "Acacia Honey", requested: 5, available: 3 },
+      { slug: "sidr", name: "Sidr Honey", requested: 1, available: 0 },
+      { slug: "ghost", name: "ghost", requested: 2, available: 0 },
+    ]);
   });
 });

@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.next-*/
 /out/
 
 # production
@@ -39,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local media uploads (development storage adapter)
+/public/uploads/
+
+# env files: example is committed, real ones are not
+!.env.example

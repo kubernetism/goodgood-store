@@ -11,8 +11,8 @@ describe("formatPrice", () => {
     expect(formatPrice(125_000_000)).toBe("Rs 1,250,000");
   });
 
-  it("rounds stray paisa to the nearest rupee", () => {
-    expect(formatPrice(99_950)).toBe("Rs 1,000");
+  it("shows paisa when a price is not a whole rupee", () => {
+    expect(formatPrice(99_950)).toBe("Rs 999.5");
     expect(formatPrice(0)).toBe("Rs 0");
   });
 });

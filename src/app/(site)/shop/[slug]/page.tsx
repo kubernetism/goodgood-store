@@ -12,14 +12,9 @@ import { Price, discountPercent } from "@/components/ui/price";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { SectionHeading, Eyebrow } from "@/components/ui/section-heading";
 import { SidebarPanel } from "@/components/ui/sidebar-panel";
-import {
-  getAllProducts,
-  getCategory,
-  getProductBySlug,
-  getRelatedProducts,
-  getTopRatedProducts,
-} from "@/features/products/catalog";
-import { categoryHighlights, type Product } from "@/features/products/data";
+import { getCategory, getProductBySlug, getRelatedProducts, getTopRatedProducts } from "@/features/products/catalog";
+import { getCatalog } from "@/features/products/catalog-data";
+import type { Category, Product } from "@/features/products/types";
 import { ProductGallery } from "@/features/products/components/product-gallery";
 import { ProductGrid } from "@/features/products/components/product-grid";
 import { QuantityAddToCart } from "@/features/products/components/quantity-add-to-cart";
@@ -29,20 +24,29 @@ import { FREE_SHIPPING_THRESHOLD } from "@/features/cart/pricing";
 import { formatPrice } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
 
-export function generateStaticParams() {
-  return getAllProducts().map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  const { products } = await getCatalog();
+  // Cache Components needs at least one param to validate the route; an empty
+  // catalogue (fresh database) prerenders a not-found shell instead.
+  return products.length > 0 ? products.map((product) => ({ slug: product.slug })) : [{ slug: "coming-soon" }];
 }
 
 export async function generateMetadata({ params }: PageProps<"/shop/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const [{ slug }, catalog] = await Promise.all([params, getCatalog()]);
+  const product = getProductBySlug(catalog, slug);
   if (!product) return { title: "Product not found" };
+  const image = product.images[0];
 
   return {
     title: product.name,
     description: product.summary,
     alternates: { canonical: `/shop/${product.slug}` },
-    openGraph: { title: product.name, description: product.summary, type: "website" },
+    openGraph: {
+      title: product.name,
+      description: product.summary,
+      type: "website",
+      ...(image ? { images: [{ url: image.url, alt: image.alt }] } : {}),
+    },
   };
 }
 
@@ -65,11 +69,11 @@ export default function ProductPage({ params }: PageProps<"/shop/[slug]">) {
 }
 
 async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "params">) {
-  const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const [{ slug }, catalog] = await Promise.all([params, getCatalog()]);
+  const product = getProductBySlug(catalog, slug);
   if (!product) notFound();
 
-  const category = getCategory(product.category);
+  const category = getCategory(catalog, product.category);
   const shareUrl = encodeURIComponent(`${siteConfig.url}/shop/${product.slug}`);
   const shareLinks = [
     { network: "facebook", label: "Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}` },
@@ -85,7 +89,9 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
               <ProductGallery
                 productName={product.name}
                 category={product.category}
+                images={product.images}
                 discount={discountPercent(product.price, product.compareAtPrice)}
+                isSoldOut={product.stock === 0}
               />
 
               <div className="space-y-5">
@@ -93,7 +99,7 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
                   href={shopHref(defaultShopQuery, { category: product.category })}
                   className="inline-block rounded-sm font-display text-eyebrow font-semibold text-primary-ink uppercase hover:underline"
                 >
-                  {category.name} honey
+                  {product.categoryName} honey
                 </Link>
                 <h1 className="font-heading text-h3 font-semibold lg:text-[2.5rem] lg:leading-tight">{product.name}</h1>
                 <p className="flex items-center gap-3 text-meta">
@@ -101,7 +107,7 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
                   <span>({product.reviewCount} reviews)</span>
                 </p>
                 <Price price={product.price} compareAtPrice={product.compareAtPrice} size="lg" />
-                <p>{product.summary}</p>
+                <p className="font-subtitle">{product.summary}</p>
 
                 <ul aria-label="Product qualities" className="flex flex-wrap gap-2">
                   {product.tags.map((tag) => (
@@ -116,7 +122,7 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
                   ))}
                 </ul>
 
-                <QuantityAddToCart slug={product.slug} productName={product.name} />
+                <QuantityAddToCart slug={product.slug} productName={product.name} stock={product.stock} />
 
                 <p className="text-meta">
                   Free delivery across Pakistan on orders over{" "}
@@ -150,12 +156,12 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
             </div>
 
             <HoneyProfile product={product} />
-            <ProductDescription product={product} />
+            <ProductDescription product={product} category={category} />
           </div>
 
           <aside aria-label="More honey" className="space-y-8 lg:col-span-4">
             <SidebarPanel title="Top Rated">
-              <TopRatedList products={getTopRatedProducts(5)} />
+              <TopRatedList products={getTopRatedProducts(catalog, 5)} />
             </SidebarPanel>
             <GiftPromoCard />
           </aside>
@@ -165,7 +171,7 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
       <section aria-labelledby="related-heading" className="bg-ivory py-16 lg:py-24">
         <Container>
           <SectionHeading id="related-heading" eyebrow="Keep exploring" title="You may also like" />
-          <ProductGrid products={getRelatedProducts(product, 4)} className="mt-10" />
+          <ProductGrid products={getRelatedProducts(catalog, product, 4)} className="mt-10" />
         </Container>
       </section>
     </>
@@ -204,7 +210,8 @@ function HoneyProfile({ product }: { product: Product }) {
   );
 }
 
-function ProductDescription({ product }: { product: Product }) {
+function ProductDescription({ product, category }: { product: Product; category: Category | undefined }) {
+  const highlights = category?.highlights ?? [];
   return (
     <section aria-labelledby="description-heading" className="mt-16">
       <h2 id="description-heading" className="font-heading text-promo font-semibold">
@@ -212,14 +219,18 @@ function ProductDescription({ product }: { product: Product }) {
       </h2>
       <div className="mt-6 space-y-4 text-strong">
         <p>{product.description}</p>
-        <p className="font-semibold">Why you&apos;ll love it:</p>
-        <ul className="list-disc space-y-1 pl-6 marker:text-primary-ink">
-          {categoryHighlights[product.category].map((item) => (
-            <li key={item.title}>
-              <strong>{item.title}:</strong> {item.text}
-            </li>
-          ))}
-        </ul>
+        {highlights.length > 0 && (
+          <>
+            <p className="font-semibold">Why you&apos;ll love it:</p>
+            <ul className="list-disc space-y-1 pl-6 marker:text-primary-ink">
+              {highlights.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}:</strong> {item.text}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
         <p className="flex gap-3 rounded-md border-l-4 border-primary bg-primary-tint p-4 text-sm">
           <Info className="mt-0.5 size-4 shrink-0 text-primary-ink" aria-hidden="true" />
           <span>

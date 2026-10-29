@@ -1,0 +1,30 @@
+/* Raw-honey palette, scoped to the homepage header and main content only.
+   Keep the existing layout, typography and motion (variance/motion/density 4/4/4).
+   The footer and all other routes continue to use the original global tokens. */
+.home-honey-theme {
+  /* Brown ink on amber: 5.34:1 normally, 4.68:1 on hover. */
+  --color-primary: #c98520;
+  --color-primary-hover: #bd7b20;
+  --color-primary-tint: #f6e8cb;
+  /* Text accent: 7.21:1 on ivory, 6.19:1 on beeswax. */
+  --color-primary-ink: #7c4819;
+  --color-honey-300: #e5b45a;
+  --color-honey-500: #d3973b;
+  --color-amber-600: #c98520;
+
+  --color-cream: #f6e8cb;
+  --color-surface: #fffaf0;
+  --color-tile: #f9efda;
+  --color-panel: #f6e8cb;
+  --color-border: #e5d1ae;
+  --color-star: #9e6015;
+}
+
+/* Scoped focus colors, including light menus nested within dark surfaces. */
+.home-honey-theme :where(.on-dark) {
+  --color-focus: var(--color-honey-300);
+}
+
+.home-honey-theme :where(.on-light) {
+  --color-focus: var(--color-strong);
+}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import { cx } from "@/lib/cx";
+import { StarButton, StarLink } from "@/components/ui/star-controls";
 
 type Variant = "primary" | "dark" | "outline" | "outline-dark";
 type Size = "md" | "sm" | "pill";
@@ -39,11 +40,11 @@ export function buttonClasses({
 type ButtonProps = ComponentProps<"button"> & { variant?: Variant; size?: Size };
 
 export function Button({ variant, size, className, type = "button", ...props }: ButtonProps) {
-  return <button type={type} className={buttonClasses({ variant, size, className })} {...props} />;
+  return <StarButton type={type} className={buttonClasses({ variant, size, className })} {...props} />;
 }
 
 type ButtonLinkProps = ComponentProps<typeof Link> & { variant?: Variant; size?: Size };
 
 export function ButtonLink({ variant, size, className, ...props }: ButtonLinkProps) {
-  return <Link className={buttonClasses({ variant, size, className })} {...props} />;
+  return <StarLink className={buttonClasses({ variant, size, className })} {...props} />;
 }

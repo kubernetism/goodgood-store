@@ -1,8 +1,10 @@
 import { Quote } from "lucide-react";
 import { RatingStars } from "@/components/ui/rating-stars";
 import { ScrollCarousel } from "@/components/ui/scroll-carousel";
+import { SlidingRow } from "@/components/ui/sliding-row";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { testimonials } from "@/content/company";
+import { cx } from "@/lib/cx";
 
 function initialsOf(name: string) {
   return name
@@ -13,18 +15,24 @@ function initialsOf(name: string) {
 }
 
 /** Customer reviews: cream band, carousel bleeding off both edges. */
-export function Testimonials() {
+export function Testimonials({ background, autoSlide = false }: { background?: React.ReactNode; autoSlide?: boolean }) {
+  const Carousel = autoSlide ? SlidingRow : ScrollCarousel;
   return (
-    <section aria-labelledby="testimonials-heading" className="bg-cream py-16 lg:py-24">
+    <section
+      aria-labelledby="testimonials-heading"
+      className={cx("bg-cream py-16 lg:py-24", Boolean(background) && "relative isolate")}
+    >
+      {background}
       <SectionHeading
         id="testimonials-heading"
         eyebrow="Kind words"
         title="Loved in kitchens across Pakistan"
         className="reveal px-4"
       />
-      <ScrollCarousel
+      <Carousel
         label="Customer testimonials"
         bleed
+        fullWidth={autoSlide}
         className="mt-10"
         itemClassName="basis-[88%] sm:basis-[24rem] lg:basis-[23.75rem]"
         items={testimonials.map((testimonial) => ({

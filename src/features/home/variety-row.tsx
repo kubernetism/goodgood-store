@@ -1,17 +1,20 @@
 import Link from "next/link";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { getCategoryCounts } from "@/features/products/catalog";
-import { categoryIcons } from "@/features/products/category-icons";
+import { categoryIcon } from "@/features/products/category-icons";
+import type { Catalog } from "@/features/products/types";
 import { shopHref, defaultShopQuery } from "@/features/products/shop-query";
+import { HoneycombParallax } from "./honeycomb-parallax";
 
 /** "Shop by variety": arched tiles per category, scrolling sideways on small screens. */
-export function VarietyRow() {
-  const varieties = getCategoryCounts();
+export function VarietyRow({ catalog }: { catalog: Catalog }) {
+  const varieties = getCategoryCounts(catalog);
 
   return (
-    <section aria-labelledby="varieties-heading" className="bg-ivory py-16 lg:py-24">
+    <section aria-labelledby="varieties-heading" className="relative isolate bg-ivory py-16 lg:py-24">
+      <HoneycombParallax />
       <Container>
         <SectionHeading
           id="varieties-heading"
@@ -20,15 +23,18 @@ export function VarietyRow() {
           className="reveal"
         />
       </Container>
-      <ul className="scrollbar-none mx-auto mt-10 flex max-w-page snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:px-6 lg:grid lg:grid-cols-7 lg:gap-5 lg:overflow-visible">
+      <ul className="scrollbar-none mx-auto mt-10 flex max-w-page snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:px-6 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))] lg:gap-5 lg:overflow-visible">
         {varieties.map((variety) => (
           <li key={variety.slug} className="w-36 shrink-0 snap-start sm:w-40 lg:w-auto">
             <Link
               href={shopHref(defaultShopQuery, { category: variety.slug })}
               className="group flex flex-col items-center rounded-md text-center"
             >
-              <ImagePlaceholder
-                icon={categoryIcons[variety.slug]}
+              <MediaImage
+                image={variety.image}
+                alt=""
+                sizes="(min-width: 1024px) 150px, 160px"
+                icon={categoryIcon(variety.slug)}
                 iconSize="md"
                 tone="honey"
                 aspect="aspect-[4/5]"

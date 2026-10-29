@@ -1,6 +1,8 @@
+import { StarSummary } from "@/components/ui/star-controls";
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
-import { HoneycombPattern } from "@/components/motifs/honeycomb-pattern";
+import Image from "next/image";
+import { ChevronDown, Mail, MapPin, Phone } from "lucide-react";
+import { localImages } from "@/content/local-images";
 import { Logo } from "@/components/ui/logo";
 import { NewsletterForm } from "@/features/newsletter/newsletter-form";
 import { siteConfig } from "@/lib/site";
@@ -40,97 +42,85 @@ const linkColumns = [
   },
 ] as const;
 
-// Placeholder list until the Pakistani payment providers are confirmed.
-const paymentMethods = ["Cash on Delivery", "Visa", "Mastercard", "Bank Transfer"] as const;
-
 /**
  * `showFeatures`: the overlapping promises strip. The home page passes false
  * because it already shows the promises as drip cards under the hero.
+ * Preserve the approved design (variance 4, motion 1, density 5): tighter
+ * spacing, a horizontal desktop contact row, native disclosures on mobile.
  */
 export function SiteFooter({ showFeatures = true }: { showFeatures?: boolean }) {
   return (
     <>
       {showFeatures && <FeaturesStrip />}
-      <footer className={showFeatures ? "bg-cream pt-15" : "bg-cream"}>
-        <div className="relative isolate">
-          <HoneycombPattern fade className="text-primary-ink/[0.06]" />
-          <div className="mx-auto grid w-full max-w-wide gap-10 px-4 pt-16 pb-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-12 lg:gap-6 lg:pt-20">
-            <div className="lg:col-span-4 xl:col-span-3">
-              <Logo />
-              <p className="mt-5 max-w-sm text-body">{siteConfig.tagline}</p>
-              <address className="mt-5 space-y-3 text-strong not-italic">
-                <p className="flex items-start gap-3">
-                  <MapPin className="mt-1 size-4 shrink-0 text-primary-ink" aria-hidden="true" />
-                  {siteConfig.contact.address}
-                </p>
-                <p>
-                  <a
-                    href={siteConfig.contact.phoneHref}
-                    className="inline-flex items-center gap-3 transition-colors duration-200 hover:text-primary-ink"
-                  >
-                    <Phone className="size-4 shrink-0 text-primary-ink" aria-hidden="true" />
-                    {siteConfig.contact.phoneDisplay}
-                  </a>
-                </p>
-                <p>
-                  <a
-                    href={`mailto:${siteConfig.contact.email}`}
-                    className="inline-flex items-center gap-3 break-all transition-colors duration-200 hover:text-primary-ink"
-                  >
-                    <Mail className="size-4 shrink-0 text-primary-ink" aria-hidden="true" />
-                    {siteConfig.contact.email}
-                  </a>
-                </p>
-              </address>
-              <SocialLinks className="mt-3 -ml-3 text-strong" />
+      <footer className={`on-dark relative isolate bg-brown-950 text-on-dark ${showFeatures ? "pt-15" : ""}`}>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+          <Image src={localImages.footer.url} alt="" fill sizes="100vw" className="object-contain object-center" />
+          <span data-footer-overlay className="absolute inset-0" style={{ backgroundColor: "rgb(27 17 8 / 90%)" }} />
+        </div>
+        <div className="relative mx-auto w-full max-w-wide px-4 pt-8 pb-5 sm:px-6 lg:pt-10 lg:pb-6">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+            <div className="sm:col-span-2 lg:col-span-3">
+              <Logo tone="dark" className="[&_img]:size-11" />
+              <p className="mt-3 max-w-sm text-sm leading-relaxed text-on-dark-muted">{siteConfig.tagline}</p>
+              <SocialLinks className="mt-1 -ml-3 text-on-dark [&_a:hover]:text-honey-300" />
             </div>
 
-            {linkColumns.map((column) => (
-              <nav key={column.title} aria-label={column.title} className="lg:col-span-2">
-                <h2 className="font-display text-base font-semibold">{column.title}</h2>
-                <ul className="mt-5 space-y-1">
-                  {column.links.map((link) => (
-                    <li key={link.label}>
-                      <Link
-                        href={link.href}
-                        className="inline-flex min-h-10 items-center text-strong transition-colors duration-200 hover:text-primary-ink"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
+            <div className="lg:col-span-6">
+              <div className="hidden gap-5 lg:grid lg:grid-cols-3">
+                {linkColumns.map((column) => (
+                  <nav key={column.title} aria-label={column.title}>
+                    <h2 className="font-subtitle text-sm font-bold text-on-dark">{column.title}</h2>
+                    <FooterLinks links={column.links} />
+                  </nav>
+                ))}
+              </div>
+              {/* Native disclosures work before hydration and keep touch targets large. */}
+              <div className="lg:hidden">
+                {linkColumns.map((column) => (
+                  <details key={column.title} className="group border-b border-on-dark/15">
+                    <StarSummary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-subtitle text-sm font-bold text-on-dark [&::-webkit-details-marker]:hidden">
+                      {column.title}
+                      <ChevronDown className="size-4 shrink-0 group-open:rotate-180" aria-hidden="true" />
+                    </StarSummary>
+                    <nav aria-label={column.title} className="pb-3">
+                      <FooterLinks links={column.links} />
+                    </nav>
+                  </details>
+                ))}
+                <details className="group border-b border-on-dark/15">
+                  <StarSummary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-subtitle text-sm font-bold text-on-dark [&::-webkit-details-marker]:hidden">
+                    Contact &amp; hours
+                    <ChevronDown className="size-4 shrink-0 group-open:rotate-180" aria-hidden="true" />
+                  </StarSummary>
+                  <div className="pt-3 pb-4"><FooterContactDetails /></div>
+                </details>
+              </div>
+            </div>
 
-            <div className="sm:col-span-2 lg:col-span-2 xl:col-span-3">
-              <h2 className="font-display text-base font-semibold">The Hive Letter</h2>
-              <p className="mt-5 mb-5 text-strong">
+            <div className="min-w-0 lg:col-span-3">
+              <h2 className="font-subtitle text-sm font-bold text-on-dark">The Hive Letter</h2>
+              <p className="mt-2 mb-3 text-sm leading-relaxed text-on-dark-muted">
                 Harvest news, limited releases and honey recipes, about once a month.
               </p>
-              <NewsletterForm />
-              <h3 className="mt-3 font-display text-meta font-semibold">We accept</h3>
-              <ul
-                aria-label="Accepted payment methods"
-                className="mt-3 flex w-fit flex-wrap items-center gap-x-4 gap-y-2 rounded-sm bg-surface px-4 py-2.5"
-              >
-                {paymentMethods.map((method) => (
-                  <li key={method} className="font-display text-meta font-semibold text-strong">
-                    {method}
-                  </li>
-                ))}
-              </ul>
+              <NewsletterForm tone="dark" />
+              <p className="flex flex-wrap items-center gap-2 text-meta text-on-dark-muted">
+                We accept
+                <span className="rounded-sm bg-surface px-3 py-1.5 font-semibold text-strong">Cash on Delivery</span>
+              </p>
             </div>
+          </div>
+          <div className="mt-5 hidden border-t border-on-dark/15 pt-4 lg:block">
+            <FooterContactDetails />
           </div>
         </div>
 
-        <div className="on-dark bg-brown-950 text-on-dark">
-          <div className="mx-auto flex w-full max-w-wide flex-col gap-3 px-4 py-4 text-meta sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <div className="border-t border-on-dark/15 text-on-dark-muted">
+          <div className="mx-auto flex w-full max-w-wide flex-col gap-1 px-4 py-2 text-xs sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <p>
               © {siteConfig.copyrightYear} {siteConfig.legalName}. All rights reserved.
             </p>
             <nav aria-label="Legal">
-              <ul className="flex flex-wrap gap-x-6 gap-y-1 font-display font-semibold">
+              <ul className="flex flex-wrap gap-x-4 font-display font-semibold">
                 <li>
                   <Link href="/terms" className="inline-flex min-h-10 items-center hover:text-primary">
                     Terms & Conditions
@@ -152,5 +142,54 @@ export function SiteFooter({ showFeatures = true }: { showFeatures?: boolean }) 
         </div>
       </footer>
     </>
+  );
+}
+
+function FooterLinks({ links }: { links: ReadonlyArray<{ label: string; href: string }> }) {
+  return (
+    <ul className="mt-2">
+      {links.map((link) => (
+        <li key={link.label}>
+          <Link href={link.href} className="inline-flex min-h-11 items-center text-sm text-on-dark-muted transition-colors duration-200 hover:text-honey-300 lg:min-h-9">
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function FooterContactDetails() {
+  return (
+    <div className="grid gap-4 text-meta leading-relaxed lg:grid-cols-[1fr_1.5fr_1fr] lg:gap-6">
+      <address className="flex items-start gap-2 text-on-dark-muted not-italic">
+        <MapPin className="mt-1 size-4 shrink-0 text-honey-300" aria-hidden="true" />
+        <span>
+          <span className="font-semibold text-on-dark">{siteConfig.contact.branch}. </span>
+          {siteConfig.contact.address}
+        </span>
+      </address>
+      <ul className="grid grid-cols-2 gap-x-3 gap-y-1 lg:grid-cols-3">
+        {siteConfig.contact.people.map((person) => (
+          <li key={person.phoneHref}>
+            <a href={person.phoneHref} className="inline-flex min-h-11 items-center gap-2 text-on-dark transition-colors duration-200 hover:text-honey-300">
+              <Phone className="size-3.5 shrink-0 text-honey-300" aria-hidden="true" />
+              <span>
+                <span className="block font-semibold">{person.name}</span>
+                <span className="whitespace-nowrap">{person.phoneDisplay}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div className="min-w-0 text-on-dark-muted">
+        <a href={`mailto:${siteConfig.contact.email}`} className="inline-flex min-h-11 max-w-full items-center gap-2 text-on-dark transition-colors duration-200 hover:text-honey-300 lg:-mt-2">
+          <Mail className="size-4 shrink-0 text-honey-300" aria-hidden="true" />
+          <span className="min-w-0 break-all">{siteConfig.contact.email}</span>
+        </a>
+        <p><span className="sr-only">Support hours: </span>{siteConfig.contact.hours}</p>
+        <p>{siteConfig.contact.onlineOrders}</p>
+      </div>
+    </div>
   );
 }

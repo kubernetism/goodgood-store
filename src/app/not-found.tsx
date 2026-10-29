@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <>
-      <SiteHeader tone="dark" />
+      <SiteHeader />
       <main id="main" tabIndex={-1} className="flex-1 pb-24 outline-none lg:pb-30">
         <section className="on-dark bg-brown-950 py-20 text-center text-on-dark lg:py-28">
           <Container>

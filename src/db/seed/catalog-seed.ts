@@ -1,10 +1,12 @@
 /**
- * Mock catalogue. There is no backend yet: this module is the single source of
- * product data for the storefront, cart pricing and checkout re-pricing.
+ * Seed catalogue: the original 26 mock products and 7 categories. Loaded into
+ * the database by `npm run db:seed` (scripts/seed.mts); the storefront reads
+ * the database, never this file. Also used as a fixture by unit tests.
  *
  * Prices are integer paisa (PKR minor units: Rs 1 = 100 paisa) and are always
  * whole rupees, e.g. Rs 2,450 is stored as 245_000. Prices are placeholders.
  */
+import type { ProductTag } from "@/features/products/types";
 
 export const categories = [
   {
@@ -44,26 +46,12 @@ export const categories = [
   },
 ] as const;
 
-export type CategorySlug = (typeof categories)[number]["slug"];
-export type Category = (typeof categories)[number];
+export type SeedCategorySlug = (typeof categories)[number]["slug"];
 
-export const productTags = [
-  "Raw",
-  "Unfiltered",
-  "Organic",
-  "Single Origin",
-  "Best Seller",
-  "Seasonal",
-  "Limited",
-  "Gift",
-] as const;
-
-export type ProductTag = (typeof productTags)[number];
-
-export type Product = {
+export type SeedProduct = {
   slug: string;
   name: string;
-  category: CategorySlug;
+  category: SeedCategorySlug;
   /** Current price in paisa (whole rupees × 100). */
   price: number;
   /** Original price in paisa, when on sale. */
@@ -130,7 +118,7 @@ const pureNaturalBase = {
   tasteNotes: "Round, honest sweetness with a citrus lift",
 } as const;
 
-export const products: ReadonlyArray<Product> = [
+export const products: ReadonlyArray<SeedProduct> = [
   // Sidr
   {
     ...sidrBase,
@@ -555,7 +543,7 @@ export const products: ReadonlyArray<Product> = [
 ];
 
 /** Per-category copy for the "Why you'll love it" list on product pages. */
-export const categoryHighlights: Record<CategorySlug, ReadonlyArray<{ title: string; text: string }>> = {
+export const categoryHighlights: Record<SeedCategorySlug, ReadonlyArray<{ title: string; text: string }>> = {
   sidr: [
     { title: "Single apiary", text: "Every batch is traceable to one beekeeper in Karak." },
     { title: "Never heated", text: "Cold-extracted and cloth-strained to keep aroma and enzymes." },

@@ -1,4 +1,4 @@
-import type { Product } from "../data";
+import type { Product } from "../types";
 import { ProductCard } from "./product-card";
 import { cx } from "@/lib/cx";
 

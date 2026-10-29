@@ -1,6 +1,7 @@
 import { Headset, LockKeyhole, ShieldCheck, Truck, type LucideIcon } from "lucide-react";
 import { FREE_SHIPPING_THRESHOLD } from "@/features/cart/pricing";
 import { formatPrice } from "@/lib/format";
+import { siteConfig } from "@/lib/site";
 
 export type StorePromise = { icon: LucideIcon; title: string; text: string };
 
@@ -12,6 +13,6 @@ export const storePromises: ReadonlyArray<StorePromise> = [
     text: `Free on orders over ${formatPrice(FREE_SHIPPING_THRESHOLD)}, 2–5 working days`,
   },
   { icon: ShieldCheck, title: "Purity promise", text: "Lab-tested, never heated, never blended" },
-  { icon: Headset, title: "Real people", text: "Phone and WhatsApp support, Mon–Sat" },
-  { icon: LockKeyhole, title: "Secure checkout", text: "Cash on delivery or card, your choice" },
+  { icon: Headset, title: "Customer support", text: siteConfig.contact.hours },
+  { icon: LockKeyhole, title: "Cash on delivery", text: "Pay the courier when your honey arrives" },
 ];

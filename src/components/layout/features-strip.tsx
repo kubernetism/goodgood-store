@@ -22,7 +22,7 @@ export function FeaturesStrip() {
               <Icon className="size-6" strokeWidth={1.5} aria-hidden="true" />
             </span>
             <div>
-              <h2 className="font-display text-base font-semibold">{title}</h2>
+              <h2 className="font-subtitle text-base font-bold">{title}</h2>
               <p className="max-w-56 text-meta">{text}</p>
             </div>
           </li>

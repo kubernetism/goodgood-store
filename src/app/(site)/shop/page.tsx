@@ -1,3 +1,4 @@
+import { StarLink } from "@/components/ui/star-controls";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -8,6 +9,8 @@ import { FiltersDisclosure } from "@/components/ui/filters-disclosure";
 import { Pagination } from "@/components/ui/pagination";
 import { buttonClasses } from "@/components/ui/button";
 import { getCategory, queryProducts } from "@/features/products/catalog";
+import { getCatalog } from "@/features/products/catalog-data";
+import type { Catalog } from "@/features/products/types";
 import { ProductGrid } from "@/features/products/components/product-grid";
 import { ProductListItem } from "@/features/products/components/product-list-item";
 import { ShopSidebar } from "@/features/products/components/shop-sidebar";
@@ -45,14 +48,15 @@ export default function ShopPage({ searchParams }: PageProps<"/shop">) {
 }
 
 async function ShopContent({ searchParams }: Pick<PageProps<"/shop">, "searchParams">) {
-  const query = parseShopQuery(await searchParams);
-  const result = queryProducts(query);
+  const [catalog, params] = await Promise.all([getCatalog(), searchParams]);
+  const query = parseShopQuery(params, catalog.categories.map((category) => category.slug));
+  const result = queryProducts(catalog, query);
 
   return (
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
       <aside aria-label="Shop filters" className="lg:col-span-4 xl:pr-4">
         <FiltersDisclosure label="Filters">
-          <ShopSidebar query={query} />
+          <ShopSidebar query={query} catalog={catalog} />
         </FiltersDisclosure>
       </aside>
 
@@ -74,7 +78,7 @@ async function ShopContent({ searchParams }: Pick<PageProps<"/shop">, "searchPar
           </p>
         </div>
 
-        {hasActiveFilters(query) && <ActiveFilters query={query} />}
+        {hasActiveFilters(query) && <ActiveFilters query={query} catalog={catalog} />}
 
         <div className="mt-8">
           {result.items.length === 0 ? (
@@ -108,7 +112,7 @@ function ViewLink({ query, view }: { query: ShopQuery; view: ShopQuery["view"] }
   const isActive = query.view === view;
   const Icon = view === "grid" ? LayoutGrid : List;
   return (
-    <Link
+    <StarLink
       href={shopHref(query, { view, page: query.page })}
       aria-current={isActive ? "true" : undefined}
       className={cx(
@@ -118,14 +122,14 @@ function ViewLink({ query, view }: { query: ShopQuery; view: ShopQuery["view"] }
     >
       <Icon className="size-5" strokeWidth={isActive ? 2.25 : 1.75} aria-hidden="true" />
       <span className="sr-only">{view === "grid" ? "Grid view" : "List view"}</span>
-    </Link>
+    </StarLink>
   );
 }
 
-function ActiveFilters({ query }: { query: ShopQuery }) {
+function ActiveFilters({ query, catalog }: { query: ShopQuery; catalog: Catalog }) {
   const labels = [
     query.q && `“${query.q}”`,
-    query.category && getCategory(query.category).name,
+    query.category && (getCategory(catalog, query.category)?.name ?? query.category),
     query.tag,
     (query.minPrice !== null || query.maxPrice !== null) &&
       `${formatRupees(query.minPrice ?? 0)} – ${query.maxPrice !== null ? formatRupees(query.maxPrice) : "any"}`,
@@ -150,9 +154,9 @@ function EmptyResults() {
       <SearchX className="size-10 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
       <h3 className="mt-4 font-heading text-promo font-semibold">No honey matches those filters</h3>
       <p className="mt-2 max-w-sm">Try another variety or widen the price range.</p>
-      <Link href="/shop" className={buttonClasses({ className: "mt-6" })}>
+      <StarLink href="/shop" className={buttonClasses({ className: "mt-6" })}>
         View all honey
-      </Link>
+      </StarLink>
     </div>
   );
 }

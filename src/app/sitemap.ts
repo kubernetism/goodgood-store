@@ -1,14 +1,14 @@
 import type { MetadataRoute } from "next";
 import { blogPosts } from "@/features/blog/data";
-import { getAllProducts } from "@/features/products/catalog";
+import { getCatalog } from "@/features/products/catalog-data";
 import { siteConfig } from "@/lib/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes = ["", "/shop", "/blog", "/about", "/contact", "/privacy", "/terms"].map((path) => ({
     url: `${siteConfig.url}${path}`,
   }));
 
-  const productRoutes = getAllProducts().map((product) => ({
+  const productRoutes = (await getCatalog()).products.map((product) => ({
     url: `${siteConfig.url}/shop/${product.slug}`,
     lastModified: product.listedOn,
   }));

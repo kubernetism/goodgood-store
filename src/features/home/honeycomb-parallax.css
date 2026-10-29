@@ -1,0 +1,45 @@
+/* Preserve the store's existing design: variance 4, motion 4, density 4.
+   Each section owns a clipped background, below its content (layer -1).
+   Reuse the brand's hexagon mask; no extra images or network requests. */
+.home-honeycomb {
+  --comb-ink: 168 124 76;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.home-honeycomb__pattern {
+  position: absolute;
+  /* More than the full +/-100px travel, so scrolling never reveals an edge. */
+  inset: -120px 0;
+  background: rgb(var(--comb-ink) / 0.28);
+  -webkit-mask: var(--mask-honeycomb) center / 1.75rem auto repeat;
+  mask: var(--mask-honeycomb) center / 1.75rem auto repeat;
+}
+
+.home-honeycomb--dark {
+  --comb-ink: 207 163 108;
+}
+
+/* This is a mouse-only detail; touch interaction never leaves it stuck on. */
+@media (hover: none), (pointer: coarse) {
+  .home-honeycomb {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-honeycomb__pattern {
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-honeycomb__pattern {
+    /* Also protects the server-rendered page before React hydrates. */
+    transform: none !important;
+  }
+}

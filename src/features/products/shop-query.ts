@@ -1,4 +1,4 @@
-import { categories, productTags, type CategorySlug, type ProductTag } from "./data";
+import { productTags, type ProductTag } from "./types";
 
 export const sortOptions = [
   { value: "default", label: "Default sorting" },
@@ -14,7 +14,8 @@ export type ShopView = "grid" | "list";
 
 /** Parsed, trusted shape of the /shop URL. Built only via `parseShopQuery`. */
 export type ShopQuery = {
-  category: CategorySlug | null;
+  /** A known category slug. */
+  category: string | null;
   tag: ProductTag | null;
   q: string;
   /** Whole rupees, inclusive. */
@@ -56,9 +57,10 @@ function nonNegativeInt(value: string | undefined): number | null {
 /**
  * Parses untrusted search params into a ShopQuery. Unknown or malformed values
  * fall back to defaults instead of erroring, so hand-edited URLs still work.
+ * `categorySlugs` are the live categories (they are editable in the admin).
  */
-export function parseShopQuery(raw: RawSearchParams): ShopQuery {
-  const category = oneOf(first(raw.category), categories.map((c) => c.slug));
+export function parseShopQuery(raw: RawSearchParams, categorySlugs: ReadonlyArray<string>): ShopQuery {
+  const category = oneOf(first(raw.category), categorySlugs);
   const tag = oneOf(first(raw.tag), productTags);
   const q = (first(raw.q) ?? "").trim().slice(0, MAX_QUERY_LENGTH);
   const sort = oneOf(first(raw.sort), sortOptions.map((o) => o.value)) ?? "default";

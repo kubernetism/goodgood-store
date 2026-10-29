@@ -6,9 +6,11 @@ import { SocialLinks } from "@/components/layout/social-links";
 import { LatestBlog } from "@/components/sections/latest-blog";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Container } from "@/components/ui/container";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
 import { Eyebrow, SectionHeading } from "@/components/ui/section-heading";
 import { faqs, teamMembers } from "@/content/company";
+import { SLOT_KEYS, teamMemberSlotKey } from "@/features/content/slots";
+import { getSiteContent, slotImage } from "@/features/content/content-data";
 import { NewsletterForm } from "@/features/newsletter/newsletter-form";
 import { FaqAccordion } from "@/components/sections/faq-accordion";
 
@@ -37,7 +39,8 @@ const reasons = [
   },
 ] as const;
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const content = await getSiteContent();
   return (
     <>
       <PageHero title="About Us" crumbs={[{ label: "About Us" }]} />
@@ -46,8 +49,25 @@ export default function AboutPage() {
       <section aria-labelledby="about-heading" className="py-16 lg:py-30">
         <Container className="grid items-center gap-12 lg:grid-cols-2 lg:gap-6">
           <div className="grid grid-cols-2 gap-6 lg:mr-10 lg:gap-8">
-            <ImagePlaceholder icon={BeeIcon} iconSize="lg" rounded="lg" aspect="aspect-[3/5]" caption="Our apiaries" />
-            <ImagePlaceholder icon={User} iconSize="lg" rounded="lg" aspect="aspect-[3/5]" caption="Our team" className="mt-8" />
+            <MediaImage
+              image={slotImage(content, SLOT_KEYS.aboutApiaries)}
+              sizes="(min-width: 1024px) 270px, 50vw"
+              icon={BeeIcon}
+              iconSize="lg"
+              rounded="lg"
+              aspect="aspect-[3/5]"
+              caption="Our apiaries"
+            />
+            <MediaImage
+              image={slotImage(content, SLOT_KEYS.aboutTeam)}
+              sizes="(min-width: 1024px) 270px, 50vw"
+              icon={User}
+              iconSize="lg"
+              rounded="lg"
+              aspect="aspect-[3/5]"
+              caption="Our team"
+              className="mt-8"
+            />
           </div>
           <div>
             <Eyebrow decorated="leading">Our story</Eyebrow>
@@ -98,7 +118,14 @@ export default function AboutPage() {
           <ul className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             {teamMembers.map((member) => (
               <li key={member.name} className="overflow-hidden rounded-lg border border-border text-center">
-                <ImagePlaceholder icon={Users} iconSize="lg" aspect="aspect-[9/10]" />
+                <MediaImage
+                  image={slotImage(content, teamMemberSlotKey(member.name))}
+                  alt=""
+                  sizes="(min-width: 1024px) 270px, 50vw"
+                  icon={Users}
+                  iconSize="lg"
+                  aspect="aspect-[9/10]"
+                />
                 <div className="px-3 py-5">
                   <Eyebrow decorated="both">{member.role}</Eyebrow>
                   <h3 className="mt-2 text-base font-semibold sm:text-h4">{member.name}</h3>
@@ -127,7 +154,9 @@ export default function AboutPage() {
           <SectionHeading id="faq-heading" eyebrow="FAQ" title="Questions about honey" className="reveal" />
           <div className="mt-10 grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
             <FaqAccordion items={faqs} />
-            <ImagePlaceholder
+            <MediaImage
+              image={slotImage(content, SLOT_KEYS.aboutFaq)}
+              sizes="(min-width: 1024px) 560px, 100vw"
               icon={HoneyJarIcon}
               iconSize="xl"
               tone="honey"

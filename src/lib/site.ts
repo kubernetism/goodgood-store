@@ -1,7 +1,10 @@
-/**
- * Site-wide configuration. Contact details and the domain are placeholders
- * (reserved `.example` TLD, 0000000 numbers) until real business details exist.
- */
+const contactPeople = [
+  { name: "Salman Sami", phoneDisplay: "0311-9000985", phoneHref: "tel:+923119000985" },
+  { name: "M.D Basit Khan", phoneDisplay: "0319-9073330", phoneHref: "tel:+923199073330" },
+  { name: "Mubashir Khan", phoneDisplay: "0315-9021627", phoneHref: "tel:+923159021627" },
+] as const;
+
+/** Site-wide configuration. The domain and social URLs still await confirmation. */
 export const siteConfig = {
   /** Short brand name for tight spaces (title template, social labels). */
   name: "Abdul Sami Honey",
@@ -15,16 +18,17 @@ export const siteConfig = {
   // force request-time rendering under Cache Components.
   copyrightYear: 2026,
   contact: {
-    shortAddress: "Gulberg III, Lahore",
-    address: "Office 00, Placeholder Plaza, Gulberg III, Lahore, Pakistan",
-    phoneDisplay: "+92 300 0000000",
-    phoneHref: "tel:+923000000000",
-    supportPhoneDisplay: "+92 42 0000000",
-    supportPhoneHref: "tel:+92420000000",
-    email: "hello@abdulsamihoney.example",
-    supportEmail: "support@abdulsamihoney.example",
-    careersEmail: "careers@abdulsamihoney.example",
-    hours: "Mon–Sat, 10:00am – 7:00pm PKT",
+    businessName: "Abdul Sami Honey Enterprises",
+    businessType: "Import & Export",
+    branch: "Branch No. 2",
+    shortAddress: "Main GT Road, Peshawar",
+    address: "Usman Tower, Shop No. 1, 2, 3, Byco Pump, Main GT Road, Near Nasir Pur Phatak, Peshawar, Pakistan.",
+    people: contactPeople,
+    // The first supplied contact is used where space allows only one number.
+    primary: contactPeople[0],
+    email: "support@abdulsamienterprises.com",
+    hours: "Monday–Friday, 9:00am–5:00pm PKT",
+    onlineOrders: "Online orders anytime",
   },
   socials: [
     { network: "facebook", label: "Facebook", href: "https://facebook.com" },

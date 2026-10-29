@@ -16,7 +16,7 @@ export function Eyebrow({ children, decorated = false, tone = "light", className
   return (
     <p
       className={cx(
-        "inline-flex items-center gap-3 font-display text-eyebrow font-semibold uppercase",
+        "inline-flex items-center gap-3 font-subtitle text-eyebrow font-bold uppercase",
         tone === "dark" ? "text-primary" : "text-primary-ink",
         className,
       )}
@@ -40,7 +40,7 @@ type SectionHeadingProps = {
   className?: string;
 };
 
-/** Section title in Fraunces with the hexagon divider underneath. */
+/** Sansation title and subtitle with the existing hexagon divider. */
 export function SectionHeading({
   title,
   eyebrow,
@@ -69,7 +69,7 @@ export function SectionHeading({
       {description && (
         <p
           className={cx(
-            "mt-4 max-w-xl text-pretty",
+            "mt-4 max-w-xl font-subtitle text-pretty",
             isCentered && "mx-auto",
             tone === "dark" ? "text-on-dark-muted" : "text-body",
           )}

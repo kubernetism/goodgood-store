@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import brandLogo from "../../../images/logo/abdulSamiEnterprisesLogo.png";
 import { siteConfig } from "@/lib/site";
 import { cx } from "@/lib/cx";
 
@@ -6,63 +8,31 @@ type LogoProps = {
   /** `light` for ivory/honey surfaces (brown ink); `dark` for brown bands (cream ink). */
   tone?: "light" | "dark";
   className?: string;
+  /** Keep the narrow mobile navigation clear; the footer retains the name. */
+  compact?: boolean;
 };
 
 /**
- * Honey-jar mark + "Honey" script wordmark with a "by Abdul Sami" line, linking
- * home. One inline SVG; the visible lettering is decorative and the link's
- * accessible name is the full brand name.
+ * The supplied company mark with a Sansation wordmark. The link's accessible
+ * name remains the full company name, even when mobile uses only the mark.
  */
-export function Logo({ tone = "light", className }: LogoProps) {
+export function Logo({ tone = "light", className, compact = false }: LogoProps) {
   return (
     <Link
       href="/"
       className={cx(
-        "inline-flex items-center rounded-sm",
+        "inline-flex items-center gap-3 rounded-sm",
         tone === "dark" ? "text-on-dark" : "text-strong",
         className,
       )}
     >
-      <BrandLockup tone={tone} className="h-12 w-auto" />
+      <Image src={brandLogo} alt="" sizes="56px" className="h-14 w-14 shrink-0 object-contain" />
+      <span aria-hidden="true" className={cx("font-heading leading-tight", compact && "hidden sm:block")}>
+        <span className="block text-lg font-bold">Abdul Sami</span>
+        <span className="block text-xs font-semibold">Honey Enterprises</span>
+      </span>
       <span className="sr-only">{siteConfig.legalName}</span>
     </Link>
-  );
-}
-
-function BrandLockup({ tone, className }: { tone: "light" | "dark"; className?: string }) {
-  // Logotypes are exempt from contrast minimums, but these still clear 4.5:1.
-  const tagline = tone === "dark" ? "#ffb800" : "#4a331a";
-
-  return (
-    <svg viewBox="0 0 172 52" aria-hidden="true" focusable="false" className={className}>
-      <HoneyJarMark />
-      {/* textLength pins the width, so the fallback font can't change the layout before Parisienne loads. */}
-      <text
-        x="46"
-        y="31"
-        textLength="104"
-        lengthAdjust="spacingAndGlyphs"
-        fill="currentColor"
-        className="font-script"
-        fontSize="38"
-      >
-        Honey
-      </text>
-      {/* Ends before the descender of the script "y". */}
-      <text
-        x="48"
-        y="47"
-        textLength="74"
-        lengthAdjust="spacingAndGlyphs"
-        fill={tagline}
-        className="font-sans"
-        fontSize="8"
-        fontWeight="600"
-        letterSpacing="1.2"
-      >
-        BY ABDUL SAMI
-      </text>
-    </svg>
   );
 }
 

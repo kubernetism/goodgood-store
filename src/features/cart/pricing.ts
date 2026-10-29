@@ -1,4 +1,4 @@
-import type { CategorySlug } from "@/features/products/data";
+import type { ImageAsset } from "@/features/products/types";
 
 /**
  * Cart maths shared by the client (display) and the checkout Server Action
@@ -15,12 +15,26 @@ export const SHIPPING_FEE = 25_000;
 export type CartLine = { slug: string; quantity: number };
 
 /** The slice of a product the cart needs; keeps client payloads small. */
-export type CartProduct = { slug: string; name: string; price: number; category: CategorySlug; unit: string };
+export type CartProduct = {
+  slug: string;
+  name: string;
+  /** Paisa. */
+  price: number;
+  /** Category slug (picks the placeholder glyph when there is no image). */
+  category: string;
+  unit: string;
+  /** Units available; the cart caps quantities to it and checkout re-checks it. */
+  stock: number;
+  image: ImageAsset | null;
+};
 
-export type PricedLine = CartLine & { product: CartProduct; lineTotal: number };
+/** Anything with a price can be priced: cart UI products and checkout's DB rows alike. */
+export type Priceable = { price: number };
 
-export type CartTotals = {
-  lines: PricedLine[];
+export type PricedLine<P extends Priceable = CartProduct> = CartLine & { product: P; lineTotal: number };
+
+export type CartTotals<P extends Priceable = CartProduct> = {
+  lines: PricedLine<P>[];
   itemCount: number;
   subtotal: number;
   shipping: number;
@@ -56,8 +70,11 @@ export function shippingFor(subtotal: number): number {
 }
 
 /** Prices lines against the catalogue; lines for unknown products are dropped. */
-export function priceCart(lines: ReadonlyArray<CartLine>, catalog: ReadonlyMap<string, CartProduct>): CartTotals {
-  const priced: PricedLine[] = [];
+export function priceCart<P extends Priceable>(
+  lines: ReadonlyArray<CartLine>,
+  catalog: ReadonlyMap<string, P>,
+): CartTotals<P> {
+  const priced: PricedLine<P>[] = [];
   for (const line of lines) {
     const product = catalog.get(line.slug);
     if (!product) continue;
@@ -74,4 +91,26 @@ export function priceCart(lines: ReadonlyArray<CartLine>, catalog: ReadonlyMap<s
     shipping,
     total: subtotal + shipping,
   };
+}
+
+/** A cart line that can't be fulfilled as-is: reduce it to `available` (0 = remove). */
+export type StockAdjustment = { slug: string; name: string; requested: number; available: number };
+
+/**
+ * Lines asking for more than is in stock. Unknown products are reported with
+ * `available: 0` and the slug as name, so the cart can drop them.
+ */
+export function findStockIssues(
+  lines: ReadonlyArray<CartLine>,
+  catalog: ReadonlyMap<string, Pick<CartProduct, "name" | "stock">>,
+): StockAdjustment[] {
+  const issues: StockAdjustment[] = [];
+  for (const line of lines) {
+    const product = catalog.get(line.slug);
+    const available = Math.max(0, product?.stock ?? 0);
+    if (line.quantity > available) {
+      issues.push({ slug: line.slug, name: product?.name ?? line.slug, requested: line.quantity, available });
+    }
+  }
+  return issues;
 }

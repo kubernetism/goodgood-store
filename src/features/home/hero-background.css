@@ -1,0 +1,35 @@
+/* Preserve the approved honey identity: variance 4, motion 4, density 4.
+   The photograph sits behind the hero's content, within its isolation layer. */
+.hero-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-background__photo {
+  position: absolute;
+  inset: -72px 0;
+}
+
+.hero-background__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgb(27 17 8 / 80%);
+}
+
+.hero-background__rays {
+  position: absolute;
+  inset: 0;
+}
+
+.home-photo-hero__copy {
+  text-shadow: 0 2px 12px rgb(27 17 8 / 35%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-background__photo {
+    transform: none !important;
+  }
+}

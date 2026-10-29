@@ -1,14 +1,22 @@
+import type { Viewport } from "next";
 import { TopBar } from "@/components/layout/top-bar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { ScrollPerformance } from "@/components/layout/scroll-performance";
+import "@/features/home/home-theme.css";
 
-/** Home page chrome: brown top bar + honey header that blends into the hero. */
+export const viewport: Viewport = {
+  themeColor: "#e5b45a",
+};
+
+/** Home page chrome: brown top bar and the photographic navigation. */
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      <ScrollPerformance />
       <TopBar />
-      <SiteHeader tone="honey" />
-      <main id="main" tabIndex={-1} className="flex-1 outline-none">
+      <SiteHeader className="home-honey-theme" overHomeHero />
+      <main id="main" tabIndex={-1} className="home-honey-theme -mt-20 flex-1 bg-surface outline-none">
         {children}
       </main>
       {/* The promises already appear as drip cards under the hero. */}

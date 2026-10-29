@@ -1,5 +1,6 @@
 "use client";
 
+import { StarButton } from "@/components/ui/star-controls";
 import { useActionState, useId, useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { isEmail, type FormState } from "@/lib/forms";
@@ -58,22 +59,22 @@ export function NewsletterForm({ variant = "compact", tone = "light" }: Newslett
           )}
         />
         {variant === "wide" ? (
-          <button
+          <StarButton
             type="submit"
             disabled={isPending}
             className="h-13 rounded-sm bg-primary px-10 text-button font-semibold text-strong uppercase transition-colors duration-200 hover:bg-primary-hover disabled:opacity-60 sm:rounded-l-none"
           >
             {isPending ? "Subscribing…" : "Subscribe"}
-          </button>
+          </StarButton>
         ) : (
-          <button
+          <StarButton
             type="submit"
             disabled={isPending}
             className="flex size-14 shrink-0 items-center justify-center rounded-r-sm bg-primary text-strong transition-colors duration-200 hover:bg-primary-hover disabled:opacity-60"
           >
             <Send className="size-5" aria-hidden="true" />
             <span className="sr-only">{isPending ? "Subscribing" : "Subscribe"}</span>
-          </button>
+          </StarButton>
         )}
       </div>
       <p

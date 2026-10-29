@@ -6,7 +6,9 @@ import { ArrowLeft, ArrowRight, Calendar, Eye, MessageSquare, User } from "lucid
 import { PageHero } from "@/components/layout/page-hero";
 import { Container } from "@/components/ui/container";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
+import { blogCoverSlotKey, SLOT_KEYS } from "@/features/content/slots";
+import { getSiteContent, slotImage } from "@/features/content/content-data";
 import { BlogSidebar } from "@/features/blog/components/blog-sidebar";
 import { blogAuthor, blogPosts, type BlogBlock } from "@/features/blog/data";
 import { blogHref, getAdjacentPosts, getBlogCategoryName, getPostBySlug } from "@/features/blog/queries";
@@ -52,7 +54,7 @@ export default function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
 }
 
 async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">) {
-  const { slug } = await params;
+  const [{ slug }, content] = await Promise.all([params, getSiteContent()]);
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
@@ -62,7 +64,14 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
     <Container className="grid gap-12 py-16 lg:grid-cols-12 lg:gap-6 lg:py-24">
       <article className="lg:col-span-8">
         <div className="relative">
-          <ImagePlaceholder icon={HoneyDipperIcon} iconSize="lg" aspect="aspect-[5/3]" />
+          <MediaImage
+            image={slotImage(content, blogCoverSlotKey(post.slug))}
+            sizes="(min-width: 1024px) 770px, 100vw"
+            preload
+            icon={HoneyDipperIcon}
+            iconSize="lg"
+            aspect="aspect-[5/3]"
+          />
           <Link
             href={blogHref({ category: null, tag: null, q: "", page: 1 }, { category: post.category })}
             className="absolute -bottom-4 left-0 inline-flex h-8 items-center bg-primary px-3 font-display text-meta font-semibold text-strong hover:bg-primary-hover"
@@ -117,7 +126,14 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
         </div>
 
         <aside aria-label="About the author" className="mt-10 flex gap-5 rounded-sm bg-cream p-6">
-          <ImagePlaceholder icon={User} rounded="full" className="size-20 shrink-0" />
+          <MediaImage
+            image={slotImage(content, SLOT_KEYS.blogAuthor)}
+            alt=""
+            sizes="80px"
+            icon={User}
+            rounded="full"
+            className="size-20 shrink-0"
+          />
           <div>
             <p className="font-display text-base font-semibold text-strong">{blogAuthor.name}</p>
             <p className="text-meta text-primary-ink">{blogAuthor.role}</p>

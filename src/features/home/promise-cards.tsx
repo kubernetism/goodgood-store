@@ -1,11 +1,13 @@
 import { HoneyDrip } from "@/components/motifs/honey-drip";
 import { Container } from "@/components/ui/container";
 import { storePromises } from "@/content/store-promises";
+import { HoneycombParallax } from "./honeycomb-parallax";
 
 /** The four service promises as honey cards with a drip edge (the one drip strip on the page). */
 export function PromiseCards() {
   return (
-    <section aria-labelledby="promises-heading" className="pt-10 pb-16 lg:pt-14 lg:pb-24">
+    <section aria-labelledby="promises-heading" className="relative isolate pt-10 pb-16 lg:pt-14 lg:pb-24">
+      <HoneycombParallax />
       <h2 id="promises-heading" className="sr-only">
         Why shop with us
       </h2>
@@ -18,8 +20,8 @@ export function PromiseCards() {
                 <Icon className="size-8 shrink-0 sm:size-9" strokeWidth={1.5} aria-hidden="true" />
                 <span aria-hidden="true" className="hidden h-10 w-px bg-strong/30 sm:block" />
                 <div>
-                  <h3 className="font-display text-sm leading-snug font-semibold sm:text-base">{title}</h3>
-                  <p className="text-meta text-brown-800">{text}</p>
+                  <h3 className="font-subtitle text-sm leading-snug font-bold sm:text-base">{title}</h3>
+                  <p className="text-meta text-strong">{text}</p>
                 </div>
               </div>
               <HoneyDrip size="sm" className="-mt-px text-primary" />

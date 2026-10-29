@@ -1,7 +1,7 @@
 import { cx } from "@/lib/cx";
 
-// Placeholder list until the Pakistani payment providers are confirmed.
-const methods = ["Cash on Delivery", "Visa", "Mastercard", "Bank Transfer"] as const;
+// Cash on delivery is the only payment method (Pakistan only).
+const methods = ["Cash on Delivery"] as const;
 
 /** Text stand-ins for payment-network logos (no images in this build). */
 export function PaymentBadges({ className }: { className?: string }) {

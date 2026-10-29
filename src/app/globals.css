@@ -13,13 +13,15 @@
  */
 @theme {
   /* Fonts (wired to next/font CSS variables in app/layout.tsx).
-     heading: Fraunces (warm soft serif) for h1–h3 and large display copy.
+     heading: Sansation for page and section titles.
+     subtitle: Sansation for supporting headings and introductory subtitles.
      sans/display: Inter for body and every UI label (nav, buttons, prices).
      script: Parisienne, reserved for the logo wordmark and rare ≥28px accents. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-fraunces), ui-serif, Georgia, serif;
-  /* Legacy alias: blog quotes and the about page signature use font-serif. */
+  --font-heading: var(--font-sansation), ui-sans-serif, system-ui, sans-serif;
+  --font-subtitle: var(--font-sansation), ui-sans-serif, system-ui, sans-serif;
+  /* Keep the editorial quote treatment separate from headings. */
   --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-script: var(--font-parisienne), cursive;
 
@@ -162,18 +164,22 @@
   }
 
   h1,
-  h2,
-  h3,
-  h4 {
+  h2 {
     color: var(--color-strong);
     font-family: var(--font-heading);
     text-wrap: balance;
   }
 
-  /* Fraunces' SOFT axis rounds the terminals: warmer, less editorial. */
-  .font-heading,
-  .font-serif,
-  :is(h1, h2, h3, h4):not(.font-sans, .font-display) {
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--color-strong);
+    font-family: var(--font-subtitle);
+    text-wrap: balance;
+  }
+
+  .font-serif {
     font-variation-settings: "SOFT" 100;
   }
 

@@ -3,13 +3,13 @@ import { ArrowRight } from "lucide-react";
 import { SidebarPanel } from "@/components/ui/sidebar-panel";
 import { cx } from "@/lib/cx";
 import { PRICE_FILTER_STEP, getCategoryCounts, getPriceBounds, getTopRatedProducts } from "../catalog";
-import { productTags } from "../data";
+import { productTags, type Catalog } from "../types";
 import { shopHref, shopParams, type ShopQuery } from "../shop-query";
 import { PriceFilter } from "./price-filter";
 import { TopRatedList } from "./top-rated-list";
 
-export function ShopSidebar({ query }: { query: ShopQuery }) {
-  const categoryCounts = getCategoryCounts();
+export function ShopSidebar({ query, catalog }: { query: ShopQuery; catalog: Catalog }) {
+  const categoryCounts = getCategoryCounts(catalog);
   const total = categoryCounts.reduce((sum, category) => sum + category.count, 0);
 
   return (
@@ -46,7 +46,7 @@ export function ShopSidebar({ query }: { query: ShopQuery }) {
         <PriceFilter
           // Remount when the URL changes so the thumbs reflect the new query.
           key={shopHref(query)}
-          bounds={getPriceBounds()}
+          bounds={getPriceBounds(catalog)}
           step={PRICE_FILTER_STEP}
           minPrice={query.minPrice}
           maxPrice={query.maxPrice}
@@ -55,7 +55,7 @@ export function ShopSidebar({ query }: { query: ShopQuery }) {
       </SidebarPanel>
 
       <SidebarPanel title="Top Rated">
-        <TopRatedList products={getTopRatedProducts(4)} />
+        <TopRatedList products={getTopRatedProducts(catalog, 4)} />
       </SidebarPanel>
 
       <SidebarPanel title="Filter by Tag">

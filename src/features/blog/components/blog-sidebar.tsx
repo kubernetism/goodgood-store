@@ -1,9 +1,12 @@
+import { StarButton } from "@/components/ui/star-controls";
 import Form from "next/form";
 import Link from "next/link";
 import { Calendar, Search, User } from "lucide-react";
 import { SocialLinks } from "@/components/layout/social-links";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
+import { blogCoverSlotKey, SLOT_KEYS } from "@/features/content/slots";
+import { getSiteContent, slotImage } from "@/features/content/content-data";
 import { SidebarPanel } from "@/components/ui/sidebar-panel";
 import { formatDate } from "@/lib/format";
 import { cx } from "@/lib/cx";
@@ -18,14 +21,22 @@ type BlogSidebarProps = {
   activeCategory?: BlogCategorySlug;
 };
 
-export function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSidebarProps) {
+export async function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSidebarProps) {
   const currentCategory = activeCategory ?? query.category;
+  const content = await getSiteContent();
 
   return (
     <div className="space-y-8">
       <SidebarPanel title="About Me" variant="accent">
         <div className="text-center">
-          <ImagePlaceholder icon={User} rounded="full" className="mx-auto size-24" />
+          <MediaImage
+            image={slotImage(content, SLOT_KEYS.blogAuthor)}
+            alt=""
+            sizes="96px"
+            icon={User}
+            rounded="full"
+            className="mx-auto size-24"
+          />
           <p className="mt-4 font-display text-base font-semibold text-strong">{blogAuthor.name}</p>
           <p className="text-meta text-primary-ink">{blogAuthor.role}</p>
           <p className="mt-3 text-sm">{blogAuthor.bio}</p>
@@ -47,13 +58,13 @@ export function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSidebarP
             placeholder="Search your keyword"
             className="h-11 min-w-0 flex-1 rounded-l-sm border border-r-0 border-border-strong bg-tile px-3 text-sm text-strong placeholder:text-muted"
           />
-          <button
+          <StarButton
             type="submit"
             className="flex size-11 shrink-0 items-center justify-center rounded-r-sm bg-primary text-strong transition-colors duration-200 hover:bg-primary-hover"
           >
             <Search className="size-5" aria-hidden="true" />
             <span className="sr-only">Search</span>
-          </button>
+          </StarButton>
         </Form>
       </SidebarPanel>
 
@@ -61,9 +72,17 @@ export function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSidebarP
         <ul className="divide-y divide-border">
           {getPopularPosts(4).map((post) => (
             <li key={post.slug} className="group relative flex gap-4 py-4 first:pt-0 last:pb-0">
-              <ImagePlaceholder icon={HoneyDipperIcon} iconSize="sm" rounded="full" className="size-14 shrink-0" />
+              <MediaImage
+                image={slotImage(content, blogCoverSlotKey(post.slug))}
+                alt=""
+                sizes="56px"
+                icon={HoneyDipperIcon}
+                iconSize="sm"
+                rounded="full"
+                className="size-14 shrink-0"
+              />
               <div>
-                <h3 className="font-display text-sm leading-snug font-medium text-strong">
+                <h3 className="font-subtitle text-sm leading-snug font-bold text-strong">
                   <Link
                     href={`/blog/${post.slug}`}
                     className="transition-colors duration-200 group-hover:text-primary-ink after:absolute after:inset-0"

@@ -1,8 +1,9 @@
 "use client";
 
+import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
 import { useActionState, useState, type FormEvent } from "react";
-import { CircleCheck, Globe, Mail, Pencil, Phone, ShoppingBasket, User } from "lucide-react";
+import { Banknote, CircleCheck, Mail, Pencil, Phone, ShoppingBasket, User } from "lucide-react";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { FormStatus, SelectField, TextAreaField, TextField } from "@/components/ui/field";
 import { OrderSummary } from "@/features/cart/components/order-summary";
@@ -13,14 +14,28 @@ import { formatPrice } from "@/lib/format";
 import { useIsClient } from "@/lib/use-is-client";
 import { cx } from "@/lib/cx";
 import { placeOrder, type CheckoutState } from "./actions";
-import { checkoutFields, countries, paymentMethods, validateBilling, type CheckoutField } from "./validation";
+import {
+  DELIVERY_COUNTRY,
+  checkoutFields,
+  formatPakistaniMobile,
+  provinces,
+  validateBilling,
+  type CheckoutField,
+} from "./validation";
 
 const initialState: CheckoutState = { status: "idle" };
 
-// Clears the local cart only once the server has accepted the order.
+// Clears the local cart only once the server has accepted the order, and
+// applies any stock corrections the server reports (sold out / fewer left).
 async function placeOrderAndClearCart(previous: CheckoutState, formData: FormData): Promise<CheckoutState> {
   const result = await placeOrder(previous, formData);
   if (result.status === "success") cartActions.clear();
+  if (result.status === "error") {
+    for (const item of result.stockAdjustments ?? []) {
+      if (item.available === 0) cartActions.remove(item.slug);
+      else cartActions.setQuantity(item.slug, item.available);
+    }
+  }
   return result;
 }
 
@@ -43,9 +58,9 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
         <ShoppingBasket className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />
         <h2 className="mt-4 text-h4 font-semibold">Your cart is empty</h2>
         <p className="mt-2 max-w-sm">Add a few products before checking out.</p>
-        <Link href="/shop" className={buttonClasses({ className: "mt-6" })}>
+        <StarLink href="/shop" className={buttonClasses({ className: "mt-6" })}>
           Browse the shop
-        </Link>
+        </StarLink>
       </div>
     );
   }
@@ -77,10 +92,12 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
       <input type="hidden" name="cart" value={JSON.stringify(lines)} />
 
       <div aria-live="polite">
-        {errorCount > 0 && (
+        {errorCount > 0 ? (
           <FormStatus tone="error">
             {errors.cart ?? `Please fix ${errorCount === 1 ? "1 field" : `${errorCount} fields`} below to place your order.`}
           </FormStatus>
+        ) : (
+          state.status === "error" && <FormStatus tone="error">{state.message}</FormStatus>
         )}
       </div>
 
@@ -94,22 +111,20 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
           <div className="mt-4 grid gap-5 sm:grid-cols-2">
             <TextField id="firstName" name="firstName" label="First name" autoComplete="given-name" icon={User} error={errors.firstName} defaultValue={values.firstName} />
             <TextField id="lastName" name="lastName" label="Last name" autoComplete="family-name" icon={User} error={errors.lastName} defaultValue={values.lastName} />
-            <TextField id="company" name="company" label="Company name" optional autoComplete="organization" icon={Globe} defaultValue={values.company} />
-            <TextField id="phone" name="phone" type="tel" label="Phone number" autoComplete="tel" icon={Phone} error={errors.phone} defaultValue={values.phone} />
-            <TextField id="email" name="email" type="email" label="Email address" autoComplete="email" icon={Mail} error={errors.email} defaultValue={values.email} className="sm:col-span-2" />
+            <TextField id="phone" name="phone" type="tel" inputMode="tel" label="Mobile number" hint="The courier calls this number before delivery, e.g. 0300 1234567." autoComplete="tel" icon={Phone} error={errors.phone} defaultValue={values.phone} />
+            <TextField id="email" name="email" type="email" label="Email address" optional autoComplete="email" icon={Mail} error={errors.email} defaultValue={values.email} />
           </div>
         </fieldset>
 
         <fieldset className="mt-8">
-          <legend className="font-display text-sm font-semibold text-strong">Shipping Address</legend>
+          <legend className="font-display text-sm font-semibold text-strong">Delivery Address</legend>
+          <p className="mt-1 text-meta">We deliver across {DELIVERY_COUNTRY} only.</p>
           <div className="mt-4 grid gap-5 sm:grid-cols-6">
-            <SelectField id="country" name="country" label="Country" placeholder="Select country" autoComplete="country" options={countries} error={errors.country} defaultValue={values.country ?? "US"} className="sm:col-span-3" />
-            <div className="hidden sm:col-span-3 sm:block" />
-            <TextField id="street" name="street" label="House number and street name" autoComplete="address-line1" error={errors.street} defaultValue={values.street} className="sm:col-span-3" />
-            <TextField id="apartment" name="apartment" label="Apartment, suite, unit" optional autoComplete="address-line2" defaultValue={values.apartment} className="sm:col-span-3" />
-            <TextField id="city" name="city" label="Town / City" autoComplete="address-level2" error={errors.city} defaultValue={values.city} className="sm:col-span-2" />
-            <TextField id="state" name="state" label="State" autoComplete="address-level1" error={errors.state} defaultValue={values.state} className="sm:col-span-2" />
-            <TextField id="zip" name="zip" label="ZIP / Postcode" autoComplete="postal-code" error={errors.zip} defaultValue={values.zip} className="sm:col-span-2" />
+            <TextField id="street" name="street" label="House number and street" autoComplete="address-line1" error={errors.street} defaultValue={values.street} className="sm:col-span-3" />
+            <TextField id="apartment" name="apartment" label="Area, block, sector or landmark" optional autoComplete="address-line2" error={errors.apartment} defaultValue={values.apartment} className="sm:col-span-3" />
+            <TextField id="city" name="city" label="City" autoComplete="address-level2" error={errors.city} defaultValue={values.city} className="sm:col-span-2" />
+            <SelectField id="province" name="province" label="Province / territory" placeholder="Select province" autoComplete="address-level1" options={provinces} error={errors.province} defaultValue={values.province ?? ""} className="sm:col-span-2" />
+            <TextField id="postalCode" name="postalCode" label="Postal code" optional inputMode="numeric" maxLength={5} autoComplete="postal-code" error={errors.postalCode} defaultValue={values.postalCode} className="sm:col-span-2" />
           </div>
         </fieldset>
 
@@ -121,36 +136,21 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
           <h2 id="payment-heading" className="text-promo font-semibold">
             Payment Method
           </h2>
-          <fieldset
-            className="mt-6 space-y-3 rounded-sm border border-border p-3"
-            aria-describedby={errors.paymentMethod ? "paymentMethod-error" : undefined}
+          {/* Cash on delivery is the only method, so it is stated rather than offered as a choice. */}
+          <input type="hidden" name="paymentMethod" value="cod" />
+          <div
+            className={cx(
+              "mt-6 flex items-start gap-4 rounded-sm border border-primary bg-primary-tint p-4",
+              errors.paymentMethod && "border-danger",
+            )}
           >
-            <legend className="sr-only">Choose a payment method</legend>
-            {paymentMethods.map((method) => (
-              <label
-                key={method.value}
-                className={cx(
-                  "flex min-h-12 cursor-pointer items-center gap-3 rounded-sm border px-4 font-display text-sm font-semibold text-strong transition-colors duration-200 has-checked:border-primary has-checked:bg-primary-tint",
-                  errors.paymentMethod ? "border-danger" : "border-border-strong/40 hover:border-strong",
-                )}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value={method.value}
-                  defaultChecked={values.paymentMethod === method.value}
-                  className="size-4 accent-primary-ink"
-                />
-                {method.label}
-              </label>
-            ))}
-          </fieldset>
-          {errors.paymentMethod && (
-            <p id="paymentMethod-error" className="mt-1.5 text-meta font-medium text-danger">
-              {errors.paymentMethod}
-            </p>
-          )}
-          <p className="mt-3 text-meta">This is a demo store: no payment will be taken.</p>
+            <Banknote className="mt-0.5 size-6 shrink-0 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
+            <div>
+              <p className="font-display text-sm font-semibold text-strong">Cash on delivery</p>
+              <p className="mt-1 text-meta">Pay the courier in cash when your honey arrives. No card details needed.</p>
+            </div>
+          </div>
+          {errors.paymentMethod && <p className="mt-1.5 text-meta font-medium text-danger">{errors.paymentMethod}</p>}
           <Button type="submit" disabled={isPending} className="mt-6 w-full sm:w-auto">
             {isPending ? "Placing order…" : "Place order"}
           </Button>
@@ -179,13 +179,13 @@ function OrderConfirmation({ state }: { state: Extract<CheckoutState, { status: 
       <h2 className="mt-4 text-h3 font-semibold">Thank you for your order!</h2>
       <p className="mt-3 max-w-md text-strong">
         Order <strong>#{state.orderNumber}</strong> for {state.itemCount === 1 ? "1 item" : `${state.itemCount} items`} totalling{" "}
-        <strong>{formatPrice(state.total)}</strong> has been received. We&apos;ll email updates to{" "}
-        <strong>{state.email}</strong>.
+        <strong>{formatPrice(state.total)}</strong> has been received. We&apos;ll call{" "}
+        <strong>{formatPakistaniMobile(state.phone)}</strong> to confirm it before dispatch.
       </p>
-      <p className="mt-2 text-meta">Demo store: no payment was taken and no email will be sent.</p>
-      <Link href="/shop" className={buttonClasses({ className: "mt-8" })}>
+      <p className="mt-2 text-meta">Please keep the exact amount ready: you pay in cash on delivery.</p>
+      <StarLink href="/shop" className={buttonClasses({ className: "mt-8" })}>
         Continue shopping
-      </Link>
+      </StarLink>
     </div>
   );
 }

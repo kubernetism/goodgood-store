@@ -1,17 +1,22 @@
 import Link from "next/link";
 import { Calendar, Tag, User } from "lucide-react";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
+import { StarLink } from "@/components/ui/star-controls";
+import type { ImageAsset } from "@/features/products/types";
 import { formatDate } from "@/lib/format";
 import type { BlogPost } from "../data";
 import { getBlogCategoryName } from "../queries";
 
 /** DS blog card: image, author/category meta, 2-line title, date + Read more. */
-export function BlogCard({ post }: { post: BlogPost }) {
+export function BlogCard({ post, cover }: { post: BlogPost; cover: ImageAsset | null }) {
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-sm border border-border bg-surface shadow-card">
       <div className="overflow-hidden">
-        <ImagePlaceholder
+        <MediaImage
+          image={cover}
+          alt=""
+          sizes="(min-width: 1024px) 370px, (min-width: 640px) 50vw, 85vw"
           icon={HoneyDipperIcon}
           aspect="aspect-[10/7]"
           className="transition-transform duration-300 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
@@ -43,9 +48,9 @@ export function BlogCard({ post }: { post: BlogPost }) {
             <Calendar className="size-3.5 text-primary-ink" aria-hidden="true" />
             <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>
           </p>
-          <span aria-hidden="true" className="font-display text-meta font-semibold text-primary-ink uppercase">
-            Read more
-          </span>
+          <StarLink href={`/blog/${post.slug}`} className="relative z-10 font-display text-meta font-semibold text-primary-ink uppercase">
+            Read more<span className="sr-only">: {post.title}</span>
+          </StarLink>
         </div>
       </div>
     </article>

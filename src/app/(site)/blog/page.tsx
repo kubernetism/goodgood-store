@@ -1,3 +1,4 @@
+import { StarLink } from "@/components/ui/star-controls";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -10,6 +11,8 @@ import { Pagination } from "@/components/ui/pagination";
 import { BlogListCard } from "@/features/blog/components/blog-list-card";
 import { BlogSidebar } from "@/features/blog/components/blog-sidebar";
 import { blogHref, getBlogCategoryName, parseBlogQuery, queryPosts, type BlogQuery } from "@/features/blog/queries";
+import { blogCoverSlotKey, SLOT_KEYS } from "@/features/content/slots";
+import { getSiteContent, slotImage } from "@/features/content/content-data";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -31,7 +34,8 @@ export default function BlogPage({ searchParams }: PageProps<"/blog">) {
 }
 
 async function BlogContent({ searchParams }: Pick<PageProps<"/blog">, "searchParams">) {
-  const query = parseBlogQuery(await searchParams);
+  const [params, content] = await Promise.all([searchParams, getSiteContent()]);
+  const query = parseBlogQuery(params);
   const result = queryPosts(query);
 
   return (
@@ -43,15 +47,19 @@ async function BlogContent({ searchParams }: Pick<PageProps<"/blog">, "searchPar
             <SearchX className="size-10 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
             <h2 className="mt-4 text-h4 font-semibold">No posts found</h2>
             <p className="mt-2">Try another keyword or browse all posts.</p>
-            <Link href="/blog" className={buttonClasses({ className: "mt-6" })}>
+            <StarLink href="/blog" className={buttonClasses({ className: "mt-6" })}>
               View all posts
-            </Link>
+            </StarLink>
           </div>
         ) : (
           <ul className="space-y-8">
             {result.items.map((post) => (
               <li key={post.slug}>
-                <BlogListCard post={post} />
+                <BlogListCard
+                  post={post}
+                  cover={slotImage(content, blogCoverSlotKey(post.slug))}
+                  authorPhoto={slotImage(content, SLOT_KEYS.blogAuthor)}
+                />
               </li>
             ))}
           </ul>

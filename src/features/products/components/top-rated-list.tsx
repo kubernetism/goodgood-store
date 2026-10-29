@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { ImagePlaceholder } from "@/components/ui/image-placeholder";
+import { MediaImage } from "@/components/ui/media-image";
 import { Price } from "@/components/ui/price";
 import { RatingStars } from "@/components/ui/rating-stars";
-import { categoryIcons } from "../category-icons";
-import type { Product } from "../data";
+import { categoryIcon } from "../category-icons";
+import type { Product } from "../types";
 
 /** Compact product rows for sidebars ("Top Rated Product"). */
 export function TopRatedList({ products }: { products: ReadonlyArray<Product> }) {
@@ -11,15 +11,18 @@ export function TopRatedList({ products }: { products: ReadonlyArray<Product> })
     <ul className="divide-y divide-border">
       {products.map((product) => (
         <li key={product.slug} className="group relative flex items-center gap-4 py-4 first:pt-0 last:pb-0">
-          <ImagePlaceholder
-            icon={categoryIcons[product.category]}
+          <MediaImage
+            image={product.images[0]}
+            alt=""
+            sizes="56px"
+            icon={categoryIcon(product.category)}
             iconSize="sm"
             texture={false}
             className="size-14 shrink-0 rounded-md"
           />
           <div className="min-w-0">
             <RatingStars rating={product.rating} />
-            <h3 className="mt-0.5 truncate font-sans text-sm font-semibold text-strong">
+            <h3 className="mt-0.5 truncate font-subtitle text-sm font-bold text-strong">
               {/* Stretched link: the whole row is clickable. */}
               <Link
                 href={`/shop/${product.slug}`}

@@ -23,7 +23,7 @@ export function LegalDocument({ intro, updatedOn, sections }: LegalDocumentProps
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
       <nav aria-label="On this page" className="lg:col-span-4">
         <div className="rounded-sm border border-border bg-cream p-6 lg:sticky lg:top-28">
-          <h2 className="font-display text-base font-semibold">On this page</h2>
+          <h2 className="font-subtitle text-base font-bold">On this page</h2>
           <ol className="mt-4 space-y-1 text-sm">
             {sections.map((section, index) => (
               <li key={section.id}>
@@ -71,8 +71,8 @@ export function LegalDocument({ intro, updatedOn, sections }: LegalDocumentProps
           <p className="font-display font-semibold">Questions about this policy?</p>
           <p className="mt-1">
             Email{" "}
-            <a href={`mailto:${siteConfig.contact.supportEmail}`} className="font-semibold text-primary-ink underline underline-offset-2">
-              {siteConfig.contact.supportEmail}
+            <a href={`mailto:${siteConfig.contact.email}`} className="break-all font-semibold text-primary-ink underline underline-offset-2">
+              {siteConfig.contact.email}
             </a>{" "}
             or use our{" "}
             <Link href="/contact" className="font-semibold text-primary-ink underline underline-offset-2">

@@ -86,17 +86,23 @@ export function MobileNav() {
           </nav>
 
           <div className="space-y-2 border-t border-border bg-ivory px-5 py-4 text-meta">
-            <a href={siteConfig.contact.phoneHref} className="flex min-h-11 items-center gap-2 hover:text-primary-ink">
-              <Phone className="size-4 text-primary-ink" aria-hidden="true" />
-              {siteConfig.contact.phoneDisplay}
+            {siteConfig.contact.people.map((person) => (
+              <a key={person.phoneHref} href={person.phoneHref} className="flex min-h-11 items-center gap-3 hover:text-primary-ink">
+                <Phone className="size-4 shrink-0 text-primary-ink" aria-hidden="true" />
+                <span>
+                  <span className="block font-semibold">{person.name}</span>
+                  {person.phoneDisplay}
+                </span>
+              </a>
+            ))}
+            <a href={`mailto:${siteConfig.contact.email}`} className="flex min-h-11 items-center gap-3 hover:text-primary-ink">
+              <Mail className="size-4 shrink-0 text-primary-ink" aria-hidden="true" />
+              <span className="min-w-0 break-all">{siteConfig.contact.email}</span>
             </a>
-            <a
-              href={`mailto:${siteConfig.contact.email}`}
-              className="flex min-h-11 items-center gap-2 hover:text-primary-ink"
-            >
-              <Mail className="size-4 text-primary-ink" aria-hidden="true" />
-              {siteConfig.contact.email}
-            </a>
+            <p className="text-body">
+              {siteConfig.contact.hours}
+              <span className="mt-1 block font-semibold">{siteConfig.contact.onlineOrders}</span>
+            </p>
           </div>
         </div>
       </dialog>
