@@ -21,6 +21,7 @@ export const privacySections: ReadonlyArray<LegalSection> = [
       "Order details, including the products you buy, delivery notes and your chosen payment method.",
       "Messages you send through our contact form or by email.",
       "Basic technical data such as browser type and pages visited, used to keep the site secure and working.",
+      "Anonymous blog visit counts and an estimate of active time spent with an article visible, used to understand which articles readers find useful.",
     ],
     after: [
       "Card and wallet payments are processed by our payment providers. We never see or store your full card number.",
@@ -42,7 +43,8 @@ export const privacySections: ReadonlyArray<LegalSection> = [
     title: "Cookies and local storage",
     paragraphs: [
       "Our site stores your shopping cart in your browser’s local storage so it survives page reloads. This data stays on your device and is not used for advertising.",
-      "We do not use third-party advertising cookies. If we add analytics in future, we will update this policy and ask for consent where the law requires it.",
+      "For blog statistics, we store a random visit identifier and reading time in your browser’s session storage. It is used for up to 30 minutes and remains there until the tab is closed. The store records the article, visit identifier and estimated active time; it does not store your IP address or account identity for these statistics. We respect browser Do Not Track and Global Privacy Control signals.",
+      "We do not use third-party advertising cookies. We ask for consent where the law requires it.",
     ],
   },
   {

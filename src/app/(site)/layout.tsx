@@ -7,8 +7,8 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <ScrollPerformance />
-      <SiteHeader />
-      <main id="main" tabIndex={-1} className="flex-1 pb-24 outline-none lg:pb-30">
+      <SiteHeader overPageHero />
+      <main id="main" tabIndex={-1} className="-mt-20 flex-1 pb-24 outline-none lg:pb-30">
         {children}
       </main>
       <SiteFooter />

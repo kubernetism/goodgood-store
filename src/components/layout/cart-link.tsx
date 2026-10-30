@@ -5,8 +5,8 @@ import { ShoppingCart } from "lucide-react";
 import { useCartItemCount } from "@/features/cart/cart-store";
 
 /** Header cart button with a live item-count badge. */
-export function CartLink() {
-  const count = useCartItemCount();
+export function CartLink({ availableSlugs }: { availableSlugs: string[] }) {
+  const count = useCartItemCount(availableSlugs);
   const label = count === 1 ? "Cart, 1 item" : `Cart, ${count} items`;
 
   return (

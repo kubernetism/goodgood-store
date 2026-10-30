@@ -29,11 +29,23 @@
 .admin-form input[type=checkbox] { width: 18px; height: 18px; }
 .admin-form .check { display: flex; align-items: center; gap: 8px; }
 .admin-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.admin-form .admin-columns { align-items: start; }
 .admin-table-wrap { overflow-x: auto; }
 .admin-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
 .admin-table th { color: #776959; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
 .admin-table th, .admin-table td { padding: 13px 10px; border-bottom: 1px solid #eee6db; vertical-align: top; }
 .admin-table a { color: #8c541c; font-weight: 700; }
+.admin-product-visibility { display: grid; gap: 4px; }
+.admin-product-visibility label { display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; }
+.admin-product-visibility input { width: 18px; height: 18px; accent-color: #8c541c; }
+.admin-visibility-error { color: #8b2e20; font-size: 12px; }
+.admin-image-select { display: grid; align-content: start; gap: 6px; min-width: 0; }
+.admin-image-select > label { font-size: 13px; font-weight: 700; }
+.admin-image-upload { margin-top: 3px; }
+.admin-image-upload summary { color: #8c541c; cursor: pointer; font-size: 13px; font-weight: 700; }
+.admin-image-upload-fields { display: grid; gap: 10px; padding-top: 10px; }
+.admin-image-upload-fields p { margin: 0; }
+.admin-image-upload-fields button:disabled { cursor: wait; opacity: .7; }
 .admin-search { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
 .admin-search input { max-width: 320px; }
 .admin-search select { width: auto; }
@@ -45,4 +57,40 @@
 .admin-loading { padding: 36px; }
 .admin-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .admin-app :focus-visible { outline: 3px solid #c9842d; outline-offset: 2px; }
+.admin-order-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.admin-order-tabs a { display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 8px 13px; border: 1px solid #ddcdb8; border-radius: 8px; background: #fffdf9; color: #654a31; font-size: 14px; font-weight: 700; text-decoration: none; }
+.admin-order-tabs a:hover { border-color: #8c541c; }
+.admin-order-tabs a[aria-current="page"] { background: #8c541c; border-color: #8c541c; color: white; }
+.admin-order-tab-count { min-width: 23px; padding: 2px 6px; border-radius: 20px; background: #f0e7d9; color: #654a31; text-align: center; font-size: 12px; }
+.admin-shipping-address { min-width: 210px; max-width: 300px; overflow-wrap: anywhere; }
+.admin-order-row-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 140px; }
+.admin-order-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 12px; margin-bottom: 18px; }
+.admin-order-filters label { display: grid; gap: 6px; color: #5c4937; font-size: 13px; font-weight: 700; }
+.admin-order-filters input, .admin-order-filters select { min-height: 42px; width: 100%; border: 1px solid #cdbfac; border-radius: 6px; background: white; padding: 9px 11px; color: #30251b; font-weight: 400; }
+.admin-order-filter-search { flex: 1 1 240px; max-width: 320px; }
+.admin-order-filter-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-order-filter-hint, .admin-order-filter-error { flex-basis: 100%; margin: 0; }
+.admin-copy-shipping { display: inline-grid; gap: 4px; }
+.admin-copy-shipping .admin-button { min-height: 36px; padding: 5px 10px; }
+.admin-order-back { display: inline-block; margin-bottom: 14px; color: #8c541c; font-weight: 700; text-decoration: none; }
+.admin-order-back:hover { text-decoration: underline; }
+.admin-order-fields, .admin-order-totals { display: grid; gap: 12px; margin-top: 18px; }
+.admin-order-fields > div, .admin-order-totals > div { display: grid; grid-template-columns: minmax(110px, 150px) minmax(0, 1fr); gap: 8px; }
+.admin-order-fields dt, .admin-order-totals dt { color: #776959; font-size: 13px; font-weight: 600; }
+.admin-order-fields dd, .admin-order-totals dd { margin: 0; overflow-wrap: anywhere; }
+.admin-order-fields a { color: #8c541c; }
+.admin-order-notes { white-space: pre-wrap; }
+.admin-order-print-heading { display: none; }
 @media (max-width: 800px) { .admin-shell { display: block; } .admin-sidebar { padding: 16px; gap: 14px; } .admin-sidebar nav { display: flex; overflow-x: auto; padding-bottom: 3px; } .admin-sidebar nav a { white-space: nowrap; } .admin-account { margin-top: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; } .admin-main { padding: 28px 16px; } .admin-columns { grid-template-columns: 1fr; } }
+@media print {
+  .admin-app { background: white; color: black; }
+  .admin-shell { display: block; }
+  .admin-sidebar, .admin-order-screen-only { display: none !important; }
+  .admin-main { width: 100%; padding: 0; }
+  .admin-order-print-heading { display: block; }
+  .admin-order-print-heading h1 { font-size: 24px; }
+  .admin-order-detail .admin-columns { display: block; }
+  .admin-order-detail .admin-panel { border-color: #aaa; padding: 16px; break-inside: avoid; }
+  .admin-order-detail .admin-table-wrap { overflow: visible; }
+  .admin-order-detail a { color: inherit; text-decoration: none; }
+}

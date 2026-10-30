@@ -4,16 +4,16 @@ const contactPeople = [
   { name: "Mubashir Khan", phoneDisplay: "0315-9021627", phoneHref: "tel:+923159021627" },
 ] as const;
 
-/** Site-wide configuration. The domain and social URLs still await confirmation. */
+/** Site-wide configuration. Social profile URLs still await confirmation. */
 export const siteConfig = {
   /** Short brand name for tight spaces (title template, social labels). */
   name: "Abdul Sami Honey",
   legalName: "Honey by Abdul Sami Enterprises",
-  titleTagline: "Raw & Pure Honey in Pakistan",
+  titleTagline: "Honey in Pakistan",
   tagline: "Raw, single-origin honey from Pakistani beekeepers, bottled with care.",
   description:
-    "Honey by Abdul Sami Enterprises sells raw, unfiltered Pakistani honey: Sidr, Acacia, Wildflower, Black Forest, honeycomb and gift sets, delivered across Pakistan.",
-  url: "https://abdulsamihoney.example",
+    "Shop raw, lab-tested honey and honeycomb in Pakistan. Contact Abdul Sami Honey Enterprises in Peshawar for import and export enquiries.",
+  url: "https://www.abdulsamienterprises.com",
   // Hard-coded rather than computed: a `new Date()` in a shared layout would
   // force request-time rendering under Cache Components.
   copyrightYear: 2026,
@@ -52,17 +52,8 @@ export const mainNav: ReadonlyArray<NavItem> = [
   {
     label: "Shop",
     href: "/shop",
-    children: [
-      { label: "All Honey", href: "/shop" },
-      { label: "Sidr Honey", href: "/shop?category=sidr" },
-      { label: "Acacia Honey", href: "/shop?category=acacia" },
-      { label: "Wildflower Honey", href: "/shop?category=wildflower" },
-      { label: "Black Forest Honey", href: "/shop?category=black-forest" },
-      { label: "Pure Natural Honey", href: "/shop?category=pure-natural" },
-      { label: "Honeycomb", href: "/shop?category=honeycomb" },
-    ],
+    children: [{ label: "All Honey", href: "/shop" }],
   },
-  { label: "Gift Sets", href: "/shop?category=gift-sets" },
   { label: "About", href: "/about" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },

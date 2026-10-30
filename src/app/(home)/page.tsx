@@ -28,6 +28,8 @@ import { formatPktDateTime } from "@/lib/pk-time";
 import { parseYouTubeUrl } from "@/lib/youtube";
 import { siteConfig } from "@/lib/site";
 import { localImages } from "@/content/local-images";
+import { JsonLd } from "@/components/seo/json-ld";
+import brandLogo from "../../../images/logo/abdulSamiEnterprisesLogo.png";
 
 export const metadata: Metadata = {
   title: { absolute: `${siteConfig.legalName} | ${siteConfig.titleTagline}` },
@@ -50,6 +52,22 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        name: siteConfig.contact.businessName,
+        url: siteConfig.url,
+        image: new URL(brandLogo.src, siteConfig.url).toString(),
+        logo: new URL(brandLogo.src, siteConfig.url).toString(),
+        telephone: siteConfig.contact.primary.phoneHref.replace("tel:", ""),
+        email: siteConfig.contact.email,
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "Branch No. 2, Usman Tower, Shop No. 1, 2, 3, Byco Pump, Main GT Road, Near Nasir Pur Phatak",
+          addressLocality: "Peshawar",
+          addressCountry: "PK",
+        },
+      }} />
       <HomeHero banner={banners.hero} slotImage={slotImage(content, SLOT_KEYS.homeHero)} />
 
       <PromiseCards />
@@ -63,25 +81,25 @@ export default async function HomePage() {
             id="our-honey-heading"
             eyebrow="From the hive"
             title="Our honey"
-            description="Every jar is raw, traceable and harvested in season. Choose a variety to explore."
+            description={tabCategories.length ? "Every jar is raw, traceable and harvested in season. Choose a variety to explore." : undefined}
             className="reveal"
           />
         </Container>
         <div className="mt-10">
-          <ProductTabs
+          {tabCategories.length ? <ProductTabs
             label="Honey varieties"
             tabs={tabCategories.map((category) => ({
               id: category.slug,
               label: category.name,
               panel: <ProductSlider products={getProductsByCategory(catalog, category.slug, 4)} label={`${category.name} honey`} />,
             }))}
-          />
+          /> : <Container><p className="text-center text-muted">Our honey selection is being updated. Please check back soon.</p></Container>}
         </div>
       </section>
 
       <DealBanner catalog={catalog} banner={banners.deal} fallbackImage={slotImage(content, SLOT_KEYS.homeDeal)} />
 
-      <section aria-labelledby="favourites-heading" className="relative isolate py-16 lg:py-24">
+      {catalog.products.length > 1 && <section aria-labelledby="favourites-heading" className="relative isolate py-16 lg:py-24">
         <HoneycombParallax />
         <Container>
           <SectionHeading
@@ -92,7 +110,7 @@ export default async function HomePage() {
           />
         </Container>
         <ProductSlider products={getTopRatedProducts(catalog, 8)} label="Customer favourites" className="mt-10" />
-      </section>
+      </section>}
 
       {/* The still straddles the white → cream boundary into testimonials. */}
       <section
@@ -136,7 +154,7 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      <Testimonials autoSlide background={<HoneycombParallax />} />
+      <Testimonials background={<HoneycombParallax />} />
 
       <LatestBlog autoSlide background={<HoneycombParallax />} />
     </>

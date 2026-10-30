@@ -3,7 +3,8 @@ import { siteConfig } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/cart", "/checkout", "/admin"] },
+    // Google must be able to crawl cart and checkout to read their noindex tags.
+    rules: { userAgent: "*", allow: "/", disallow: ["/admin"] },
     sitemap: `${siteConfig.url}/sitemap.xml`,
   };
 }

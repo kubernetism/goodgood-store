@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { HoneyJarIcon } from "@/components/icons/honey-icons";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { PageHeroBackground } from "@/components/layout/page-hero";
 import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 
@@ -13,9 +14,10 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <>
-      <SiteHeader />
-      <main id="main" tabIndex={-1} className="flex-1 pb-24 outline-none lg:pb-30">
-        <section className="on-dark bg-brown-950 py-20 text-center text-on-dark lg:py-28">
+      <SiteHeader overPageHero />
+      <main id="main" tabIndex={-1} className="-mt-20 flex-1 pb-24 outline-none lg:pb-30">
+        <section id="page-hero" className="on-dark relative isolate overflow-hidden bg-brown-950 pt-[calc(100vw/3+6rem)] pb-20 text-center text-on-dark md:pt-40 md:pb-20 lg:pt-48 lg:pb-28">
+          <PageHeroBackground />
           <Container>
             <HoneyJarIcon className="mx-auto size-14 text-primary" strokeWidth={1.25} />
             <p className="mt-4 font-display text-eyebrow font-semibold text-primary">Error 404</p>

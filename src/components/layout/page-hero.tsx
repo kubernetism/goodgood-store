@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { HoneycombPattern } from "@/components/motifs/honeycomb-pattern";
+import Image from "next/image";
+import navbarBackground from "../../../images/middle_of_website_images/navbar_background_image.png";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/section-heading";
 
@@ -18,9 +19,27 @@ type PageHeroProps = {
 };
 
 /**
- * Brown title band used by every inner page, continuing the dark header. A
- * honeycomb texture builds up on the right where photography would sit.
+ * Brown title band used by every inner page, continuing the dark header.
+ * The image retains its proportions so both lines of the verse stay in frame.
  */
+export function PageHeroBackground() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      <Image src={navbarBackground} alt="" fill sizes="100vw" className="scale-110 object-cover object-center opacity-25 blur-2xl" />
+      <div className="mt-20 flex h-full items-start justify-center md:mt-0 md:items-center">
+        <Image
+          src={navbarBackground}
+          alt=""
+          sizes="100vw"
+          className="h-auto w-full md:h-full md:w-auto md:max-w-full md:object-contain"
+          style={{ maskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)" }}
+        />
+      </div>
+      <span className="absolute inset-0 bg-[rgb(27_17_8/80%)]" />
+    </div>
+  );
+}
+
 export function PageHero({
   title,
   eyebrow = "Honey by Abdul Sami",
@@ -28,13 +47,9 @@ export function PageHero({
   titleAs: Title = "h1",
 }: PageHeroProps) {
   return (
-    <section className="on-dark relative isolate overflow-hidden bg-brown-950 text-on-dark">
-      <HoneycombPattern fade className="text-primary/15" />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-24 right-[-6rem] -z-10 size-[28rem] rounded-full bg-[radial-gradient(circle,rgb(255_184_0/0.22),transparent_65%)]"
-      />
-      <Container className="flex flex-col gap-6 py-16 md:flex-row md:items-end md:justify-between lg:py-24">
+    <section id="page-hero" className="on-dark relative isolate overflow-hidden bg-brown-950 text-on-dark">
+      <PageHeroBackground />
+      <Container className="flex flex-col gap-6 pt-[calc(100vw/3+6rem)] pb-10 md:flex-row md:items-end md:justify-between md:pt-36 md:pb-16 lg:pt-44 lg:pb-24">
         <div>
           <Eyebrow tone="dark" decorated="leading" className="mb-3">
             {eyebrow}

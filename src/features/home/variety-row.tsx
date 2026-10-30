@@ -10,7 +10,8 @@ import { HoneycombParallax } from "./honeycomb-parallax";
 
 /** "Shop by variety": arched tiles per category, scrolling sideways on small screens. */
 export function VarietyRow({ catalog }: { catalog: Catalog }) {
-  const varieties = getCategoryCounts(catalog);
+  const varieties = getCategoryCounts(catalog).filter((variety) => variety.count > 0);
+  if (!varieties.length) return null;
 
   return (
     <section aria-labelledby="varieties-heading" className="relative isolate bg-ivory py-16 lg:py-24">
@@ -23,9 +24,9 @@ export function VarietyRow({ catalog }: { catalog: Catalog }) {
           className="reveal"
         />
       </Container>
-      <ul className="scrollbar-none mx-auto mt-10 flex max-w-page snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:px-6 lg:grid lg:grid-cols-[repeat(auto-fit,minmax(8.5rem,1fr))] lg:gap-5 lg:overflow-visible">
+      <ul className="scrollbar-none mx-auto mt-10 flex max-w-page snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:px-6 lg:flex-wrap lg:justify-center lg:gap-5 lg:overflow-visible">
         {varieties.map((variety) => (
-          <li key={variety.slug} className="w-36 shrink-0 snap-start sm:w-40 lg:w-auto">
+          <li key={variety.slug} className="w-36 shrink-0 snap-start first:ml-auto last:mr-auto sm:w-40 lg:w-36 lg:first:ml-0 lg:last:mr-0">
             <Link
               href={shopHref(defaultShopQuery, { category: variety.slug })}
               className="group flex flex-col items-center rounded-md text-center"

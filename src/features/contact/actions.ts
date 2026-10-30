@@ -1,13 +1,13 @@
 "use server";
 
 import { readFields, type FormState } from "@/lib/forms";
+import { and, count, eq, gt } from "drizzle-orm";
+import { db } from "@/db/client";
+import { contactMessages } from "@/db/schema";
+import { getClientIp, getClientIpHash } from "@/server/request";
 import { contactFields, validateContact, type ContactField } from "./validation";
 
-/**
- * Contact form handler. There is no backend yet, so a valid message is
- * acknowledged without being stored or sent. Wire email/CRM delivery here,
- * and add rate limiting before it does anything with side effects.
- */
+/** Save validated enquiries for the admin team to review. */
 export async function sendContactMessage(
   _previous: FormState<ContactField>,
   formData: FormData,
@@ -24,9 +24,23 @@ export async function sendContactMessage(
     };
   }
 
+  try {
+    // Avoid treating all visitors without a forwarded IP as one client.
+    const ipHash = await getClientIp() === "unknown" ? null : await getClientIpHash();
+    if (ipHash) {
+      const [recent] = await db.select({ value: count() }).from(contactMessages).where(and(
+        eq(contactMessages.ipHash, ipHash),
+        gt(contactMessages.createdAt, new Date(Date.now() - 10 * 60 * 1000)),
+      ));
+      if ((recent?.value ?? 0) >= 5) {
+        return { status: "error", message: "You've sent several messages recently. Please wait a few minutes before trying again.", fieldErrors: {}, values: input };
+      }
+    }
+    await db.insert(contactMessages).values({ ...result.data, consent: true, ipHash });
+  } catch {
+    return { status: "error", message: "We couldn't send your message just now. Please try again or contact us by phone or email.", fieldErrors: {}, values: input };
+  }
+
   const firstName = result.data.name.split(/\s+/)[0];
-  return {
-    status: "success",
-    message: `Thanks, ${firstName}! Your message is with our team and we'll reply within one business day.`,
-  };
+  return { status: "success", message: `Thanks, ${firstName}! Your message is with our team and we'll reply within one business day.` };
 }

@@ -11,14 +11,22 @@ import { Pagination } from "@/components/ui/pagination";
 import { BlogListCard } from "@/features/blog/components/blog-list-card";
 import { BlogSidebar } from "@/features/blog/components/blog-sidebar";
 import { blogHref, getBlogCategoryName, parseBlogQuery, queryPosts, type BlogQuery } from "@/features/blog/queries";
-import { blogCoverSlotKey, SLOT_KEYS } from "@/features/content/slots";
-import { getSiteContent, slotImage } from "@/features/content/content-data";
+import { blogCoverImage, getSiteContent } from "@/features/content/content-data";
+import { getPublishedBlogPosts } from "@/features/blog/blog-data";
+import { blogAuthorImage } from "@/features/blog/author-image";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Beekeeping stories, honey recipes and buying guides from the Abdul Sami Honey team.",
-  alternates: { canonical: "/blog" },
-};
+export async function generateMetadata({ searchParams }: PageProps<"/blog">): Promise<Metadata> {
+  const [params, posts] = await Promise.all([searchParams, getPublishedBlogPosts()]);
+  const query = parseBlogQuery(params, posts);
+  const result = queryPosts(posts, query);
+  const filtered = Boolean(params.category || params.tag || query.q);
+  return {
+    title: "Honey Journal",
+    description: "Explore honey recipes, buying guides and stories from Abdul Sami Honey Enterprises.",
+    robots: { index: !filtered, follow: true },
+    ...(!filtered ? { alternates: { canonical: blogHref({ category: null, tag: null, q: "", page: result.page }, { page: result.page }) } } : {}),
+  };
+}
 
 export default function BlogPage({ searchParams }: PageProps<"/blog">) {
   return (
@@ -34,9 +42,9 @@ export default function BlogPage({ searchParams }: PageProps<"/blog">) {
 }
 
 async function BlogContent({ searchParams }: Pick<PageProps<"/blog">, "searchParams">) {
-  const [params, content] = await Promise.all([searchParams, getSiteContent()]);
-  const query = parseBlogQuery(params);
-  const result = queryPosts(query);
+  const [params, content, posts] = await Promise.all([searchParams, getSiteContent(), getPublishedBlogPosts()]);
+  const query = parseBlogQuery(params, posts);
+  const result = queryPosts(posts, query);
 
   return (
     <div className="grid gap-12 lg:grid-cols-12 lg:gap-6">
@@ -57,8 +65,8 @@ async function BlogContent({ searchParams }: Pick<PageProps<"/blog">, "searchPar
               <li key={post.slug}>
                 <BlogListCard
                   post={post}
-                  cover={slotImage(content, blogCoverSlotKey(post.slug))}
-                  authorPhoto={slotImage(content, SLOT_KEYS.blogAuthor)}
+                  cover={blogCoverImage(post)}
+                  authorPhoto={blogAuthorImage(content)}
                 />
               </li>
             ))}

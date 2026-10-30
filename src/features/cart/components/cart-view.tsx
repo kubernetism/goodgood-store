@@ -11,13 +11,15 @@ import { categoryIcon } from "@/features/products/category-icons";
 import { formatPrice } from "@/lib/format";
 import { useIsClient } from "@/lib/use-is-client";
 import { cartActions, useCartLines } from "../cart-store";
-import { MAX_LINE_QUANTITY, priceCart, type CartProduct } from "../pricing";
+import { MAX_LINE_QUANTITY, partitionCartLines, priceCart, type CartProduct } from "../pricing";
 import { OrderSummary } from "./order-summary";
+import { UnavailableCartItems } from "./unavailable-cart-items";
 
 export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
   const isClient = useIsClient();
   const lines = useCartLines();
   const totals = priceCart(lines, new Map(catalog.map((product) => [product.slug, product])));
+  const { unavailable } = partitionCartLines(lines, new Set(catalog.map((product) => product.slug)));
 
   if (!isClient) {
     return <div aria-busy="true" aria-label="Loading cart" className="h-64 animate-pulse rounded-sm bg-tile" />;
@@ -25,18 +27,23 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
 
   if (totals.lines.length === 0) {
     return (
+      <div className="space-y-6">
+      <UnavailableCartItems lines={unavailable} />
       <div className="flex flex-col items-center rounded-md border border-dashed border-border-strong/50 px-6 py-16 text-center">
         <ShoppingBasket className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />
-        <h2 className="mt-4 text-h4 font-semibold">Your cart is empty</h2>
+        <h2 className="mt-4 text-h4 font-semibold">{unavailable.length ? "No available items in your cart" : "Your cart is empty"}</h2>
         <p className="mt-2 max-w-sm">Fill it with raw honey from our partner apiaries.</p>
         <StarLink href="/shop" className={buttonClasses({ className: "mt-6" })}>
           Browse the shop
         </StarLink>
       </div>
+      </div>
     );
   }
 
   return (
+    <div className="space-y-6">
+    <UnavailableCartItems lines={unavailable} />
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
       <section aria-labelledby="cart-items-heading" className="lg:col-span-8">
         <h2 id="cart-items-heading" className="text-h4 font-semibold">
@@ -115,6 +122,7 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
           Proceed to checkout
         </StarLink>
       </section>
+    </div>
     </div>
   );
 }

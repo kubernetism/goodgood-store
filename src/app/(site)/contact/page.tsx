@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Clock, Mail, MapPinned, Map as MapIcon, PhoneCall } from "lucide-react";
+import { Clock, Mail, MapPinned, PhoneCall } from "lucide-react";
 import { PageHero } from "@/components/layout/page-hero";
 import { Container } from "@/components/ui/container";
-import { MediaImage } from "@/components/ui/media-image";
-import { SLOT_KEYS } from "@/features/content/slots";
-import { getSiteContent, slotImage } from "@/features/content/content-data";
 import { ContactForm } from "@/features/contact/contact-form";
 import { siteConfig } from "@/lib/site";
 
@@ -16,8 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-export default async function ContactPage() {
-  const content = await getSiteContent();
+export default function ContactPage() {
   return (
     <>
       <PageHero title="Contact Us" crumbs={[{ label: "Contact Us" }]} />
@@ -81,28 +77,14 @@ export default async function ContactPage() {
 
       <section aria-labelledby="quote-heading">
         <Container>
-          {/* The form card overlaps the top of the map, as in the mockup. */}
-          <div className="relative z-10 bg-surface px-0 sm:px-6 lg:mx-auto lg:max-w-[48.75rem] lg:px-5">
+          <div className="px-0 sm:px-6 lg:mx-auto lg:max-w-[48.75rem] lg:px-5">
             <h2 id="quote-heading" className="text-promo font-semibold">
               Send Us a Message
             </h2>
             <p className="mt-2 mb-8 font-subtitle">Tell us what you need and our team will reply within one business day.</p>
             <ContactForm />
-            <div className="h-8" />
           </div>
         </Container>
-        <div className="-mt-24 lg:-mt-40">
-          <MediaImage
-            image={slotImage(content, SLOT_KEYS.contactMap)}
-            sizes="100vw"
-            label={`Map showing our store at ${contact.branch}, ${contact.address} (map coming soon)`}
-            icon={MapIcon}
-            iconSize="lg"
-            tone="honey"
-            aspect="aspect-[4/3] sm:aspect-[16/7] lg:aspect-[16/6]"
-            caption="Map"
-          />
-        </div>
       </section>
     </>
   );

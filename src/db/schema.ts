@@ -15,6 +15,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import type { CategoryHighlight } from "@/features/products/types";
+import type { BlogBlock } from "@/features/blog/data";
 
 /*
  * Database schema. Money is integer paisa (Rs 1 = 100 paisa), timestamps are
@@ -33,6 +34,31 @@ const timestamps = {
 export const productStatus = pgEnum("product_status", ["active", "draft", "archived"]);
 export const orderStatus = pgEnum("order_status", ["pending", "confirmed", "shipped", "delivered", "cancelled"]);
 export const bannerPlacement = pgEnum("banner_placement", ["hero", "deal", "announcement"]);
+
+/** Singleton operational settings; secrets remain in the server environment. */
+export const storeSettings = pgTable("store_settings", {
+  id: integer("id").primaryKey().default(1),
+  orderWhatsappNumber: text("order_whatsapp_number"),
+  ...timestamps,
+}, (t) => [check("store_settings_singleton", sql`${t.id} = 1`)]);
+
+/** Customer enquiries submitted through the contact form. */
+export const contactMessages = pgTable("contact_messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  service: text("service").notNull(),
+  phone: text("phone"),
+  message: text("message").notNull(),
+  consent: boolean("consent").notNull(),
+  isRead: boolean("is_read").notNull().default(false),
+  /** HMAC of the client's IP, used only for throttling; no raw IP is stored. */
+  ipHash: text("ip_hash"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index("contact_messages_created_at_idx").on(t.createdAt),
+  index("contact_messages_ip_created_at_idx").on(t.ipHash, t.createdAt),
+]);
 
 /** Uploaded images. `url` is the public URL at upload time; `storageKey` locates the object. */
 export const media = pgTable(
@@ -148,6 +174,56 @@ export const contentSlots = pgTable("content_slots", {
   youtubeId: text("youtube_id"),
   ...timestamps,
 });
+
+export const blogPosts = pgTable("blog_posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull(),
+  title: text("title").notNull(),
+  excerpt: text("excerpt").notNull(),
+  category: text("category").notNull(),
+  tags: text("tags").array().notNull().default(sql`'{}'::text[]`),
+  author: text("author").notNull(),
+  publishedOn: date("published_on", { mode: "string" }).notNull(),
+  views: integer("views").notNull().default(0),
+  comments: integer("comments").notNull().default(0),
+  body: jsonb("body").$type<ReadonlyArray<BlogBlock>>().notNull(),
+  coverId: uuid("cover_id").references(() => media.id, { onDelete: "set null" }),
+  isPublished: boolean("is_published").notNull().default(false),
+  ...timestamps,
+}, (t) => [
+  uniqueIndex("blog_posts_slug_unique").on(t.slug),
+  index("blog_posts_published_date_idx").on(t.isPublished, t.publishedOn),
+  check("blog_posts_slug_format", sql`${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$'`),
+]);
+
+/** Anonymous per-tab visits. No IP address, account, or device identifier is stored. */
+export const blogVisits = pgTable("blog_visits", {
+  id: uuid("id").primaryKey(),
+  postId: uuid("post_id").notNull().references(() => blogPosts.id, { onDelete: "cascade" }),
+  engagedSeconds: integer("engaged_seconds").notNull().default(0),
+  startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index("blog_visits_post_idx").on(t.postId),
+  check("blog_visits_engagement_range", sql`${t.engagedSeconds} >= 0 and ${t.engagedSeconds} <= 1800`),
+]);
+
+export const testimonials = pgTable("testimonials", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  role: text("role").notNull().default(""),
+  quote: text("quote").notNull(),
+  rating: doublePrecision("rating").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isActive: boolean("is_active").notNull().default(false),
+  ...timestamps,
+}, (t) => [
+  index("testimonials_active_order_idx").on(t.isActive, t.sortOrder),
+  index("testimonials_storefront_order_idx").on(t.isActive, t.sortOrder, t.createdAt, t.id),
+  check("testimonials_rating_range", sql`${t.rating} >= 1 and ${t.rating} <= 5`),
+  check("testimonials_name_not_blank", sql`length(trim(${t.name})) > 0`),
+  check("testimonials_quote_not_blank", sql`length(trim(${t.quote})) > 0`),
+]);
 
 export const banners = pgTable(
   "banners",

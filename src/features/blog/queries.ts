@@ -1,37 +1,33 @@
-import { blogCategories, blogPosts, type BlogCategorySlug, type BlogPost } from "./data";
+import { blogCategories, type BlogCategorySlug, type BlogPost } from "./data";
 
 export const BLOG_PAGE_SIZE = 4;
 
-export function getLatestPosts(limit = Infinity): BlogPost[] {
-  return [...blogPosts].sort((a, b) => b.publishedOn.localeCompare(a.publishedOn)).slice(0, limit);
+export function getLatestPosts(posts: ReadonlyArray<BlogPost>, limit = Infinity): BlogPost[] {
+  return [...posts].sort((a, b) => b.publishedOn.localeCompare(a.publishedOn)).slice(0, limit);
 }
 
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return blogPosts.find((post) => post.slug === slug);
-}
-
-export function getPopularPosts(limit: number): BlogPost[] {
-  return [...blogPosts].sort((a, b) => b.views - a.views).slice(0, limit);
+export function getPostBySlug(posts: ReadonlyArray<BlogPost>, slug: string): BlogPost | undefined {
+  return posts.find((post) => post.slug === slug);
 }
 
 export function getBlogCategoryName(slug: BlogCategorySlug): string {
   return blogCategories.find((category) => category.slug === slug)?.name ?? slug;
 }
 
-export function getBlogCategoryCounts() {
+export function getBlogCategoryCounts(posts: ReadonlyArray<BlogPost>) {
   return blogCategories.map((category) => ({
     ...category,
-    count: blogPosts.filter((post) => post.category === category.slug).length,
+    count: posts.filter((post) => post.category === category.slug).length,
   }));
 }
 
-export function getBlogTags(): string[] {
-  return [...new Set(blogPosts.flatMap((post) => post.tags))];
+export function getBlogTags(posts: ReadonlyArray<BlogPost>): string[] {
+  return [...new Set(posts.flatMap((post) => post.tags))];
 }
 
 /** Previous (older) and next (newer) posts around `slug`, by publish date. */
-export function getAdjacentPosts(slug: string): { previous?: BlogPost; next?: BlogPost } {
-  const ordered = getLatestPosts();
+export function getAdjacentPosts(posts: ReadonlyArray<BlogPost>, slug: string): { previous?: BlogPost; next?: BlogPost } {
+  const ordered = getLatestPosts(posts);
   const index = ordered.findIndex((post) => post.slug === slug);
   if (index === -1) return {};
   return { previous: ordered[index + 1], next: ordered[index - 1] };
@@ -45,11 +41,11 @@ function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-export function parseBlogQuery(raw: RawSearchParams): BlogQuery {
+export function parseBlogQuery(raw: RawSearchParams, posts: ReadonlyArray<BlogPost>): BlogQuery {
   const categoryParam = first(raw.category);
   const category = blogCategories.find((c) => c.slug === categoryParam)?.slug ?? null;
   const tagParam = first(raw.tag);
-  const tag = tagParam && getBlogTags().includes(tagParam) ? tagParam : null;
+  const tag = tagParam && getBlogTags(posts).includes(tagParam) ? tagParam : null;
   const q = (first(raw.q) ?? "").trim().slice(0, 80);
   const pageParam = first(raw.page);
   const page = pageParam && /^\d{1,4}$/.test(pageParam) ? Math.max(1, Number(pageParam)) : 1;
@@ -67,9 +63,9 @@ export function blogHref(query: BlogQuery, overrides: Partial<BlogQuery> = {}): 
   return search ? `/blog?${search}` : "/blog";
 }
 
-export function queryPosts(query: BlogQuery, pageSize = BLOG_PAGE_SIZE) {
+export function queryPosts(posts: ReadonlyArray<BlogPost>, query: BlogQuery, pageSize = BLOG_PAGE_SIZE) {
   const needle = query.q.toLowerCase();
-  const matches = getLatestPosts().filter(
+  const matches = getLatestPosts(posts).filter(
     (post) =>
       (!query.category || post.category === query.category) &&
       (!query.tag || post.tags.includes(query.tag)) &&

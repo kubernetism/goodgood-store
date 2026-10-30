@@ -1,4 +1,3 @@
-import { blogPosts } from "@/features/blog/data";
 import { teamMembers } from "@/content/company";
 
 /*
@@ -102,18 +101,9 @@ export const slotDefinitions: ReadonlyArray<SlotDefinition> = [
     key: SLOT_KEYS.blogAuthor,
     group: "Blog",
     label: "Author photo",
-    hint: "Square portrait, shown as a circle in the blog sidebar and under posts.",
+    hint: "Square portrait for the blog sidebar and posts. If unset, Sana Malik's team portrait is used.",
     kind: "image",
   },
-  ...blogPosts.map(
-    (post): SlotDefinition => ({
-      key: blogCoverSlotKey(post.slug),
-      group: "Blog",
-      label: `Cover: ${post.title}`,
-      hint: "Landscape cover (5:3), also used on blog cards.",
-      kind: "image",
-    }),
-  ),
 ];
 
 const slotKeys = new Set(slotDefinitions.map((slot) => slot.key));

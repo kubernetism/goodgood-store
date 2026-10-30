@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { Mail, Menu, Phone, X } from "lucide-react";
-import { mainNav, siteConfig } from "@/lib/site";
+import { siteConfig, type NavItem } from "@/lib/site";
 import { Logo } from "@/components/ui/logo";
 
 /**
  * Hamburger + slide-in drawer for < 1024px. A native modal <dialog> gives us
  * the focus trap, Escape-to-close and inert background for free.
  */
-export function MobileNav() {
+export function MobileNav({ items }: { items: ReadonlyArray<NavItem> }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   const open = () => dialogRef.current?.showModal();
@@ -52,7 +52,7 @@ export function MobileNav() {
 
           <nav aria-label="Mobile" className="flex-1 overflow-y-auto px-5 py-4">
             <ul className="space-y-1">
-              {mainNav.map((item) => (
+              {items.map((item) => (
                 <li key={item.label}>
                   {item.href ? (
                     <Link

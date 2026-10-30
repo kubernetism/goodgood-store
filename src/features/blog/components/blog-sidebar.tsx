@@ -5,13 +5,14 @@ import { Calendar, Search, User } from "lucide-react";
 import { SocialLinks } from "@/components/layout/social-links";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
 import { MediaImage } from "@/components/ui/media-image";
-import { blogCoverSlotKey, SLOT_KEYS } from "@/features/content/slots";
-import { getSiteContent, slotImage } from "@/features/content/content-data";
+import { blogCoverImage, getSiteContent } from "@/features/content/content-data";
+import { getPublishedBlogPosts } from "../blog-data";
+import { blogAuthorImage } from "../author-image";
 import { SidebarPanel } from "@/components/ui/sidebar-panel";
 import { formatDate } from "@/lib/format";
 import { cx } from "@/lib/cx";
 import { blogAuthor, type BlogCategorySlug } from "../data";
-import { blogHref, getBlogCategoryCounts, getBlogTags, getPopularPosts, type BlogQuery } from "../queries";
+import { blogHref, getBlogCategoryCounts, getBlogTags, getLatestPosts, type BlogQuery } from "../queries";
 
 const emptyQuery: BlogQuery = { category: null, tag: null, q: "", page: 1 };
 
@@ -23,14 +24,14 @@ type BlogSidebarProps = {
 
 export async function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSidebarProps) {
   const currentCategory = activeCategory ?? query.category;
-  const content = await getSiteContent();
+  const [content, posts] = await Promise.all([getSiteContent(), getPublishedBlogPosts()]);
 
   return (
     <div className="space-y-8">
       <SidebarPanel title="About Me" variant="accent">
         <div className="text-center">
           <MediaImage
-            image={slotImage(content, SLOT_KEYS.blogAuthor)}
+            image={blogAuthorImage(content)}
             alt=""
             sizes="96px"
             icon={User}
@@ -68,12 +69,12 @@ export async function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSi
         </Form>
       </SidebarPanel>
 
-      <SidebarPanel title="Popular Feeds" variant="accent">
+      <SidebarPanel title="Recent Posts" variant="accent">
         <ul className="divide-y divide-border">
-          {getPopularPosts(4).map((post) => (
+          {getLatestPosts(posts, 4).map((post) => (
             <li key={post.slug} className="group relative flex gap-4 py-4 first:pt-0 last:pb-0">
               <MediaImage
-                image={slotImage(content, blogCoverSlotKey(post.slug))}
+                image={blogCoverImage(post)}
                 alt=""
                 sizes="56px"
                 icon={HoneyDipperIcon}
@@ -102,7 +103,7 @@ export async function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSi
 
       <SidebarPanel title="Categories" variant="accent">
         <ul className="space-y-3">
-          {getBlogCategoryCounts().map((category) => {
+          {getBlogCategoryCounts(posts).filter((category) => category.count > 0).map((category) => {
             const isActive = currentCategory === category.slug;
             return (
               <li key={category.slug}>
@@ -138,7 +139,7 @@ export async function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSi
 
       <SidebarPanel title="Popular Tags" variant="accent">
         <ul className="flex flex-wrap gap-2.5">
-          {getBlogTags().map((tag) => {
+          {getBlogTags(posts).map((tag) => {
             const isActive = query.tag === tag;
             return (
               <li key={tag}>

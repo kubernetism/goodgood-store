@@ -1,9 +1,8 @@
 import { Quote } from "lucide-react";
 import { RatingStars } from "@/components/ui/rating-stars";
-import { ScrollCarousel } from "@/components/ui/scroll-carousel";
 import { SlidingRow } from "@/components/ui/sliding-row";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { testimonials } from "@/content/company";
+import { getVisibleTestimonials } from "@/features/testimonials/testimonial-data";
 import { cx } from "@/lib/cx";
 
 function initialsOf(name: string) {
@@ -15,8 +14,9 @@ function initialsOf(name: string) {
 }
 
 /** Customer reviews: cream band, carousel bleeding off both edges. */
-export function Testimonials({ background, autoSlide = false }: { background?: React.ReactNode; autoSlide?: boolean }) {
-  const Carousel = autoSlide ? SlidingRow : ScrollCarousel;
+export async function Testimonials({ background }: { background?: React.ReactNode }) {
+  const testimonials = await getVisibleTestimonials();
+  if (!testimonials.length) return null;
   return (
     <section
       aria-labelledby="testimonials-heading"
@@ -29,14 +29,12 @@ export function Testimonials({ background, autoSlide = false }: { background?: R
         title="Loved in kitchens across Pakistan"
         className="reveal px-4"
       />
-      <Carousel
+      <SlidingRow
         label="Customer testimonials"
-        bleed
-        fullWidth={autoSlide}
+        fullWidth={testimonials.length > 4}
         className="mt-10"
-        itemClassName="basis-[88%] sm:basis-[24rem] lg:basis-[23.75rem]"
         items={testimonials.map((testimonial) => ({
-          key: testimonial.name,
+          key: testimonial.id,
           content: (
             <figure className="relative flex h-full flex-col rounded-lg border border-border bg-surface p-6">
               <Quote aria-hidden="true" strokeWidth={1.25} className="absolute top-5 right-5 size-10 text-primary-ink/25" />
@@ -53,7 +51,7 @@ export function Testimonials({ background, autoSlide = false }: { background?: R
                 </span>
                 <span>
                   <span className="block font-display text-base font-semibold text-strong">{testimonial.name}</span>
-                  <span className="block text-meta text-muted">{testimonial.role}</span>
+                  {testimonial.role && <span className="block text-meta text-muted">{testimonial.role}</span>}
                 </span>
               </figcaption>
             </figure>

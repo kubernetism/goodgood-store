@@ -7,7 +7,7 @@ import { requireAdmin } from "@/server/auth/session";
 // prefetched into a shared static shell.
 export const instant = false;
 
-const links = [["/admin", "Overview"], ["/admin/orders", "Orders"], ["/admin/products", "Products"], ["/admin/banners", "Banners"], ["/admin/media", "Media"], ["/admin/content", "Content"], ["/admin/settings", "Settings"]] as const;
+const links = [["/admin", "Overview"], ["/admin/orders", "Orders"], ["/admin/messages", "Messages"], ["/admin/products", "Products"], ["/admin/categories", "Categories"], ["/admin/blog", "Blog"], ["/admin/testimonials", "Testimonials"], ["/admin/banners", "Banners"], ["/admin/media", "Media"], ["/admin/content", "Content"], ["/admin/settings", "Settings"]] as const;
 
 async function AdminShell({ children }: { children: React.ReactNode }) {
   const admin = await requireAdmin();

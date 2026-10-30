@@ -1,25 +1,17 @@
-import { StarSummary } from "@/components/ui/star-controls";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { localImages } from "@/content/local-images";
 import { Logo } from "@/components/ui/logo";
 import { NewsletterForm } from "@/features/newsletter/newsletter-form";
 import { siteConfig } from "@/lib/site";
+import { getCatalog } from "@/features/products/catalog-data";
+import { getCategoryCounts } from "@/features/products/catalog";
 import { FeaturesStrip } from "./features-strip";
 import { SocialLinks } from "./social-links";
+import { FooterDisclosure } from "./footer-disclosure";
 
-const linkColumns = [
-  {
-    title: "Shop",
-    links: [
-      { label: "All Honey", href: "/shop" },
-      { label: "Sidr Honey", href: "/shop?category=sidr" },
-      { label: "Acacia Honey", href: "/shop?category=acacia" },
-      { label: "Honeycomb", href: "/shop?category=honeycomb" },
-      { label: "Gift Sets", href: "/shop?category=gift-sets" },
-    ],
-  },
+const otherLinkColumns = [
   {
     title: "Company",
     links: [
@@ -43,18 +35,32 @@ const linkColumns = [
 ] as const;
 
 /**
- * `showFeatures`: the overlapping promises strip. The home page passes false
+ * `showFeatures`: the promises strip above the footer. The home page passes false
  * because it already shows the promises as drip cards under the hero.
  * Preserve the approved design (variance 4, motion 1, density 5): tighter
  * spacing, a horizontal desktop contact row, native disclosures on mobile.
  */
-export function SiteFooter({ showFeatures = true }: { showFeatures?: boolean }) {
+export async function SiteFooter({ showFeatures = true }: { showFeatures?: boolean }) {
+  const catalog = await getCatalog();
+  const linkColumns = [
+    {
+      title: "Shop",
+      links: [
+        { label: "All Honey", href: "/shop" },
+        ...getCategoryCounts(catalog).filter((category) => category.count > 0).map((category) => ({
+          label: category.name,
+          href: `/shop?category=${encodeURIComponent(category.slug)}`,
+        })),
+      ],
+    },
+    ...otherLinkColumns,
+  ];
   return (
     <>
       {showFeatures && <FeaturesStrip />}
-      <footer className={`on-dark relative isolate bg-brown-950 text-on-dark ${showFeatures ? "pt-15" : ""}`}>
+      <footer className="on-dark relative isolate bg-brown-950 text-on-dark">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-          <Image src={localImages.footer.url} alt="" fill sizes="100vw" className="object-contain object-center" />
+          <Image src={localImages.footer.url} alt="" fill sizes="100vw" className="object-cover" style={{ objectPosition: "center top" }} />
           <span data-footer-overlay className="absolute inset-0" style={{ backgroundColor: "rgb(27 17 8 / 90%)" }} />
         </div>
         <div className="relative mx-auto w-full max-w-wide px-4 pt-8 pb-5 sm:px-6 lg:pt-10 lg:pb-6">
@@ -74,26 +80,17 @@ export function SiteFooter({ showFeatures = true }: { showFeatures?: boolean }) 
                   </nav>
                 ))}
               </div>
-              {/* Native disclosures work before hydration and keep touch targets large. */}
               <div className="lg:hidden">
                 {linkColumns.map((column) => (
-                  <details key={column.title} className="group border-b border-on-dark/15">
-                    <StarSummary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-subtitle text-sm font-bold text-on-dark [&::-webkit-details-marker]:hidden">
-                      {column.title}
-                      <ChevronDown className="size-4 shrink-0 group-open:rotate-180" aria-hidden="true" />
-                    </StarSummary>
+                  <FooterDisclosure key={column.title} title={column.title}>
                     <nav aria-label={column.title} className="pb-3">
                       <FooterLinks links={column.links} />
                     </nav>
-                  </details>
+                  </FooterDisclosure>
                 ))}
-                <details className="group border-b border-on-dark/15">
-                  <StarSummary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 font-subtitle text-sm font-bold text-on-dark [&::-webkit-details-marker]:hidden">
-                    Contact &amp; hours
-                    <ChevronDown className="size-4 shrink-0 group-open:rotate-180" aria-hidden="true" />
-                  </StarSummary>
+                <FooterDisclosure title="Contact & hours">
                   <div className="pt-3 pb-4"><FooterContactDetails /></div>
-                </details>
+                </FooterDisclosure>
               </div>
             </div>
 

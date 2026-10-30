@@ -2,18 +2,20 @@
 
 import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
-import { useActionState, useState, type FormEvent } from "react";
+import { useActionState, useRef, useState, type FormEvent } from "react";
 import { Banknote, CircleCheck, Mail, Pencil, Phone, ShoppingBasket, User } from "lucide-react";
 import { Button, buttonClasses } from "@/components/ui/button";
 import { FormStatus, SelectField, TextAreaField, TextField } from "@/components/ui/field";
 import { OrderSummary } from "@/features/cart/components/order-summary";
+import { UnavailableCartItems } from "@/features/cart/components/unavailable-cart-items";
 import { cartActions, useCartLines } from "@/features/cart/cart-store";
-import { priceCart, type CartProduct } from "@/features/cart/pricing";
+import { partitionCartLines, priceCart, type CartProduct } from "@/features/cart/pricing";
 import { readFields, type FieldErrors } from "@/lib/forms";
 import { formatPrice } from "@/lib/format";
 import { useIsClient } from "@/lib/use-is-client";
 import { cx } from "@/lib/cx";
 import { placeOrder, type CheckoutState } from "./actions";
+import { finishOrderWhatsappWindow, openOrderWhatsappWindow } from "./whatsapp-window";
 import {
   DELIVERY_COUNTRY,
   checkoutFields,
@@ -39,12 +41,27 @@ async function placeOrderAndClearCart(previous: CheckoutState, formData: FormDat
   return result;
 }
 
-export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
-  const [state, formAction, isPending] = useActionState(placeOrderAndClearCart, initialState);
+export function CheckoutForm({ catalog, whatsappEnabled }: { catalog: ReadonlyArray<CartProduct>; whatsappEnabled: boolean }) {
+  const whatsappWindow = useRef<Window | null>(null);
+  const [state, formAction, isPending] = useActionState(async (previous: CheckoutState, formData: FormData) => {
+    try {
+      const result = await placeOrderAndClearCart(previous, formData);
+      const popup = whatsappWindow.current;
+      whatsappWindow.current = null;
+      finishOrderWhatsappWindow(popup, result.status === "success" ? result.whatsappUrl : undefined);
+      return result;
+    } catch (error) {
+      const popup = whatsappWindow.current;
+      whatsappWindow.current = null;
+      finishOrderWhatsappWindow(popup);
+      throw error;
+    }
+  }, initialState);
   const [clientErrors, setClientErrors] = useState<FieldErrors<CheckoutField> | null>(null);
   const isClient = useIsClient();
   const lines = useCartLines();
   const totals = priceCart(lines, new Map(catalog.map((product) => [product.slug, product])));
+  const { unavailable } = partitionCartLines(lines, new Set(catalog.map((product) => product.slug)));
 
   if (state.status === "success") return <OrderConfirmation state={state} />;
 
@@ -54,13 +71,16 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
 
   if (totals.lines.length === 0) {
     return (
+      <div className="space-y-6">
+      <UnavailableCartItems lines={unavailable} />
       <div className="flex flex-col items-center rounded-md border border-dashed border-border-strong/50 px-6 py-16 text-center">
         <ShoppingBasket className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />
-        <h2 className="mt-4 text-h4 font-semibold">Your cart is empty</h2>
+        <h2 className="mt-4 text-h4 font-semibold">{unavailable.length ? "No available items in your cart" : "Your cart is empty"}</h2>
         <p className="mt-2 max-w-sm">Add a few products before checking out.</p>
         <StarLink href="/shop" className={buttonClasses({ className: "mt-6" })}>
           Browse the shop
         </StarLink>
+      </div>
       </div>
     );
   }
@@ -70,9 +90,16 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
   const values: Partial<Record<CheckoutField, string>> = state.status === "error" ? state.values : {};
 
   function validateBeforeSubmit(event: FormEvent<HTMLFormElement>) {
+    if (unavailable.length > 0) {
+      event.preventDefault();
+      return;
+    }
     const result = validateBilling(readFields(new FormData(event.currentTarget), checkoutFields));
     if (result.ok) {
       setClientErrors(null);
+      if (whatsappEnabled && !isPending) {
+        whatsappWindow.current = openOrderWhatsappWindow();
+      }
       return;
     }
     event.preventDefault();
@@ -90,6 +117,8 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
   return (
     <form action={formAction} onSubmit={validateBeforeSubmit} noValidate className="space-y-12">
       <input type="hidden" name="cart" value={JSON.stringify(lines)} />
+
+      <UnavailableCartItems lines={unavailable} />
 
       <div aria-live="polite">
         {errorCount > 0 ? (
@@ -151,7 +180,8 @@ export function CheckoutForm({ catalog }: { catalog: ReadonlyArray<CartProduct> 
             </div>
           </div>
           {errors.paymentMethod && <p className="mt-1.5 text-meta font-medium text-danger">{errors.paymentMethod}</p>}
-          <Button type="submit" disabled={isPending} className="mt-6 w-full sm:w-auto">
+          {whatsappEnabled && <p className="mt-4 text-sm text-strong">After your order is placed, WhatsApp will open with your contact, delivery and order details. Review the message and tap Send to share it with us.</p>}
+          <Button type="submit" disabled={isPending || unavailable.length > 0} className="mt-6 w-full sm:w-auto">
             {isPending ? "Placing order…" : "Place order"}
           </Button>
         </section>
@@ -183,6 +213,10 @@ function OrderConfirmation({ state }: { state: Extract<CheckoutState, { status: 
         <strong>{formatPakistaniMobile(state.phone)}</strong> to confirm it before dispatch.
       </p>
       <p className="mt-2 text-meta">Please keep the exact amount ready: you pay in cash on delivery.</p>
+      {state.whatsappUrl && <>
+        <p className="mt-4 max-w-md text-sm text-strong">Your order is already placed. Review the message in WhatsApp and tap Send to share it with us. If WhatsApp did not open, use the button below.</p>
+        <a href={state.whatsappUrl} target="_blank" rel="noopener noreferrer" className={buttonClasses({ className: "mt-5" })}>Open order in WhatsApp</a>
+      </>}
       <StarLink href="/shop" className={buttonClasses({ className: "mt-8" })}>
         Continue shopping
       </StarLink>

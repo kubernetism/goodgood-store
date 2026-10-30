@@ -13,10 +13,12 @@ import { readFields, type FieldErrors } from "@/lib/forms";
 import { getClientIpHash } from "@/server/request";
 import { isCheckViolation } from "@/server/db-errors";
 import { checkoutFields, validateBilling, type CheckoutField } from "./validation";
+import { getOrderWhatsappNumber } from "@/features/admin/whatsapp-settings-data";
+import { orderWhatsappUrl } from "@/features/orders/whatsapp-message";
 
 export type CheckoutState =
   | { status: "idle" }
-  | { status: "success"; orderNumber: string; total: number; phone: string; itemCount: number }
+  | { status: "success"; orderNumber: string; total: number; phone: string; itemCount: number; whatsappUrl?: string }
   | {
       status: "error";
       message: string;
@@ -103,6 +105,8 @@ export async function placeOrder(_previous: CheckoutState, formData: FormData): 
   const { totals } = prepared;
   const details = billing.data;
   const orderId = randomUUID();
+  // A settings outage must never cause a successfully saved order to be retried.
+  const whatsappNumber = await getOrderWhatsappNumber().catch(() => null);
 
   try {
     const results = await db.batch([
@@ -154,12 +158,17 @@ export async function placeOrder(_previous: CheckoutState, formData: FormData): 
 
     const number = results[0][0]?.number;
     if (number === undefined) throw new Error("Order insert returned no number");
+    let whatsappUrl: string | undefined;
+    try {
+      if (whatsappNumber) whatsappUrl = orderWhatsappUrl(whatsappNumber, formatOrderNumber(number), details, totals);
+    } catch { /* The order is saved even if a WhatsApp link cannot be prepared. */ }
     return {
       status: "success",
       orderNumber: formatOrderNumber(number),
       total: totals.total,
       phone: details.phone,
       itemCount: totals.itemCount,
+      ...(whatsappUrl ? { whatsappUrl } : {}),
     };
   } catch (error) {
     if (isCheckViolation(error, "products_stock_non_negative")) {

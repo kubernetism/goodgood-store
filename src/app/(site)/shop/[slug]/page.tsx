@@ -23,6 +23,8 @@ import { shopHref, defaultShopQuery } from "@/features/products/shop-query";
 import { FREE_SHIPPING_THRESHOLD } from "@/features/cart/pricing";
 import { formatPrice } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
+import { JsonLd } from "@/components/seo/json-ld";
+import { productStructuredData } from "@/features/products/product-structured-data";
 
 export async function generateStaticParams() {
   const { products } = await getCatalog();
@@ -82,6 +84,7 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
 
   return (
     <>
+      <JsonLd data={productStructuredData(product)} />
       <Container className="py-16 lg:py-24">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">

@@ -9,7 +9,7 @@ import { PriceFilter } from "./price-filter";
 import { TopRatedList } from "./top-rated-list";
 
 export function ShopSidebar({ query, catalog }: { query: ShopQuery; catalog: Catalog }) {
-  const categoryCounts = getCategoryCounts(catalog);
+  const categoryCounts = getCategoryCounts(catalog).filter((category) => category.count > 0);
   const total = categoryCounts.reduce((sum, category) => sum + category.count, 0);
 
   return (

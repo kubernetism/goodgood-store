@@ -8,6 +8,7 @@ import type { ImageAsset } from "@/features/products/types";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { localImages } from "@/content/local-images";
 import { SLOT_KEYS, blogCoverSlotKey } from "./slots";
+import type { BlogPost } from "@/features/blog/data";
 
 export type SlotContent = { image: ImageAsset | null; youtubeId: string | null };
 export type SiteContent = Record<string, SlotContent>;
@@ -43,6 +44,10 @@ export async function getSiteContent(): Promise<SiteContent> {
 
 export function slotImage(content: SiteContent, key: string): ImageAsset | null {
   return content[key]?.image ?? localSlotImages[key] ?? null;
+}
+
+export function blogCoverImage(post: BlogPost): ImageAsset | null {
+  return post.cover ?? localSlotImages[blogCoverSlotKey(post.slug)] ?? null;
 }
 
 // Deliberately leave people, apiaries and video posters alone: product

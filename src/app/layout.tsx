@@ -56,8 +56,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // Browser appearance extensions may add styles to the root before React hydrates.
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${sansation.variable} ${fraunces.variable} ${inter.variable} ${parisienne.variable} antialiased`}
     >
       <body className="flex min-h-dvh flex-col">

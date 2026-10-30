@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { MAX_LINE_QUANTITY, parseCartLines, type CartLine } from "./pricing";
+import { MAX_LINE_QUANTITY, parseCartLines, partitionCartLines, type CartLine } from "./pricing";
 
 /*
  * Client-only cart persisted in localStorage (there is no backend yet).
@@ -88,6 +88,10 @@ export const cartActions = {
   remove(slug: string) {
     write(getSnapshot().filter((line) => line.slug !== slug));
   },
+  removeMany(slugs: ReadonlyArray<string>) {
+    const removed = new Set(slugs);
+    write(getSnapshot().filter((line) => !removed.has(line.slug)));
+  },
   clear() {
     write([]);
   },
@@ -97,6 +101,7 @@ export function useCartLines(): CartLine[] {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
-export function useCartItemCount(): number {
-  return useCartLines().reduce((sum, line) => sum + line.quantity, 0);
+export function useCartItemCount(availableSlugs: ReadonlyArray<string>): number {
+  const { available } = partitionCartLines(useCartLines(), new Set(availableSlugs));
+  return available.reduce((sum, line) => sum + line.quantity, 0);
 }

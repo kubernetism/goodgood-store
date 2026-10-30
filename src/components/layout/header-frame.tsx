@@ -7,66 +7,65 @@ type HeaderFrameProps = {
   children: ReactNode;
   background: ReactNode;
   className?: string;
-  /** The home hero extends under the header; other routes always use the background. */
-  overHomeHero?: boolean;
+  /** ID of the hero extending under the header, if this page has one. */
+  heroId?: string;
 };
 
 /** Only the decorative background changes; the navigation remains stationary. */
-export function HeaderFrame({ children, background, className, overHomeHero = false }: HeaderFrameProps) {
+export function HeaderFrame({ children, background, className, heroId }: HeaderFrameProps) {
   const headerRef = useRef<HTMLElement>(null);
-  const [overHero, setOverHero] = useState(overHomeHero);
+  const [overHero, setOverHero] = useState(Boolean(heroId));
 
   useEffect(() => {
-    if (!overHomeHero) return;
+    if (!heroId) return;
 
     let intersection: IntersectionObserver | undefined;
-    let mutations: MutationObserver | undefined;
-    let resize: ResizeObserver | undefined;
     let active = true;
+    let observedHero: HTMLElement | null = null;
     let observedHeight = 0;
 
-    function observeHero(): boolean {
-      const hero = document.getElementById("home-hero");
+    function observeHero() {
+      const hero = document.getElementById(heroId!);
       const header = headerRef.current;
-      if (!hero || !header) return false;
-
-      function observeAtHeaderHeight() {
-        const height = Math.round(header!.getBoundingClientRect().height);
-        if (intersection && height === observedHeight) return;
-        observedHeight = height;
+      if (!hero || !header) {
         intersection?.disconnect();
-        intersection = new IntersectionObserver(
-          ([entry]) => {
-            if (active && entry) setOverHero(entry.isIntersecting);
-          },
-          { rootMargin: `-${height}px 0px 0px 0px` },
-        );
-        intersection.observe(hero!);
+        intersection = undefined;
+        observedHero = null;
+        if (active) setOverHero(false);
+        return;
       }
 
-      observeAtHeaderHeight();
-      resize = new ResizeObserver(observeAtHeaderHeight);
-      resize.observe(header);
-      return true;
+      const height = Math.round(header.getBoundingClientRect().height);
+      if (intersection && hero === observedHero && height === observedHeight) return;
+      observedHero = hero;
+      observedHeight = height;
+      intersection?.disconnect();
+      intersection = new IntersectionObserver(
+        ([entry]) => {
+          if (active && entry?.target === observedHero) setOverHero(entry.isIntersecting);
+        },
+        { rootMargin: `-${height}px 0px 0px 0px` },
+      );
+      intersection.observe(hero);
     }
 
-    if (!observeHero()) {
-      // The home page can stream in after the shared layout has hydrated.
-      // Keep navigation readable until its hero appears.
-      queueMicrotask(() => { if (active) setOverHero(false); });
-      mutations = new MutationObserver(() => {
-        if (observeHero()) mutations?.disconnect();
-      });
-      mutations.observe(document.documentElement, { childList: true, subtree: true });
-    }
+    // Route transitions can replace the hero while this shared header stays mounted.
+    // Also handle a streamed hero that appears after the header hydrates.
+    const mutations = new MutationObserver(() => {
+      if (document.getElementById(heroId) !== observedHero) observeHero();
+    });
+    mutations.observe(document.getElementById("main") ?? document.documentElement, { childList: true, subtree: true });
+    const resize = new ResizeObserver(observeHero);
+    if (headerRef.current) resize.observe(headerRef.current);
+    observeHero();
 
     return () => {
       active = false;
       intersection?.disconnect();
-      mutations?.disconnect();
-      resize?.disconnect();
+      mutations.disconnect();
+      resize.disconnect();
     };
-  }, [overHomeHero]);
+  }, [heroId]);
 
   return (
     <header ref={headerRef} data-over-hero={overHero ? "true" : "false"} className={cx("on-dark sticky top-0 z-40 isolate", className)}>
@@ -80,7 +79,7 @@ export function HeaderFrame({ children, background, className, overHomeHero = fa
       >
         {background}
       </div>
-      {overHomeHero && <noscript><style>{"[data-navbar-background]{opacity:1!important}"}</style></noscript>}
+      {heroId && <noscript><style>{"[data-navbar-background]{opacity:1!important}"}</style></noscript>}
       {children}
     </header>
   );

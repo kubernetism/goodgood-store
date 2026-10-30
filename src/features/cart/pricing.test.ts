@@ -5,6 +5,7 @@ import {
   MAX_LINE_QUANTITY,
   SHIPPING_FEE,
   parseCartLines,
+  partitionCartLines,
   priceCart,
   type CartProduct,
 } from "./pricing";
@@ -16,6 +17,21 @@ const product = (overrides: Partial<CartProduct> & Pick<CartProduct, "slug" | "p
   stock: 10,
   image: null,
   ...overrides,
+});
+
+describe("partitionCartLines", () => {
+  it("separates deleted or inactive products without dropping available items", () => {
+    const lines = [
+      { slug: "acacia", quantity: 2 },
+      { slug: "removed-honey", quantity: 3 },
+      { slug: "sidr", quantity: 1 },
+    ];
+    expect(partitionCartLines(lines, new Set(["acacia", "sidr"]))).toEqual({
+      available: [lines[0], lines[2]],
+      unavailable: [lines[1]],
+    });
+    expect(partitionCartLines(lines, new Set()).unavailable).toEqual(lines);
+  });
 });
 
 const catalog = new Map<string, CartProduct>([

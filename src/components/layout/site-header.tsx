@@ -8,22 +8,28 @@ import { HeaderFrame } from "./header-frame";
 import { MobileNav } from "./mobile-nav";
 import { HeaderSearch } from "./header-search";
 import { CartLink } from "./cart-link";
+import { getCatalog } from "@/features/products/catalog-data";
+import { catalogNavigation } from "@/features/products/catalog-navigation";
 
 type SiteHeaderProps = {
   /** Optional route-scoped palette; doesn't wrap or constrain the sticky header. */
   className?: string;
   /** Fade the background away when the navbar overlaps the home hero. */
   overHomeHero?: boolean;
+  /** Fade the background away when the navbar overlaps an inner-page hero. */
+  overPageHero?: boolean;
 };
 
-export function SiteHeader({ className, overHomeHero = false }: SiteHeaderProps) {
+export async function SiteHeader({ className, overHomeHero = false, overPageHero = false }: SiteHeaderProps) {
+  const catalog = await getCatalog();
+  const navigation = catalogNavigation(catalog);
   return (
     <HeaderFrame
       className={className}
-      overHomeHero={overHomeHero}
+      heroId={overHomeHero ? "home-hero" : overPageHero ? "page-hero" : undefined}
       background={
         <>
-          <Image src={navbarBackground} alt="" fill sizes="100vw" loading="eager" className="object-cover object-center" />
+          <Image src={navbarBackground} alt="" fill sizes="100vw" loading="eager" className="object-cover object-[center_42%]" />
           <span data-navbar-overlay className="absolute inset-0" style={{ backgroundColor: "rgb(27 17 8 / 90%)" }} />
         </>
       }
@@ -34,15 +40,15 @@ export function SiteHeader({ className, overHomeHero = false }: SiteHeaderProps)
         <div className="hidden flex-1 justify-center lg:flex">
           {/* usePathname suspends on routes whose params are unknown at build
               time, so the prerendered shell shows the nav without highlighting. */}
-          <Suspense fallback={<MainNav tone="dark" activePath={null} />}>
-            <ActiveMainNav tone="dark" />
+          <Suspense fallback={<MainNav tone="dark" activePath={null} items={navigation} />}>
+            <ActiveMainNav tone="dark" items={navigation} />
           </Suspense>
         </div>
 
         <div className="on-light ml-auto flex items-center gap-2 sm:gap-3 lg:ml-0">
           <HeaderSearch />
-          <CartLink />
-          <MobileNav />
+          <CartLink availableSlugs={catalog.products.map((product) => product.slug)} />
+          <MobileNav items={navigation} />
         </div>
       </Container>
     </HeaderFrame>

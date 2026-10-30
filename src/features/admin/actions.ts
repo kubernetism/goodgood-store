@@ -13,21 +13,76 @@ import { canTransition, isOrderStatus, restocksOnTransition } from "@/features/o
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { parseYouTubeUrl } from "@/lib/youtube";
 import { requireAdmin } from "@/server/auth/session";
-import { checkImageUpload, extensionFor, MAX_UPLOAD_BYTES } from "@/server/media/image-file";
 import { getMediaStorage } from "@/server/media/storage";
+import { storeUploadedImage } from "@/server/media/upload";
 import { productFormSchema } from "./product-schema";
+import { categoryFormSchema } from "./category-schema";
 
 const value = (form: FormData, name: string) => String(form.get(name) ?? "");
 function error(path: string, message: string): never { redirect(`${path}?error=${encodeURIComponent(message)}`); }
 function success(path: string): never { redirect(`${path}?saved=1`); }
 function validId(id: string) { return z.uuid().safeParse(id).success; }
+function isForeignKeyViolation(cause: unknown): boolean {
+  for (let current = cause, depth = 0; current && typeof current === "object" && depth < 5; depth++) {
+    if ("code" in current && current.code === "23503") return true;
+    current = "cause" in current ? current.cause : undefined;
+  }
+  return false;
+}
+
+export async function saveCategory(form: FormData) {
+  await requireAdmin();
+  const id = value(form, "id");
+  if (id && !validId(id)) error("/admin/categories", "Invalid category.");
+  const path = id ? `/admin/categories/${id}` : "/admin/categories/new";
+  const parsed = categoryFormSchema.safeParse({ ...Object.fromEntries(form.entries()), isActive: value(form, "isActive") === "yes" });
+  if (!parsed.success) error(path, parsed.error.issues[0]?.message ?? "Check the category details.");
+  const categoryId = id || randomUUID();
+  let updated: { id: string }[];
+  try {
+    updated = id
+      ? await db.update(categories).set(parsed.data).where(eq(categories.id, id)).returning({ id: categories.id })
+      : await db.insert(categories).values({ id: categoryId, ...parsed.data }).returning({ id: categories.id });
+  } catch (cause) {
+    console.error("Category save failed", cause);
+    error(path, "Could not save the category. Check that its slug is unique and its image exists.");
+  }
+  if (!updated.length) error("/admin/categories", "Category not found.");
+  updateTag(CACHE_TAGS.catalog);
+  revalidatePath("/admin/categories");
+  revalidatePath("/admin/products");
+  revalidatePath("/admin/content");
+  success(`/admin/categories/${categoryId}`);
+}
+
+export async function deleteCategory(form: FormData) {
+  await requireAdmin();
+  const id = value(form, "id");
+  if (!validId(id)) error("/admin/categories", "Invalid category.");
+  const path = `/admin/categories/${id}`;
+  if (value(form, "confirm") !== "yes") error(path, "Confirm category deletion first.");
+  let deleted: { id: string }[];
+  try {
+    deleted = await db.delete(categories).where(eq(categories.id, id)).returning({ id: categories.id });
+  } catch (cause) {
+    console.error("Category deletion failed", cause);
+    error(path, isForeignKeyViolation(cause) ? "Move or delete this category's products first, then try again." : "Could not delete the category. Please try again.");
+  }
+  if (!deleted.length) error("/admin/categories", "Category not found.");
+  updateTag(CACHE_TAGS.catalog);
+  revalidatePath("/admin/categories");
+  revalidatePath("/admin/products");
+  revalidatePath("/admin/content");
+  success("/admin/categories");
+}
 
 export async function saveProduct(form: FormData) {
   await requireAdmin();
   const id = value(form, "id");
   const path = id && validId(id) ? `/admin/products/${id}` : "/admin/products/new";
   if (id && !validId(id)) error("/admin/products", "Invalid product.");
-  const parsed = productFormSchema.safeParse({ ...Object.fromEntries(form.entries()), tags: form.getAll("tags"), imageIds: form.getAll("imageId").map(String).filter(Boolean) });
+  const status = value(form, "active") === "yes" ? "active" : value(form, "inactiveStatus") === "archived" ? "archived" : "draft";
+  const parsed = productFormSchema.safeParse({ ...Object.fromEntries(form.entries()), status, tags: form.getAll("tags"), imageIds: form.getAll("imageId").map(String).filter(Boolean) });
   if (!parsed.success) error(path, parsed.error.issues[0]?.message ?? "Check the product details.");
   const { imageIds, ...product } = parsed.data;
   if (new Set(imageIds).size !== imageIds.length) error(path, "Each image can only be selected once.");
@@ -57,6 +112,42 @@ export async function archiveProduct(form: FormData) {
   if (!validId(id) || value(form, "confirm") !== "yes") error("/admin/products", "Confirm the archive action first.");
   await db.update(products).set({ status: "archived" }).where(eq(products.id, id));
   updateTag(CACHE_TAGS.catalog);
+  revalidatePath("/admin/products");
+  success("/admin/products");
+}
+
+export async function setProductVisibility(id: string, active: boolean): Promise<{ error?: string }> {
+  await requireAdmin();
+  if (!validId(id) || typeof active !== "boolean") return { error: "Invalid product or visibility." };
+  let updated: { id: string }[];
+  try {
+    updated = await db.update(products).set({ status: active ? "active" : "draft" }).where(eq(products.id, id)).returning({ id: products.id });
+  } catch (cause) {
+    console.error("Product visibility update failed", cause);
+    return { error: "Could not update visibility. Please try again." };
+  }
+  if (!updated.length) return { error: "Product not found." };
+  updateTag(CACHE_TAGS.catalog);
+  revalidatePath("/admin/products");
+  return {};
+}
+
+export async function deleteProduct(form: FormData) {
+  await requireAdmin();
+  const id = value(form, "id");
+  if (!validId(id)) error("/admin/products", "Invalid product.");
+  const path = `/admin/products/${id}`;
+  if (value(form, "confirm") !== "yes") error(path, "Confirm product deletion first.");
+  let deleted: { id: string }[];
+  try {
+    deleted = await db.delete(products).where(eq(products.id, id)).returning({ id: products.id });
+  } catch (cause) {
+    console.error("Product deletion failed", cause);
+    error(path, "Could not delete the product. Please try again.");
+  }
+  if (!deleted.length) error("/admin/products", "Product not found.");
+  updateTag(CACHE_TAGS.catalog);
+  updateTag(CACHE_TAGS.banners);
   revalidatePath("/admin/products");
   success("/admin/products");
 }
@@ -93,9 +184,15 @@ export async function changeOrderStatus(form: FormData) {
   const id = value(form, "id");
   const target = value(form, "status");
   if (!validId(id) || !isOrderStatus(target)) error("/admin/orders", "Invalid order status.");
+  const returnTo = value(form, "returnTo");
+  const resultUrl = (key: "error" | "saved", message: string) => {
+    const query = new URLSearchParams({ [key]: message });
+    if (returnTo && returnTo.length <= 600) query.set("returnTo", returnTo);
+    return `/admin/orders/${id}?${query}`;
+  };
   const [order] = await db.select({ status: orders.status }).from(orders).where(eq(orders.id, id)).limit(1);
-  if (!order || !canTransition(order.status, target)) error(`/admin/orders/${id}`, "This status change is no longer available.");
-  if (target === "cancelled" && value(form, "confirm") !== "yes") error(`/admin/orders/${id}`, "Confirm cancellation first.");
+  if (!order || !canTransition(order.status, target)) redirect(resultUrl("error", "This status change is no longer available."));
+  if (target === "cancelled" && value(form, "confirm") !== "yes") redirect(resultUrl("error", "Confirm cancellation first."));
   // One SQL statement makes the status transition, audit event and optional
   // restock atomic. The previous status guards against concurrent changes.
   const result = await db.execute(sql`
@@ -111,26 +208,25 @@ export async function changeOrderStatus(form: FormData) {
       SELECT id, ${order.status}::order_status, ${target}::order_status, ${admin.email} FROM changed RETURNING id
     ) SELECT count(*)::integer AS changed FROM changed
   `);
-  if (!Number(result.rows[0]?.changed)) error(`/admin/orders/${id}`, "The order changed elsewhere. Refresh and try again.");
+  if (!Number(result.rows[0]?.changed)) redirect(resultUrl("error", "The order changed elsewhere. Refresh and try again."));
   if (restocksOnTransition(order.status, target)) updateTag(CACHE_TAGS.catalog);
   revalidatePath("/admin/orders");
-  success(`/admin/orders/${id}`);
+  redirect(resultUrl("saved", "1"));
 }
 
 export async function uploadMedia(form: FormData) {
   await requireAdmin();
-  const file = form.get("image");
-  const alt = value(form, "alt").trim();
-  if (!(file instanceof File) || file.size > MAX_UPLOAD_BYTES || !alt || alt.length > 250) error("/admin/media", "Choose an image under 4 MB and provide alt text (up to 250 characters).");
-  const checked = checkImageUpload(new Uint8Array(await file.arrayBuffer()));
-  if (!checked.ok) error("/admin/media", checked.message);
-  const key = `images/${randomUUID()}.${extensionFor[checked.type]}`;
-  try {
-    const stored = await getMediaStorage().put(key, checked.bytes, checked.type);
-    await db.insert(media).values({ storageKey: stored.key, url: stored.url, alt, contentType: checked.type, sizeBytes: checked.bytes.length, width: checked.size?.width, height: checked.size?.height });
-  } catch (cause) { console.error("Media upload failed", cause); error("/admin/media", "Upload failed. Check image storage configuration and try again."); }
+  const result = await storeUploadedImage(form.get("image"), form.get("alt"));
+  if (result.error) error("/admin/media", result.error);
   revalidatePath("/admin/media");
   success("/admin/media");
+}
+
+export async function uploadImageInline(form: FormData) {
+  await requireAdmin();
+  const result = await storeUploadedImage(form.get("image"), form.get("alt"));
+  if (result.image) revalidatePath("/admin/media");
+  return result;
 }
 
 export async function deleteMedia(form: FormData) {
@@ -143,7 +239,7 @@ export async function deleteMedia(form: FormData) {
     await getMediaStorage().remove(image.storageKey);
     await db.delete(media).where(eq(media.id, id));
   } catch (cause) { console.error("Media deletion failed", cause); error("/admin/media", "Could not delete the image. Please try again."); }
-  updateTag(CACHE_TAGS.content); updateTag(CACHE_TAGS.catalog); updateTag(CACHE_TAGS.banners);
+  updateTag(CACHE_TAGS.content); updateTag(CACHE_TAGS.catalog); updateTag(CACHE_TAGS.banners); updateTag(CACHE_TAGS.blog);
   revalidatePath("/admin/media");
   success("/admin/media");
 }

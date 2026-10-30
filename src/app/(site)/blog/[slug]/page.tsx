@@ -2,26 +2,32 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ArrowLeft, ArrowRight, Calendar, Eye, MessageSquare, User } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, User } from "lucide-react";
 import { PageHero } from "@/components/layout/page-hero";
 import { Container } from "@/components/ui/container";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
 import { MediaImage } from "@/components/ui/media-image";
-import { blogCoverSlotKey, SLOT_KEYS } from "@/features/content/slots";
-import { getSiteContent, slotImage } from "@/features/content/content-data";
+import { blogCoverImage, getSiteContent } from "@/features/content/content-data";
+import { getPublishedBlogPosts } from "@/features/blog/blog-data";
 import { BlogSidebar } from "@/features/blog/components/blog-sidebar";
-import { blogAuthor, blogPosts, type BlogBlock } from "@/features/blog/data";
+import { BlogMetricsDisplay } from "@/features/blog/components/blog-metrics";
+import { BlogVisitTracker } from "@/features/blog/components/blog-visit-tracker";
+import { blogAuthorImage } from "@/features/blog/author-image";
+import { blogAuthor, type BlogBlock } from "@/features/blog/data";
 import { blogHref, getAdjacentPosts, getBlogCategoryName, getPostBySlug } from "@/features/blog/queries";
 import { formatDate } from "@/lib/format";
+import { siteConfig } from "@/lib/site";
+import { JsonLd } from "@/components/seo/json-ld";
 
-export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  return (await getPublishedBlogPosts()).map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = getPostBySlug(await getPublishedBlogPosts(), slug);
   if (!post) return { title: "Post not found" };
+  const cover = blogCoverImage(post);
 
   return {
     title: post.title,
@@ -33,6 +39,7 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
       description: post.excerpt,
       publishedTime: post.publishedOn,
       authors: [post.author],
+      ...(cover ? { images: [{ url: cover.url, alt: cover.alt }] } : {}),
     },
   };
 }
@@ -54,23 +61,36 @@ export default function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
 }
 
 async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">) {
-  const [{ slug }, content] = await Promise.all([params, getSiteContent()]);
-  const post = getPostBySlug(slug);
+  const [{ slug }, content, posts] = await Promise.all([params, getSiteContent(), getPublishedBlogPosts()]);
+  const post = getPostBySlug(posts, slug);
   if (!post) notFound();
 
-  const { previous, next } = getAdjacentPosts(post.slug);
+  const { previous, next } = getAdjacentPosts(posts, post.slug);
 
   return (
     <Container className="grid gap-12 py-16 lg:grid-cols-12 lg:gap-6 lg:py-24">
-      <article className="lg:col-span-8">
+      <JsonLd data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt,
+        datePublished: post.publishedOn,
+        author: { "@type": "Person", name: post.author },
+        publisher: { "@type": "Organization", name: siteConfig.contact.businessName },
+        mainEntityOfPage: `${siteConfig.url}/blog/${post.slug}`,
+        ...(blogCoverImage(post) ? { image: [new URL(blogCoverImage(post)!.url, siteConfig.url).toString()] } : {}),
+      }} />
+      <article id="blog-article" className="lg:col-span-8">
+        <BlogVisitTracker slug={post.slug} />
         <div className="relative">
           <MediaImage
-            image={slotImage(content, blogCoverSlotKey(post.slug))}
+            image={blogCoverImage(post)}
             sizes="(min-width: 1024px) 770px, 100vw"
             preload
             icon={HoneyDipperIcon}
             iconSize="lg"
             aspect="aspect-[5/3]"
+            rounded="md"
           />
           <Link
             href={blogHref({ category: null, tag: null, q: "", page: 1 }, { category: post.category })}
@@ -91,14 +111,7 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
               <Calendar className="size-4 text-primary-ink" aria-hidden="true" />
               <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>
             </li>
-            <li className="flex items-center gap-2">
-              <Eye className="size-4 text-primary-ink" aria-hidden="true" />
-              {post.views} views
-            </li>
-            <li className="flex items-center gap-2">
-              <MessageSquare className="size-4 text-primary-ink" aria-hidden="true" />
-              {post.comments} comments
-            </li>
+            <BlogMetricsDisplay slug={post.slug} />
           </ul>
         </header>
 
@@ -125,9 +138,9 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
           </ul>
         </div>
 
-        <aside aria-label="About the author" className="mt-10 flex gap-5 rounded-sm bg-cream p-6">
+        {post.author === blogAuthor.name && <aside aria-label="About the author" className="mt-10 flex gap-5 rounded-sm bg-cream p-6">
           <MediaImage
-            image={slotImage(content, SLOT_KEYS.blogAuthor)}
+            image={blogAuthorImage(content)}
             alt=""
             sizes="80px"
             icon={User}
@@ -139,7 +152,7 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
             <p className="text-meta text-primary-ink">{blogAuthor.role}</p>
             <p className="mt-2 text-sm">{blogAuthor.bio}</p>
           </div>
-        </aside>
+        </aside>}
 
         <nav aria-label="More posts" className="mt-10 grid gap-4 sm:grid-cols-2">
           {previous && (

@@ -9,6 +9,9 @@ export const CACHE_TAGS = {
   content: "content",
   /** Promo banners. */
   banners: "banners",
+  blog: "blog",
+  testimonials: "testimonials",
+  settings: "store-settings",
 } as const;
 
 export type CacheTag = (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS];

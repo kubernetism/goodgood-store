@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/container";
 import { CheckoutForm } from "@/features/checkout/checkout-form";
 import { getCartCatalog } from "@/features/products/catalog";
 import { getCatalog } from "@/features/products/catalog-data";
+import { getOrderWhatsappNumber } from "@/features/admin/whatsapp-settings-data";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
+  const [catalog, whatsappNumber] = await Promise.all([getCatalog(), getOrderWhatsappNumber().catch(() => null)]);
   return (
     <>
       <PageHero
@@ -20,7 +22,7 @@ export default async function CheckoutPage() {
         crumbs={[{ label: "Cart", href: "/cart" }, { label: "Checkout" }]}
       />
       <Container className="py-16 lg:py-24">
-        <CheckoutForm catalog={getCartCatalog(await getCatalog())} />
+        <CheckoutForm catalog={getCartCatalog(catalog)} whatsappEnabled={Boolean(whatsappNumber)} />
       </Container>
     </>
   );

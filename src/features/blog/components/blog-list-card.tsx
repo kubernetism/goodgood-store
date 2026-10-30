@@ -1,6 +1,6 @@
 import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
-import { ArrowRight, Calendar, Eye, MessageSquare, User } from "lucide-react";
+import { ArrowRight, Calendar, User } from "lucide-react";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 import { MediaImage } from "@/components/ui/media-image";
@@ -8,6 +8,7 @@ import type { ImageAsset } from "@/features/products/types";
 import { formatDate } from "@/lib/format";
 import { blogAuthor, type BlogPost } from "../data";
 import { getBlogCategoryName } from "../queries";
+import { BlogMetricsDisplay } from "./blog-metrics";
 
 /** Blog listing entry (mockup: Blog Right Sidebar). */
 type BlogListCardProps = { post: BlogPost; cover: ImageAsset | null; authorPhoto: ImageAsset | null };
@@ -38,14 +39,7 @@ export function BlogListCard({ post, cover, authorPhoto }: BlogListCardProps) {
           </Link>
         </h2>
         <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 font-display text-meta font-semibold text-strong">
-          <li className="flex items-center gap-2">
-            <Eye className="size-4 text-primary-ink" aria-hidden="true" />
-            {post.views} views
-          </li>
-          <li className="flex items-center gap-2">
-            <MessageSquare className="size-4 text-primary-ink" aria-hidden="true" />
-            {post.comments} comments
-          </li>
+          <BlogMetricsDisplay slug={post.slug} />
           <li className="flex items-center gap-2">
             <Calendar className="size-4 text-primary-ink" aria-hidden="true" />
             <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>

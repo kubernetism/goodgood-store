@@ -24,13 +24,12 @@ import {
 } from "@/features/products/shop-query";
 import { cx } from "@/lib/cx";
 import { formatRupees } from "@/lib/format";
+import { shopMetadata } from "@/features/products/shop-metadata";
 
-export const metadata: Metadata = {
-  title: "Shop Raw Honey",
-  description:
-    "Shop raw, single-origin Pakistani honey: Sidr, Acacia, Wildflower, Black Forest, honeycomb and gift sets. Filter by variety, price in PKR and tag.",
-  alternates: { canonical: "/shop" },
-};
+export async function generateMetadata({ searchParams }: PageProps<"/shop">): Promise<Metadata> {
+  const [params, catalog] = await Promise.all([searchParams, getCatalog()]);
+  return shopMetadata(params, catalog);
+}
 
 export default function ShopPage({ searchParams }: PageProps<"/shop">) {
   return (
@@ -51,6 +50,7 @@ async function ShopContent({ searchParams }: Pick<PageProps<"/shop">, "searchPar
   const [catalog, params] = await Promise.all([getCatalog(), searchParams]);
   const query = parseShopQuery(params, catalog.categories.map((category) => category.slug));
   const result = queryProducts(catalog, query);
+  const category = query.category ? getCategory(catalog, query.category) : undefined;
 
   return (
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
@@ -61,9 +61,12 @@ async function ShopContent({ searchParams }: Pick<PageProps<"/shop">, "searchPar
       </aside>
 
       <section aria-labelledby="shop-results-heading" className="lg:col-span-8">
-        <h2 id="shop-results-heading" className="sr-only">
-          Products
-        </h2>
+        {category ? (
+          <div className="mb-6">
+            <h2 id="shop-results-heading" className="text-h4 font-semibold">{category.name}</h2>
+            {category.blurb && <p className="mt-2">{category.blurb}</p>}
+          </div>
+        ) : <h2 id="shop-results-heading" className="sr-only">Products</h2>}
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-1">

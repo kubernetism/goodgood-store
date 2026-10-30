@@ -5,6 +5,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { SocialLinks } from "@/components/layout/social-links";
 import { LatestBlog } from "@/components/sections/latest-blog";
 import { Testimonials } from "@/components/sections/testimonials";
+import { HoneycombParallax } from "@/features/home/honeycomb-parallax";
 import { Container } from "@/components/ui/container";
 import { MediaImage } from "@/components/ui/media-image";
 import { Eyebrow, SectionHeading } from "@/components/ui/section-heading";
@@ -146,7 +147,7 @@ export default async function AboutPage() {
         </Container>
       </section>
 
-      <Testimonials />
+      <Testimonials background={<HoneycombParallax />} />
 
       {/* FAQ */}
       <section id="faq" aria-labelledby="faq-heading" className="py-16 lg:py-30">

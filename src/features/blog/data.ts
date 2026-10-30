@@ -1,4 +1,5 @@
-/** Mock blog content. Dates are ISO calendar dates (rendered in UTC). */
+/** Blog types and initial content. Dates are ISO calendar dates (rendered in UTC). */
+import type { ImageAsset } from "@/features/products/types";
 
 export const blogCategories = [
   { slug: "beekeeping", name: "Beekeeping" },
@@ -26,6 +27,7 @@ export type BlogPost = {
   views: number;
   comments: number;
   body: ReadonlyArray<BlogBlock>;
+  cover?: ImageAsset | null;
 };
 
 export const blogAuthor = {

@@ -41,6 +41,7 @@ export function ContactForm() {
     <form action={formAction} onSubmit={validateBeforeSubmit} noValidate className="space-y-5">
       <div aria-live="polite" className="empty:hidden">
         {state.status === "success" && clientErrors === null && <FormStatus tone="success">{state.message}</FormStatus>}
+        {state.status === "error" && clientErrors === null && errorCount === 0 && <FormStatus tone="error">{state.message}</FormStatus>}
         {errorCount > 0 && (
           <FormStatus tone="error">
             Please fix {errorCount === 1 ? "1 field" : `${errorCount} fields`} below and try again.

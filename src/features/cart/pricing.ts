@@ -14,6 +14,16 @@ export const SHIPPING_FEE = 25_000;
 
 export type CartLine = { slug: string; quantity: number };
 
+/** Split saved items against the currently available storefront catalogue. */
+export function partitionCartLines(lines: ReadonlyArray<CartLine>, availableSlugs: ReadonlySet<string>) {
+  const available: CartLine[] = [];
+  const unavailable: CartLine[] = [];
+  for (const line of lines) {
+    (availableSlugs.has(line.slug) ? available : unavailable).push(line);
+  }
+  return { available, unavailable };
+}
+
 /** The slice of a product the cart needs; keeps client payloads small. */
 export type CartProduct = {
   slug: string;

@@ -1,0 +1,1 @@
+CREATE INDEX "testimonials_storefront_order_idx" ON "testimonials" USING btree ("is_active","sort_order","created_at","id");

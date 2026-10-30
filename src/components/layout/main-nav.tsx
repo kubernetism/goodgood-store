@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type FocusEvent, type KeyboardEvent } from "react";
 import { ChevronDown } from "lucide-react";
-import { mainNav, type NavItem } from "@/lib/site";
+import type { NavItem } from "@/lib/site";
 import { cx } from "@/lib/cx";
 
 type Tone = "honey" | "dark";
@@ -29,15 +29,15 @@ function isItemActive(item: NavItem, activePath: string | null): boolean {
 }
 
 /** Desktop navigation that highlights the current section. */
-export function ActiveMainNav({ tone }: { tone: Tone }) {
-  return <MainNav tone={tone} activePath={usePathname()} />;
+export function ActiveMainNav({ tone, items }: { tone: Tone; items: ReadonlyArray<NavItem> }) {
+  return <MainNav tone={tone} activePath={usePathname()} items={items} />;
 }
 
 /**
  * Desktop navigation with hover/click dropdowns. `activePath` is null in the
  * prerendered fallback (pathname unknown), so nothing is highlighted there.
  */
-export function MainNav({ tone, activePath }: { tone: Tone; activePath: string | null }) {
+export function MainNav({ tone, activePath, items }: { tone: Tone; activePath: string | null; items: ReadonlyArray<NavItem> }) {
   const [openLabel, setOpenLabel] = useState<string | null>(null);
 
   function closeOnEscape(event: KeyboardEvent<HTMLElement>) {
@@ -65,7 +65,7 @@ export function MainNav({ tone, activePath }: { tone: Tone; activePath: string |
   return (
     <nav aria-label="Main" onKeyDown={closeOnEscape}>
       <ul className="flex items-center gap-1 xl:gap-3">
-        {mainNav.map((item) => {
+        {items.map((item) => {
           const isActive = isItemActive(item, activePath);
           const isOpen = openLabel === item.label;
           const menuId = `menu-${item.label.toLowerCase()}`;
@@ -123,7 +123,7 @@ export function MainNav({ tone, activePath }: { tone: Tone; activePath: string |
               <ul
                 id={menuId}
                 className={cx(
-                  "on-light absolute top-full left-0 z-50 min-w-52 rounded-md border border-border bg-surface py-2 shadow-card-hover transition duration-200 ease-out",
+                  "on-light absolute top-full left-0 z-50 max-h-[min(70vh,32rem)] min-w-52 overflow-y-auto rounded-md border border-border bg-surface py-2 shadow-card-hover transition duration-200 ease-out",
                   "invisible translate-y-1 opacity-0 group-hover/menu:visible group-hover/menu:translate-y-0 group-hover/menu:opacity-100",
                   isOpen && "visible translate-y-0 opacity-100",
                 )}
