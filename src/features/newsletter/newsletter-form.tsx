@@ -1,11 +1,11 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useActionState, useId, useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { isEmail, type FormState } from "@/lib/forms";
 import { cx } from "@/lib/cx";
 import { subscribeToNewsletter, type NewsletterField } from "./actions";
+import type { NewsletterSource } from "./sources";
 
 const initialState: FormState<NewsletterField> = { status: "idle" };
 
@@ -13,16 +13,18 @@ type NewsletterFormProps = {
   /** `compact`: input + square send icon (footer). `wide`: input + SUBSCRIBE (bands). */
   variant?: "compact" | "wide";
   tone?: "light" | "dark";
+  /** Recorded with the sign-up so the owner knows which form people use. */
+  source?: NewsletterSource;
 };
 
-export function NewsletterForm({ variant = "compact", tone = "light" }: NewsletterFormProps) {
+export function NewsletterForm({ variant = "compact", tone = "light", source = "footer" }: NewsletterFormProps) {
   const [state, formAction, isPending] = useActionState(subscribeToNewsletter, initialState);
   const [clientError, setClientError] = useState<string | null>(null);
   const id = useId();
   const inputId = `${id}-email`;
   const messageId = `${id}-message`;
 
-  const error = clientError ?? (state.status === "error" ? state.fieldErrors.email : undefined);
+  const error = clientError ?? (state.status === "error" ? (state.fieldErrors.email ?? state.message) : undefined);
 
   function validateBeforeSubmit(event: FormEvent<HTMLFormElement>) {
     const email = new FormData(event.currentTarget).get("email");
@@ -37,6 +39,7 @@ export function NewsletterForm({ variant = "compact", tone = "light" }: Newslett
 
   return (
     <form action={formAction} onSubmit={validateBeforeSubmit} noValidate className="w-full">
+      <input type="hidden" name="source" value={source} />
       <div className={cx("flex", variant === "wide" ? "flex-col gap-3 sm:flex-row sm:gap-0" : "")}>
         <label htmlFor={inputId} className="sr-only">
           Email address
@@ -59,22 +62,22 @@ export function NewsletterForm({ variant = "compact", tone = "light" }: Newslett
           )}
         />
         {variant === "wide" ? (
-          <StarButton
+          <button
             type="submit"
             disabled={isPending}
             className="h-13 rounded-sm bg-primary px-10 text-button font-semibold text-strong uppercase transition-colors duration-200 hover:bg-primary-hover disabled:opacity-60 sm:rounded-l-none"
           >
             {isPending ? "Subscribing…" : "Subscribe"}
-          </StarButton>
+          </button>
         ) : (
-          <StarButton
+          <button
             type="submit"
             disabled={isPending}
             className="flex size-14 shrink-0 items-center justify-center rounded-r-sm bg-primary text-strong transition-colors duration-200 hover:bg-primary-hover disabled:opacity-60"
           >
             <Send className="size-5" aria-hidden="true" />
             <span className="sr-only">{isPending ? "Subscribing" : "Subscribe"}</span>
-          </StarButton>
+          </button>
         )}
       </div>
       <p

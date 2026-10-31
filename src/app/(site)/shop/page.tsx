@@ -1,4 +1,3 @@
-import { StarLink } from "@/components/ui/star-controls";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -115,7 +114,7 @@ function ViewLink({ query, view }: { query: ShopQuery; view: ShopQuery["view"] }
   const isActive = query.view === view;
   const Icon = view === "grid" ? LayoutGrid : List;
   return (
-    <StarLink
+    <Link
       href={shopHref(query, { view, page: query.page })}
       aria-current={isActive ? "true" : undefined}
       className={cx(
@@ -125,7 +124,7 @@ function ViewLink({ query, view }: { query: ShopQuery; view: ShopQuery["view"] }
     >
       <Icon className="size-5" strokeWidth={isActive ? 2.25 : 1.75} aria-hidden="true" />
       <span className="sr-only">{view === "grid" ? "Grid view" : "List view"}</span>
-    </StarLink>
+    </Link>
   );
 }
 
@@ -157,9 +156,9 @@ function EmptyResults() {
       <SearchX className="size-10 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
       <h3 className="mt-4 font-heading text-promo font-semibold">No honey matches those filters</h3>
       <p className="mt-2 max-w-sm">Try another variety or widen the price range.</p>
-      <StarLink href="/shop" className={buttonClasses({ className: "mt-6" })}>
+      <Link href="/shop" className={buttonClasses({ className: "mt-6" })}>
         View all honey
-      </StarLink>
+      </Link>
     </div>
   );
 }

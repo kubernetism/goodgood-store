@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -9,6 +9,7 @@ import { db } from "@/db/client";
 import { banners, categories, contentSlots, media, orders, productImages, products } from "@/db/schema";
 import { bannerFormSchema } from "@/features/banners/model";
 import { getSlotDefinition } from "@/features/content/slots";
+import { validateCancellation, validateCourier, type Cancellation, type CourierDetails } from "@/features/orders/cancel-reasons";
 import { canTransition, isOrderStatus, restocksOnTransition } from "@/features/orders/status";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { parseYouTubeUrl } from "@/lib/youtube";
@@ -22,6 +23,8 @@ const value = (form: FormData, name: string) => String(form.get(name) ?? "");
 function error(path: string, message: string): never { redirect(`${path}?error=${encodeURIComponent(message)}`); }
 function success(path: string): never { redirect(`${path}?saved=1`); }
 function validId(id: string) { return z.uuid().safeParse(id).success; }
+/** Courier details can be corrected while the parcel is with the courier or delivered. */
+const COURIER_EDITABLE = ["dispatched", "shipped", "delivered"] as const;
 function isForeignKeyViolation(cause: unknown): boolean {
   for (let current = cause, depth = 0; current && typeof current === "object" && depth < 5; depth++) {
     if ("code" in current && current.code === "23503") return true;
@@ -190,28 +193,71 @@ export async function changeOrderStatus(form: FormData) {
     if (returnTo && returnTo.length <= 600) query.set("returnTo", returnTo);
     return `/admin/orders/${id}?${query}`;
   };
+  // Validate everything the form carries before touching the database.
+  let cancellation: Cancellation | null = null;
+  if (target === "cancelled") {
+    if (value(form, "confirm") !== "yes") redirect(resultUrl("error", "Confirm cancellation first."));
+    const parsed = validateCancellation({ reason: value(form, "reason"), note: value(form, "note") });
+    if (!parsed.ok) redirect(resultUrl("error", parsed.error));
+    cancellation = parsed.data;
+  }
+  let courier: CourierDetails = { courierName: null, trackingNumber: null };
+  if (target === "dispatched") {
+    const parsed = validateCourier({ courierName: value(form, "courierName"), trackingNumber: value(form, "trackingNumber") });
+    if (!parsed.ok) redirect(resultUrl("error", parsed.error));
+    courier = parsed.data;
+  }
   const [order] = await db.select({ status: orders.status }).from(orders).where(eq(orders.id, id)).limit(1);
   if (!order || !canTransition(order.status, target)) redirect(resultUrl("error", "This status change is no longer available."));
-  if (target === "cancelled" && value(form, "confirm") !== "yes") redirect(resultUrl("error", "Confirm cancellation first."));
-  // One SQL statement makes the status transition, audit event and optional
-  // restock atomic. The previous status guards against concurrent changes.
+  const restocks = restocksOnTransition(order.status, target);
+  const eventNote = cancellation?.note ?? (([courier.courierName, courier.trackingNumber].filter(Boolean).join(" · ")) || null);
+  // One SQL statement makes the status transition, cancel reason or courier
+  // details, the audit event and the optional restock atomic. The previous
+  // status guards against concurrent changes.
   const result = await db.execute(sql`
     WITH changed AS (
-      UPDATE orders SET status = ${target}::order_status, updated_at = now()
+      UPDATE orders SET
+        status = ${target}::order_status,
+        cancel_reason = ${cancellation?.reason ?? null},
+        cancel_note = ${cancellation?.note ?? null},
+        courier_name = coalesce(${courier.courierName}::text, courier_name),
+        tracking_number = coalesce(${courier.trackingNumber}::text, tracking_number),
+        updated_at = now()
       WHERE id = ${id}::uuid AND status = ${order.status}::order_status RETURNING id
     ), restored AS (
       UPDATE products p SET stock = p.stock + item.quantity, updated_at = now()
       FROM (SELECT oi.product_id, sum(oi.quantity)::integer AS quantity FROM order_items oi JOIN changed c ON c.id = oi.order_id WHERE oi.product_id IS NOT NULL GROUP BY oi.product_id) item
-      WHERE p.id = item.product_id AND ${restocksOnTransition(order.status, target)} RETURNING p.id
+      WHERE p.id = item.product_id AND ${restocks} RETURNING p.id
     ), event AS (
-      INSERT INTO order_events (order_id, from_status, to_status, actor)
-      SELECT id, ${order.status}::order_status, ${target}::order_status, ${admin.email} FROM changed RETURNING id
+      INSERT INTO order_events (order_id, from_status, to_status, actor, reason, note)
+      SELECT id, ${order.status}::order_status, ${target}::order_status, ${admin.email}, ${cancellation?.reason ?? null}, ${eventNote} FROM changed RETURNING id
     ) SELECT count(*)::integer AS changed FROM changed
   `);
   if (!Number(result.rows[0]?.changed)) redirect(resultUrl("error", "The order changed elsewhere. Refresh and try again."));
-  if (restocksOnTransition(order.status, target)) updateTag(CACHE_TAGS.catalog);
+  if (restocks) updateTag(CACHE_TAGS.catalog);
   revalidatePath("/admin/orders");
+  revalidatePath("/admin");
   redirect(resultUrl("saved", "1"));
+}
+
+/** Corrects the courier name or tracking number after dispatch (typos happen). */
+export async function saveCourierDetails(form: FormData) {
+  await requireAdmin();
+  const id = value(form, "id");
+  if (!validId(id)) error("/admin/orders", "Invalid order.");
+  const path = `/admin/orders/${id}`;
+  const parsed = validateCourier({ courierName: value(form, "courierName"), trackingNumber: value(form, "trackingNumber") });
+  if (!parsed.ok) error(path, parsed.error);
+  let updated: { id: string }[];
+  try {
+    updated = await db.update(orders)
+      .set({ courierName: parsed.data.courierName, trackingNumber: parsed.data.trackingNumber })
+      .where(and(eq(orders.id, id), inArray(orders.status, [...COURIER_EDITABLE])))
+      .returning({ id: orders.id });
+  } catch (cause) { console.error("Courier details save failed", cause); error(path, "Could not save the courier details. Please try again."); }
+  if (!updated.length) error(path, "Courier details can only be changed while the order is with the courier.");
+  revalidatePath(path);
+  redirect(`${path}?courier=1`);
 }
 
 export async function uploadMedia(form: FormData) {

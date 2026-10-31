@@ -1,4 +1,3 @@
-import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
@@ -55,13 +54,13 @@ export function BlogListCard({ post, cover, authorPhoto }: BlogListCardProps) {
             )}
             By: {post.author}
           </p>
-          <StarLink
+          <Link
             href={`/blog/${post.slug}`}
             className="flex min-h-11 items-center gap-2 font-display text-meta font-semibold text-strong transition-colors duration-200 hover:text-primary-ink"
           >
             <ArrowRight className="size-4" aria-hidden="true" />
             Read more<span className="sr-only">: {post.title}</span>
-          </StarLink>
+          </Link>
         </div>
       </div>
     </article>

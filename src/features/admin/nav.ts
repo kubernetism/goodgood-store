@@ -14,6 +14,7 @@ export type AdminNavIcon =
   | "blog"
   | "quote"
   | "images"
+  | "subscribers"
   | "settings";
 
 export type AdminNavItem = { href: string; label: string; icon: AdminNavIcon; badge?: "pending" | "unread" };
@@ -42,6 +43,7 @@ export const adminNavGroups: ReadonlyArray<AdminNavGroup> = [
       { href: "/admin/content", label: "Site content", icon: "content" },
       { href: "/admin/blog", label: "Blog", icon: "blog" },
       { href: "/admin/testimonials", label: "Testimonials", icon: "quote" },
+      { href: "/admin/subscribers", label: "Subscribers", icon: "subscribers" },
       { href: "/admin/media", label: "Media", icon: "images" },
     ],
   },

@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import Form from "next/form";
 import { ChevronDown } from "lucide-react";
 import { sortOptions, type SortKey } from "../shop-query";
@@ -41,9 +40,9 @@ export function SortSelect({ value, preserved }: SortSelectProps) {
         />
       </div>
       <noscript>
-        <StarButton type="submit" className="h-10 rounded-full bg-primary px-4 text-meta font-semibold text-strong">
+        <button type="submit" className="h-10 rounded-full bg-primary px-4 text-meta font-semibold text-strong">
           Apply
-        </StarButton>
+        </button>
       </noscript>
     </Form>
   );

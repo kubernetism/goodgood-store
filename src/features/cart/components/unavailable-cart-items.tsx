@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { cartActions } from "../cart-store";
 import type { CartLine } from "../pricing";
 
@@ -8,7 +7,7 @@ export function UnavailableCartItems({ lines }: { lines: ReadonlyArray<CartLine>
   if (lines.length === 0) return null;
 
   return (
-    <section aria-labelledby="unavailable-items-heading" className="rounded-md border border-border bg-ivory p-5 sm:p-6">
+    <section aria-labelledby="unavailable-items-heading" className="rounded-md border border-primary bg-primary-tint p-5 sm:p-6">
       <h2 id="unavailable-items-heading" className="font-subtitle text-base font-bold text-strong">
         Some items are no longer available
       </h2>
@@ -18,13 +17,13 @@ export function UnavailableCartItems({ lines }: { lines: ReadonlyArray<CartLine>
           <li key={line.slug}>{line.slug.replace(/[-_]+/g, " ")} <span className="text-muted">(quantity: {line.quantity})</span></li>
         ))}
       </ul>
-      <StarButton
+      <button
         type="button"
         onClick={() => cartActions.removeMany(lines.map((line) => line.slug))}
-        className="mt-4 text-sm font-semibold text-primary-ink underline underline-offset-2 hover:no-underline"
+        className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-ink underline underline-offset-2 hover:no-underline"
       >
         Remove unavailable items
-      </StarButton>
+      </button>
     </section>
   );
 }

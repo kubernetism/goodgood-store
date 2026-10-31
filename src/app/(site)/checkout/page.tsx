@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/layout/page-hero";
-import { Container } from "@/components/ui/container";
+import { waLink } from "@/features/admin/contact-links";
+import { getOrderWhatsappNumber } from "@/features/admin/whatsapp-settings-data";
 import { CheckoutForm } from "@/features/checkout/checkout-form";
+import type { CheckoutHelp } from "@/features/checkout/checkout-summary";
 import { getCartCatalog } from "@/features/products/catalog";
 import { getCatalog } from "@/features/products/catalog-data";
-import { getOrderWhatsappNumber } from "@/features/admin/whatsapp-settings-data";
+import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -12,18 +13,21 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+/** WhatsApp when the shop has set an order number, otherwise the main shop phone. */
+function checkoutHelp(whatsappNumber: string | null): CheckoutHelp {
+  const whatsapp = whatsappNumber ? waLink(whatsappNumber, "Hi, I need help with my honey order.") : null;
+  if (whatsapp) return { href: whatsapp, label: "WhatsApp us", external: true };
+  const { phoneHref, phoneDisplay } = siteConfig.contact.primary;
+  return { href: phoneHref, label: `Call ${phoneDisplay}`, external: false };
+}
+
 export default async function CheckoutPage() {
   const [catalog, whatsappNumber] = await Promise.all([getCatalog(), getOrderWhatsappNumber().catch(() => null)]);
   return (
-    <>
-      <PageHero
-        title="Checkout"
-        eyebrow="Almost there"
-        crumbs={[{ label: "Cart", href: "/cart" }, { label: "Checkout" }]}
-      />
-      <Container className="py-16 lg:py-24">
-        <CheckoutForm catalog={getCartCatalog(catalog)} whatsappEnabled={Boolean(whatsappNumber)} />
-      </Container>
-    </>
+    <CheckoutForm
+      catalog={getCartCatalog(catalog)}
+      whatsappEnabled={Boolean(whatsappNumber)}
+      help={checkoutHelp(whatsappNumber)}
+    />
   );
 }

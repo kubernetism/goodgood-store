@@ -1,4 +1,3 @@
-import { StarButton } from "@/components/ui/star-controls";
 import Form from "next/form";
 import Link from "next/link";
 import { Calendar, Search, User } from "lucide-react";
@@ -59,13 +58,13 @@ export async function BlogSidebar({ query = emptyQuery, activeCategory }: BlogSi
             placeholder="Search your keyword"
             className="h-11 min-w-0 flex-1 rounded-l-sm border border-r-0 border-border-strong bg-tile px-3 text-sm text-strong placeholder:text-muted"
           />
-          <StarButton
+          <button
             type="submit"
             className="flex size-11 shrink-0 items-center justify-center rounded-r-sm bg-primary text-strong transition-colors duration-200 hover:bg-primary-hover"
           >
             <Search className="size-5" aria-hidden="true" />
             <span className="sr-only">Search</span>
-          </StarButton>
+          </button>
         </Form>
       </SidebarPanel>
 

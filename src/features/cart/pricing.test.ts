@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   FREE_SHIPPING_THRESHOLD,
   findStockIssues,
+  freeShippingProgress,
   MAX_LINE_QUANTITY,
   SHIPPING_FEE,
   parseCartLines,
@@ -129,5 +130,19 @@ describe("findStockIssues", () => {
       { slug: "sidr", name: "Sidr Honey", requested: 1, available: 0 },
       { slug: "ghost", name: "ghost", requested: 2, available: 0 },
     ]);
+  });
+});
+
+describe("freeShippingProgress", () => {
+  it("reports the amount left and a floored percentage below the threshold", () => {
+    expect(freeShippingProgress(375_000)).toEqual({ remaining: 125_000, percent: 75, qualified: false });
+    expect(freeShippingProgress(499_999)).toMatchObject({ remaining: 1, percent: 99, qualified: false });
+  });
+  it("qualifies at exactly the threshold and caps the meter at 100", () => {
+    expect(freeShippingProgress(FREE_SHIPPING_THRESHOLD)).toEqual({ remaining: 0, percent: 100, qualified: true });
+    expect(freeShippingProgress(FREE_SHIPPING_THRESHOLD * 3)).toEqual({ remaining: 0, percent: 100, qualified: true });
+  });
+  it("treats an empty cart as not qualified", () => {
+    expect(freeShippingProgress(0)).toEqual({ remaining: FREE_SHIPPING_THRESHOLD, percent: 0, qualified: false });
   });
 });

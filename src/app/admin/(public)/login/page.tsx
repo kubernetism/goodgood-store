@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { login } from "@/features/admin/auth-actions";
 import { PasswordField } from "@/features/admin/password-field";
-import { BrandMark } from "@/features/admin/shell";
+import { BrandLogo } from "@/features/admin/shell";
 import { SubmitButton } from "@/features/admin/submit-button";
 import { Notice } from "@/features/admin/ui";
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Sign in" };
 function LoginShell({ children }: { children: React.ReactNode }) {
   return <main id="main" className="admin-login">
     <div className="admin-login-comb">
-      <div className="admin-login-wordmark"><BrandMark /><p className="admin-login-wordmark-text">Honey by Abdul Sami</p></div>
+      <div className="admin-login-wordmark"><BrandLogo className="admin-brand-logo admin-login-logo" sizes="(min-width: 1024px) 128px, 56px" /><p className="admin-login-wordmark-text">Honey by Abdul Sami</p></div>
     </div>
     <div className="admin-login-pane">{children}</div>
   </main>;

@@ -644,6 +644,14 @@
   --pill-bg: var(--ad-confirmed-bg);
   --pill-fg: var(--ad-confirmed-fg);
 }
+.admin-pill[data-tone="packed"] {
+  --pill-bg: var(--ad-packed-bg);
+  --pill-fg: var(--ad-packed-fg);
+}
+.admin-pill[data-tone="dispatched"] {
+  --pill-bg: var(--ad-dispatched-bg);
+  --pill-fg: var(--ad-dispatched-fg);
+}
 .admin-pill[data-tone="shipped"] {
   --pill-bg: var(--ad-shipped-bg);
   --pill-fg: var(--ad-shipped-fg);
@@ -1073,6 +1081,7 @@
 }
 .admin-status-tabs ul {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--ad-space-2);
   margin: 0;
   padding: 2px;
@@ -1110,6 +1119,8 @@
 }
 .admin-status-tab[data-tone="pending"] { --pill-bg: var(--ad-pending-bg); --pill-fg: var(--ad-pending-fg); }
 .admin-status-tab[data-tone="confirmed"] { --pill-bg: var(--ad-confirmed-bg); --pill-fg: var(--ad-confirmed-fg); }
+.admin-status-tab[data-tone="packed"] { --pill-bg: var(--ad-packed-bg); --pill-fg: var(--ad-packed-fg); }
+.admin-status-tab[data-tone="dispatched"] { --pill-bg: var(--ad-dispatched-bg); --pill-fg: var(--ad-dispatched-fg); }
 .admin-status-tab[data-tone="shipped"] { --pill-bg: var(--ad-shipped-bg); --pill-fg: var(--ad-shipped-fg); }
 .admin-status-tab[data-tone="delivered"] { --pill-bg: var(--ad-delivered-bg); --pill-fg: var(--ad-delivered-fg); }
 .admin-status-tab[data-tone="cancelled"] { --pill-bg: var(--ad-cancelled-bg); --pill-fg: var(--ad-cancelled-fg); }
@@ -1141,6 +1152,7 @@
     mask-image: linear-gradient(to right, transparent 0, black var(--ad-space-4), black calc(100% - 24px), transparent 100%);
   }
   .admin-status-tabs ul {
+    flex-wrap: nowrap;
     width: max-content;
     padding-inline: var(--ad-space-4);
   }

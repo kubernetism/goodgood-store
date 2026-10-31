@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { bannerScheduleStatus, canCancel, forwardStatus, hexLevel, orderStatusTabs, statusActionLabel, stockLevel } from "./status-display";
+import { bannerScheduleStatus, canCancel, forwardStatus, hasShippingSlip, hexLevel, orderStatusTabs, statusActionLabel, stockLevel } from "./status-display";
 
 describe("hexLevel", () => {
-  it("fills the cell as an order moves forward and strikes cancelled", () => {
+  it("fills the cell a fifth per stage and strikes cancelled", () => {
     expect(hexLevel("pending")).toEqual({ level: 0, struck: false });
     expect(hexLevel("confirmed")).toEqual({ level: 1, struck: false });
-    expect(hexLevel("shipped")).toEqual({ level: 2, struck: false });
-    expect(hexLevel("delivered")).toEqual({ level: 3, struck: false });
+    expect(hexLevel("packed")).toEqual({ level: 2, struck: false });
+    expect(hexLevel("dispatched")).toEqual({ level: 3, struck: false });
+    expect(hexLevel("shipped")).toEqual({ level: 4, struck: false });
+    expect(hexLevel("delivered")).toEqual({ level: 5, struck: false });
     expect(hexLevel("cancelled")).toEqual({ level: 0, struck: true });
   });
 });
@@ -14,7 +16,9 @@ describe("hexLevel", () => {
 describe("order status buttons", () => {
   it("offers exactly one forward step per open status", () => {
     expect(forwardStatus("pending")).toBe("confirmed");
-    expect(forwardStatus("confirmed")).toBe("shipped");
+    expect(forwardStatus("confirmed")).toBe("packed");
+    expect(forwardStatus("packed")).toBe("dispatched");
+    expect(forwardStatus("dispatched")).toBe("shipped");
     expect(forwardStatus("shipped")).toBe("delivered");
   });
   it("offers nothing for finished orders", () => {
@@ -22,17 +26,24 @@ describe("order status buttons", () => {
     expect(forwardStatus("cancelled")).toBeNull();
   });
   it("keeps cancel separate and only for open orders", () => {
-    expect(["pending", "confirmed", "shipped"].map((status) => canCancel(status as "pending"))).toEqual([true, true, true]);
+    expect((["pending", "confirmed", "packed", "dispatched", "shipped"] as const).map(canCancel)).toEqual([true, true, true, true, true]);
     expect(canCancel("delivered")).toBe(false);
     expect(canCancel("cancelled")).toBe(false);
   });
   it("labels buttons with verbs", () => {
     expect(statusActionLabel("confirmed")).toBe("Mark as confirmed");
-    expect(statusActionLabel("shipped")).toBe("Mark as shipped");
+    expect(statusActionLabel("packed")).toBe("Mark as packed");
+    expect(statusActionLabel("dispatched")).toBe("Mark as dispatched");
     expect(statusActionLabel("delivered")).toBe("Mark as delivered");
   });
   it("orders tabs by lifecycle with cancelled last", () => {
-    expect(orderStatusTabs).toEqual(["pending", "confirmed", "shipped", "delivered", "cancelled"]);
+    expect(orderStatusTabs).toEqual(["pending", "confirmed", "packed", "dispatched", "shipped", "delivered", "cancelled"]);
+  });
+  it("has a shipping slip from confirmation on", () => {
+    expect(hasShippingSlip("pending")).toBe(false);
+    expect(hasShippingSlip("packed")).toBe(true);
+    expect(hasShippingSlip("delivered")).toBe(true);
+    expect(hasShippingSlip("cancelled")).toBe(false);
   });
 });
 

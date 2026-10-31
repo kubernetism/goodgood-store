@@ -1,4 +1,3 @@
-import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import { MediaImage } from "@/components/ui/media-image";
@@ -49,13 +48,13 @@ export function ProductListItem({ product }: { product: Product }) {
         <p className="line-clamp-2 text-body">{product.summary}</p>
         <div className="mt-3 flex gap-3">
           {!isSoldOut && <AddToCartButton slug={product.slug} productName={product.name} />}
-          <StarLink
+          <Link
             href={href}
             className="flex size-11 items-center justify-center rounded-full bg-surface text-strong shadow-card transition-colors duration-200 hover:bg-primary"
           >
             <Eye className="size-5" aria-hidden="true" />
             <span className="sr-only">View {product.name} details</span>
-          </StarLink>
+          </Link>
         </div>
       </div>
     </article>

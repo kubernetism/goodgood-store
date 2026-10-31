@@ -1,4 +1,4 @@
-import { StarLink } from "@/components/ui/star-controls";
+import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cx } from "@/lib/cx";
 
@@ -24,10 +24,10 @@ export function Pagination({ page, pageCount, hrefFor, label = "Pagination", cla
       <ul className="flex flex-wrap items-center justify-center gap-2">
         <li>
           {page > 1 ? (
-            <StarLink href={hrefFor(page - 1)} className={cx(square, "border-border text-strong hover:bg-primary")}>
+            <Link href={hrefFor(page - 1)} className={cx(square, "border-border text-strong hover:bg-primary")}>
               <ArrowLeft className="size-4" aria-hidden="true" />
               <span className="sr-only">Previous page</span>
-            </StarLink>
+            </Link>
           ) : (
             <span aria-hidden="true" className={cx(square, "border-border text-muted opacity-50")}>
               <ArrowLeft className="size-4" />
@@ -36,7 +36,7 @@ export function Pagination({ page, pageCount, hrefFor, label = "Pagination", cla
         </li>
         {pages.map((number) => (
           <li key={number}>
-            <StarLink
+            <Link
               href={hrefFor(number)}
               aria-current={number === page ? "page" : undefined}
               className={cx(
@@ -48,15 +48,15 @@ export function Pagination({ page, pageCount, hrefFor, label = "Pagination", cla
             >
               <span className="sr-only">Page </span>
               {number}
-            </StarLink>
+            </Link>
           </li>
         ))}
         <li>
           {page < pageCount ? (
-            <StarLink href={hrefFor(page + 1)} className={cx(square, "border-border text-strong hover:bg-primary")}>
+            <Link href={hrefFor(page + 1)} className={cx(square, "border-border text-strong hover:bg-primary")}>
               <ArrowRight className="size-4" aria-hidden="true" />
               <span className="sr-only">Next page</span>
-            </StarLink>
+            </Link>
           ) : (
             <span aria-hidden="true" className={cx(square, "border-border text-muted opacity-50")}>
               <ArrowRight className="size-4" />

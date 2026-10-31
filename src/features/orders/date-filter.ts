@@ -17,7 +17,7 @@ export type OrderDateFilter = {
 };
 
 /**
- * Open orders (pending, confirmed, shipped) default to all dates so older
+ * Open orders (pending through shipped) default to all dates so older
  * work is never hidden; finished orders (delivered, cancelled) default to today.
  */
 export function defaultOrderDateMode(status: OrderStatus): "today" | "all" {

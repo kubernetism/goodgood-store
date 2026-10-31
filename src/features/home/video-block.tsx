@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { Play, X } from "lucide-react";
@@ -42,7 +41,7 @@ export function VideoBlock({ poster, video, title }: VideoBlockProps) {
         ) : (
           <ImagePlaceholder icon={BeeIcon} iconSize="xl" tone="honey" aspect={posterAspect} />
         )}
-        <StarButton
+        <button
           type="button"
           aria-haspopup="dialog"
           onClick={() => {
@@ -55,7 +54,7 @@ export function VideoBlock({ poster, video, title }: VideoBlockProps) {
             <Play className="ml-1 size-6" fill="currentColor" aria-hidden="true" />
           </span>
           <span className="sr-only">Play video: {title}</span>
-        </StarButton>
+        </button>
       </div>
 
       <dialog
@@ -83,14 +82,14 @@ export function VideoBlock({ poster, video, title }: VideoBlockProps) {
           ) : (
             <ImagePlaceholder icon={BeeIcon} iconSize="xl" tone="dark" aspect="aspect-video" caption="Video coming soon" />
           )}
-          <StarButton
+          <button
             type="button"
             onClick={close}
             className="absolute top-3 right-3 flex size-11 items-center justify-center rounded-full bg-surface text-strong"
           >
             <X className="size-5" aria-hidden="true" />
             <span className="sr-only">Close video</span>
-          </StarButton>
+          </button>
         </div>
       </dialog>
     </>

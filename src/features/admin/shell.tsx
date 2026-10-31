@@ -1,12 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import {
-  House, Images, LogOut, Mail, Megaphone, Menu, NotebookPen, Package, PanelsTopLeft, Quote, ReceiptText, Settings, Store, Tags,
+  House, Images, LogOut, Mail, MailPlus, Megaphone, Menu, NotebookPen, Package, PanelsTopLeft, Quote, ReceiptText, Settings, Store, Tags,
   type LucideIcon,
 } from "lucide-react";
 import { logout } from "./auth-actions";
 import { adminNavGroups, adminSettingsItem, bottomBarHrefs, type AdminNavIcon, type AdminNavItem } from "./nav";
 import { AdminMoreButton, AdminNavLink } from "./nav-link";
+import brandLogo from "../../../images/logo/abdulSamiEnterprisesLogo.png";
 
 /*
  * Admin chrome (server). Desktop: a grouped sidebar. Below 1024px: a slim top
@@ -16,22 +18,28 @@ import { AdminMoreButton, AdminNavLink } from "./nav-link";
 
 const icons: Record<AdminNavIcon, LucideIcon> = {
   house: House, orders: ReceiptText, mail: Mail, package: Package, tags: Tags, megaphone: Megaphone,
-  content: PanelsTopLeft, blog: NotebookPen, quote: Quote, images: Images, settings: Settings,
+  content: PanelsTopLeft, blog: NotebookPen, quote: Quote, images: Images, subscribers: MailPlus, settings: Settings,
 };
 
 export type NavBadges = Partial<Record<NonNullable<AdminNavItem["badge"]>, { text: string; ariaLabel: string } | null>>;
 
-/** The honey cell mark (decorative). */
-export function BrandMark({ className = "admin-brand-mark" }: { className?: string }) {
-  return <svg className={className} viewBox="0 0 30 34" aria-hidden="true" focusable="false">
-    <path d="M15 1.5 28 9v16L15 32.5 2 25V9Z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-    <path d="M15 9.5 21.5 13.2v7.6L15 24.5l-6.5-3.7v-7.6Z" fill="currentColor" />
-  </svg>;
+/**
+ * The Abdul Sami Enterprises seal (decorative: the visible wordmark next to it
+ * names the brand). The seal's own gold rim separates it from the dark comb;
+ * the badge adds a hairline honey ring and a soft lift so it never melts into
+ * the sidebar. `sizes` is the rendered CSS width, so next/image serves a 2x
+ * file for crisp edges without shipping the 1278px original.
+ */
+export function BrandLogo({ className = "admin-brand-logo", sizes = "36px" }: { className?: string; sizes?: string }) {
+  // Always above the fold (sidebar, top bar, login), so it loads eagerly.
+  return <span className={className}>
+    <Image src={brandLogo} alt="" sizes={sizes} loading="eager" />
+  </span>;
 }
 
 function Brand() {
   return <Link href="/admin" className="admin-brand">
-    <BrandMark />
+    <BrandLogo />
     <span className="admin-brand-text"><span className="admin-brand-name">Honey by Abdul Sami</span><span className="admin-brand-sub">Admin</span></span>
   </Link>;
 }
@@ -73,8 +81,8 @@ export function AdminSidebar({ email, badges }: { email: string; badges: NavBadg
     <nav aria-label="Admin" className="admin-nav">
       <NavGroups badges={badges} groups={adminNavGroups} stagger />
       <ul className="admin-nav-footer">
-        <li className="admin-nav-item" style={staggerStyle(10)}><NavItemLink item={adminSettingsItem} badges={badges} /></li>
-        <li className="admin-nav-item" style={staggerStyle(11)}><StoreLink className="admin-nav-link" /></li>
+        <li className="admin-nav-item" style={staggerStyle(11)}><NavItemLink item={adminSettingsItem} badges={badges} /></li>
+        <li className="admin-nav-item" style={staggerStyle(12)}><StoreLink className="admin-nav-link" /></li>
       </ul>
     </nav>
     <Account email={email} />

@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "@/lib/cx";
 
@@ -47,7 +46,7 @@ export function ProductTabs({ tabs, label }: { tabs: ReadonlyArray<Tab>; label: 
         {tabs.map((tab, index) => {
           const isActive = index === activeIndex;
           return (
-            <StarButton
+            <button
               key={tab.id}
               ref={(node) => {
                 tabRefs.current[index] = node;
@@ -67,7 +66,7 @@ export function ProductTabs({ tabs, label }: { tabs: ReadonlyArray<Tab>; label: 
               )}
             >
               {tab.label}
-            </StarButton>
+            </button>
           );
         })}
       </div>

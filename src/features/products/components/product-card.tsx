@@ -1,4 +1,3 @@
-import { StarLink } from "@/components/ui/star-controls";
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import { MediaImage } from "@/components/ui/media-image";
@@ -44,14 +43,14 @@ export function ProductCard({ product, headingLevel: Heading = "h3", imageSizes 
         )}
         <div className="absolute inset-x-0 bottom-4 flex justify-center gap-3 transition duration-200 pointer-fine:translate-y-2 pointer-fine:opacity-0 pointer-fine:group-focus-within:translate-y-0 pointer-fine:group-focus-within:opacity-100 pointer-fine:group-hover:translate-y-0 pointer-fine:group-hover:opacity-100">
           {!isSoldOut && <AddToCartButton slug={product.slug} productName={product.name} />}
-          <StarLink
+          <Link
             href={href}
             tabIndex={-1}
             aria-hidden="true"
             className="relative z-10 flex size-11 items-center justify-center rounded-full bg-surface text-strong shadow-card transition-colors duration-200 hover:bg-primary"
           >
             <Eye className="size-5" />
-          </StarLink>
+          </Link>
         </div>
       </div>
       <div className="flex flex-1 flex-col gap-1 px-4 pt-4 pb-5">

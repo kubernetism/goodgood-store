@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
@@ -72,7 +71,7 @@ export function ProductGallery({ productName, category, images, discount, isSold
               const name = image ? `image ${index + 1}` : placeholderViews[index]?.toLowerCase();
               return (
                 <li key={image?.url ?? placeholderViews[index]}>
-                  <StarButton
+                  <button
                     type="button"
                     onClick={() => setActive(index)}
                     aria-pressed={index === current}
@@ -83,29 +82,29 @@ export function ProductGallery({ productName, category, images, discount, isSold
                   >
                     <MediaImage image={image} alt="" sizes="90px" icon={Icon} iconSize="sm" texture={false} />
                     <span className="sr-only">Show {name}</span>
-                  </StarButton>
+                  </button>
                 </li>
               );
             })}
           </ul>
 
           <div className="mt-3 flex gap-2">
-            <StarButton
+            <button
               type="button"
               onClick={() => step(-1)}
               className="flex size-11 items-center justify-center rounded-full border border-border-strong text-strong transition-colors duration-200 hover:bg-primary"
             >
               <ArrowLeft className="size-4" aria-hidden="true" />
               <span className="sr-only">Previous image</span>
-            </StarButton>
-            <StarButton
+            </button>
+            <button
               type="button"
               onClick={() => step(1)}
               className="flex size-11 items-center justify-center rounded-full border border-border-strong text-strong transition-colors duration-200 hover:bg-primary"
             >
               <ArrowRight className="size-4" aria-hidden="true" />
               <span className="sr-only">Next image</span>
-            </StarButton>
+            </button>
           </div>
         </>
       )}

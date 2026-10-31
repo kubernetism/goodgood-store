@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { Truck } from "lucide-react";
 import navbarBackground from "../../../images/middle_of_website_images/navbar_background_image.png";
 import { Logo } from "@/components/ui/logo";
 import { Container } from "@/components/ui/container";
@@ -47,6 +49,14 @@ export async function SiteHeader({ className, overHomeHero = false, overPageHero
 
         <div className="on-light ml-auto flex items-center gap-2 sm:gap-3 lg:ml-0">
           <HeaderSearch />
+          <Link
+            href="/track-order"
+            aria-label="Track your order"
+            title="Track your order"
+            className="flex size-11 items-center justify-center rounded-full bg-surface text-strong shadow-card transition-colors duration-200 hover:text-primary-ink"
+          >
+            <Truck className="size-5" aria-hidden="true" />
+          </Link>
           <CartLink availableSlugs={catalog.products.map((product) => product.slug)} />
           <MobileNav items={navigation} />
         </div>

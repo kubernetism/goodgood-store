@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Calendar, Tag, User } from "lucide-react";
 import { HoneyDipperIcon } from "@/components/icons/honey-icons";
 import { MediaImage } from "@/components/ui/media-image";
-import { StarLink } from "@/components/ui/star-controls";
 import type { ImageAsset } from "@/features/products/types";
 import { formatDate } from "@/lib/format";
 import type { BlogPost } from "../data";
@@ -48,9 +47,9 @@ export function BlogCard({ post, cover }: { post: BlogPost; cover: ImageAsset | 
             <Calendar className="size-3.5 text-primary-ink" aria-hidden="true" />
             <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>
           </p>
-          <StarLink href={`/blog/${post.slug}`} className="relative z-10 font-display text-meta font-semibold text-primary-ink uppercase">
+          <Link href={`/blog/${post.slug}`} className="relative z-10 font-display text-meta font-semibold text-primary-ink uppercase">
             Read more<span className="sr-only">: {post.title}</span>
-          </StarLink>
+          </Link>
         </div>
       </div>
     </article>

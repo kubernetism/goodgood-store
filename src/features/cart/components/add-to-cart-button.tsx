@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useRef, useState } from "react";
 import { Check, ShoppingCart } from "lucide-react";
 import { cartActions } from "@/features/cart/cart-store";
@@ -32,7 +31,7 @@ export function AddToCartButton({ slug, productName, quantity = 1, variant = "ic
 
   return (
     <>
-      <StarButton
+      <button
         type="button"
         onClick={addToCart}
         className={cx(
@@ -49,7 +48,7 @@ export function AddToCartButton({ slug, productName, quantity = 1, variant = "ic
         ) : (
           <span className="sr-only">Add {productName} to cart</span>
         )}
-      </StarButton>
+      </button>
       <span role="status" className="sr-only">
         {justAdded ? `${productName} added to cart` : ""}
       </span>

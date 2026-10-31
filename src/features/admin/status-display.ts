@@ -3,10 +3,12 @@ import { nextStatuses } from "@/features/orders/status";
 
 /*
  * Presentation helpers for statuses (pure, unit tested). The hexagon "filling
- * cell" fills as an order moves forward; cancelled is an empty, struck cell.
+ * cell" fills in fifths as an order moves through its six stages (empty when
+ * pending, full when delivered); cancelled is an empty, struck cell.
  */
 
-export type HexLevel = 0 | 1 | 2 | 3;
+export type HexLevel = 0 | 1 | 2 | 3 | 4 | 5;
+export const HEX_LEVELS = 5;
 export type PillTone =
   | OrderStatus
   | "neutral"
@@ -22,10 +24,14 @@ export function hexLevel(status: OrderStatus): { level: HexLevel; struck: boolea
       return { level: 0, struck: false };
     case "confirmed":
       return { level: 1, struck: false };
-    case "shipped":
+    case "packed":
       return { level: 2, struck: false };
-    case "delivered":
+    case "dispatched":
       return { level: 3, struck: false };
+    case "shipped":
+      return { level: 4, struck: false };
+    case "delivered":
+      return { level: 5, struck: false };
     case "cancelled":
       return { level: 0, struck: true };
     default: {
@@ -36,7 +42,18 @@ export function hexLevel(status: OrderStatus): { level: HexLevel; struck: boolea
 }
 
 /** Lifecycle order for status tabs and the progress strip (cancelled last). */
-export const orderStatusTabs = ["pending", "confirmed", "shipped", "delivered", "cancelled"] as const satisfies ReadonlyArray<OrderStatus>;
+/** Compact stage names for the dashboard pipeline (the aria-label uses the full description). */
+export const orderStageShortLabels: Record<OrderStatus, string> = {
+  pending: "Pending",
+  confirmed: "Confirmed",
+  packed: "Packed",
+  dispatched: "With courier",
+  shipped: "In transit",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};
+
+export const orderStatusTabs = ["pending", "confirmed", "packed", "dispatched", "shipped", "delivered", "cancelled"] as const satisfies ReadonlyArray<OrderStatus>;
 
 /** The one forward step offered as the primary button, or null when the order is final. */
 export function forwardStatus(status: OrderStatus): OrderStatus | null {
@@ -50,6 +67,8 @@ export function canCancel(status: OrderStatus): boolean {
 const actionLabels: Record<OrderStatus, string> = {
   pending: "Mark as pending",
   confirmed: "Mark as confirmed",
+  packed: "Mark as packed",
+  dispatched: "Mark as dispatched",
   shipped: "Mark as shipped",
   delivered: "Mark as delivered",
   cancelled: "Cancel order",
@@ -58,6 +77,11 @@ const actionLabels: Record<OrderStatus, string> = {
 /** Verb label for the button that moves an order to `target`. */
 export function statusActionLabel(target: OrderStatus): string {
   return actionLabels[target];
+}
+
+/** From confirmation on, the order has a printable shipping slip. */
+export function hasShippingSlip(status: OrderStatus): boolean {
+  return status !== "pending" && status !== "cancelled";
 }
 
 export type BannerScheduleStatus = "live" | "scheduled" | "ended" | "off";

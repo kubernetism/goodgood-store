@@ -179,7 +179,7 @@ export default async function AboutPage() {
             Harvest news, limited releases and honey recipes, about once a month.
           </p>
           <div className="mx-auto mt-8 max-w-xl text-left">
-            <NewsletterForm variant="wide" tone="dark" />
+            <NewsletterForm variant="wide" tone="dark" source="about" />
           </div>
         </Container>
       </section>

@@ -79,6 +79,25 @@ export function shippingFor(subtotal: number): number {
   return subtotal === 0 || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
 }
 
+export type FreeShippingProgress = {
+  /** Paisa still needed for free delivery (0 once qualified). */
+  remaining: number;
+  /** 0..100, whole numbers, for the progress meter. */
+  percent: number;
+  qualified: boolean;
+};
+
+/** How far a subtotal is from the free-delivery threshold (drives the checkout nudge). */
+export function freeShippingProgress(subtotal: number): FreeShippingProgress {
+  const safe = Math.max(0, subtotal);
+  const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - safe);
+  return {
+    remaining,
+    percent: Math.min(100, Math.floor((safe / FREE_SHIPPING_THRESHOLD) * 100)),
+    qualified: safe > 0 && remaining === 0,
+  };
+}
+
 /** Prices lines against the catalogue; lines for unknown products are dropped. */
 export function priceCart<P extends Priceable>(
   lines: ReadonlyArray<CartLine>,

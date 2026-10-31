@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import Form from "next/form";
 import { useState } from "react";
 import { buttonClasses } from "@/components/ui/button";
@@ -81,9 +80,9 @@ export function PriceFilter({ bounds, step, minPrice, maxPrice, preserved }: Pri
         />
       </div>
 
-      <StarButton type="submit" className={buttonClasses({ variant: "dark", size: "sm", className: "w-full" })}>
+      <button type="submit" className={buttonClasses({ variant: "dark", size: "sm", className: "w-full" })}>
         Filter
-      </StarButton>
+      </button>
     </Form>
   );
 }

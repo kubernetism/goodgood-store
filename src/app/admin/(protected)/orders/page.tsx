@@ -13,7 +13,7 @@ import { hexLevel, orderStatusTabs } from "@/features/admin/status-display";
 import { AdminTable, TBody, Td, Th, THead, Tr } from "@/features/admin/table";
 import { AdminHeading, EmptyState, FilterChips, HexGlyph, Pager, pageNumber } from "@/features/admin/ui";
 import { defaultOrderDateMode, parseOrderDateFilter } from "@/features/orders/date-filter";
-import { formatOrderNumber, isOrderStatus, orderStatusLabels, parseOrderNumber } from "@/features/orders/status";
+import { formatOrderNumber, isOrderStatus, openOrderStatuses, orderStatusLabels, parseOrderNumber } from "@/features/orders/status";
 import { shippingAddress, shippingCopyText } from "@/features/orders/shipping-details";
 import { formatPrice } from "@/lib/format";
 import { dateToPktLocal, formatPktDateTime } from "@/lib/pk-time";
@@ -24,7 +24,6 @@ import { requireAdmin } from "@/server/auth/session";
 export const instant = false;
 export const metadata: Metadata = { title: "Orders" };
 
-const OPEN_STATUSES = ["pending", "confirmed", "shipped"] as const;
 
 export default async function OrdersPage({ searchParams }: { searchParams: Promise<RawSearchParams> }) {
   await requireAdmin();
@@ -55,7 +54,7 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
   const todayWhere = today.start && today.end ? and(gte(orders.createdAt, today.start), lt(orders.createdAt, today.end)) : sql`false`;
   const countWhere = explicitDate
     ? and(searchWhere, dateWhere)
-    : and(searchWhere, or(inArray(orders.status, [...OPEN_STATUSES]), todayWhere));
+    : and(searchWhere, or(inArray(orders.status, [...openOrderStatuses]), todayWhere));
   const [rows, counts] = await Promise.all([
     db.select().from(orders).where(and(eq(orders.status, status), searchWhere, dateWhere)).orderBy(desc(orders.createdAt), desc(orders.number)).limit(21).offset((page - 1) * 20),
     db.select({ status: orders.status, total: count() }).from(orders).where(countWhere).groupBy(orders.status),

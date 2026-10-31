@@ -25,6 +25,7 @@ const otherLinkColumns = [
   {
     title: "Customer Care",
     links: [
+      { label: "Track Your Order", href: "/track-order" },
       { label: "Delivery Information", href: "/terms#delivery" },
       { label: "Returns & Refunds", href: "/terms#returns" },
       { label: "Privacy Policy", href: "/privacy" },

@@ -1,10 +1,10 @@
 import { BadgeCheck, MapPin, ShieldCheck } from "lucide-react";
 import { BeeIcon } from "@/components/icons/honey-icons";
 import { HoneycombParallax } from "@/features/home/honeycomb-parallax";
+import { ButtonLink } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { localImages } from "@/content/local-images";
 import { HeroBackground } from "./hero-background";
-import { HeroStarButton } from "./hero-star-button";
 import type { StorefrontBanner } from "@/features/banners/model";
 import type { ImageAsset } from "@/features/products/types";
 
@@ -51,14 +51,14 @@ export function HomeHero({ banner, slotImage }: HomeHeroProps) {
                 )}
                 <div className="mt-8 flex flex-wrap gap-3">
                   {banner.ctaLabel && banner.ctaHref && (
-                    <HeroStarButton href={banner.ctaHref}>
+                    <ButtonLink href={banner.ctaHref}>
                       {banner.ctaLabel}
-                    </HeroStarButton>
+                    </ButtonLink>
                   )}
                   {banner.ctaHref !== "/shop" && (
-                    <HeroStarButton href="/shop" variant="outline">
+                    <ButtonLink href="/shop" variant="outline-dark">
                       Shop all honey
-                    </HeroStarButton>
+                    </ButtonLink>
                   )}
                 </div>
               </>
@@ -72,12 +72,12 @@ export function HomeHero({ banner, slotImage }: HomeHeroProps) {
                   blended, jarred in Pakistan.
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <HeroStarButton href="/shop">
+                  <ButtonLink href="/shop">
                     Shop all honey
-                  </HeroStarButton>
-                  <HeroStarButton href="/shop?category=gift-sets" variant="outline">
+                  </ButtonLink>
+                  <ButtonLink href="/shop?category=gift-sets" variant="outline-dark">
                     Explore gift sets
-                  </HeroStarButton>
+                  </ButtonLink>
                 </div>
               </>
             )}

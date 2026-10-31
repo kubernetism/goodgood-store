@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useId, useState, type ReactNode } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { cx } from "@/lib/cx";
@@ -21,7 +20,7 @@ export function FiltersDisclosure({ label, children, className }: FiltersDisclos
 
   return (
     <div className={className}>
-      <StarButton
+      <button
         type="button"
         aria-expanded={isOpen}
         aria-controls={panelId}
@@ -30,7 +29,7 @@ export function FiltersDisclosure({ label, children, className }: FiltersDisclos
       >
         <SlidersHorizontal className="size-4" aria-hidden="true" />
         {isOpen ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`}
-      </StarButton>
+      </button>
       <div id={panelId} className={cx("mt-6 lg:mt-0 lg:block", isOpen ? "block" : "hidden")}>
         {children}
       </div>

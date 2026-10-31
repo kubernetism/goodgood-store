@@ -26,8 +26,8 @@ export function Tr({ children }: { children: ReactNode }) {
   return <tr role="row">{children}</tr>;
 }
 
-export function Th({ children, num = false }: { children?: ReactNode; num?: boolean }) {
-  return <th scope="col" role="columnheader" className={num ? "num" : undefined}>{children}</th>;
+export function Th({ children, num = false, sort }: { children?: ReactNode; num?: boolean; sort?: "ascending" | "descending" | "none" }) {
+  return <th scope="col" role="columnheader" className={num ? "num" : undefined} aria-sort={sort}>{children}</th>;
 }
 
 /**

@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
@@ -79,7 +78,7 @@ export function ScrollCarousel({
 
       {showArrows && (
         <div className="mt-6 flex justify-center gap-3 2xl:pointer-events-none 2xl:absolute 2xl:inset-x-[-5.5rem] 2xl:top-1/2 2xl:mt-0 2xl:-translate-y-1/2 2xl:justify-between">
-          <StarButton
+          <button
             type="button"
             onClick={() => scrollByPage(-1)}
             disabled={edges.atStart}
@@ -87,8 +86,8 @@ export function ScrollCarousel({
           >
             <ArrowLeft className="size-5" aria-hidden="true" />
             <span className="sr-only">Previous</span>
-          </StarButton>
-          <StarButton
+          </button>
+          <button
             type="button"
             onClick={() => scrollByPage(1)}
             disabled={edges.atEnd}
@@ -96,7 +95,7 @@ export function ScrollCarousel({
           >
             <ArrowRight className="size-5" aria-hidden="true" />
             <span className="sr-only">Next</span>
-          </StarButton>
+          </button>
         </div>
       )}
     </div>

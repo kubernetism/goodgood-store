@@ -4,16 +4,135 @@
  */
 
 /* ── Dashboard ──────────────────────────────────────────────────────── */
-.admin-dash-panels {
+/*
+ * Three regions, in reading order: the range-scoped "Sales and orders"
+ * frame, a compact "Right now" strip (live, all dates) and "Inbox and
+ * audience". The main column is narrower at
+ * 1024 (sidebar open) than at 768, so the grid follows the column's own
+ * width with container queries, not the viewport.
+ */
+.admin-dash {
+  container: dash / inline-size;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--ad-space-4);
+  gap: var(--ad-space-8);
+  min-width: 0;
 }
-@media (min-width: 1024px) {
-  .admin-dash-panels {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.admin-app .admin-dash :is(.admin-now-head, .admin-range-head) h2 {
+  font-size: var(--ad-text-xl);
+  line-height: var(--ad-text-xl-lh);
+}
+.admin-app .admin-dash .admin-panel-head h3 {
+  font-family: var(--ad-font-display);
+  font-size: var(--ad-text-lg);
+  line-height: var(--ad-text-lg-lh);
+  font-weight: 560;
+  font-variation-settings: "SOFT" 50;
+}
+.admin-now-head .admin-hint,
+.admin-range-foot {
+  margin: var(--ad-space-1) 0 0;
+}
+/* Every dashboard stat row: two up on phones, four up on wide columns. */
+.admin-dash .admin-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+/* Cards in a row share label / value / context tracks, so a label that wraps
+   to two lines does not push its figure below its neighbours'. */
+@supports (grid-template-rows: subgrid) {
+  .admin-dash .admin-stat {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+  }
+  .admin-dash .admin-stat-label {
+    align-self: start;
   }
 }
+
+/* Right now: a compact live strip under the ledger. Denser stats, short
+   panels, lists side by side as soon as the column allows. */
+.admin-now {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "head" "stats" "waiting" "low";
+  gap: var(--ad-space-3);
+}
+/* Dashboard panel heads always stack the hint under the title (the shared
+   flex head lets a short hint drift beside it on wide panels). */
+.admin-dash .admin-panel-head {
+  display: grid;
+  justify-content: normal;
+  align-items: start;
+  gap: var(--ad-space-1);
+}
+:is(.admin-now, .admin-dash-more) .admin-stat {
+  gap: 2px;
+  padding: var(--ad-space-3);
+}
+.admin-app :is(.admin-now, .admin-dash-more) .admin-stat-value {
+  font-size: var(--ad-text-xl);
+  line-height: var(--ad-text-xl-lh);
+}
+:is(.admin-now, .admin-dash-more) .admin-stat-arrow {
+  inset-block-start: var(--ad-space-3);
+  inset-inline-end: var(--ad-space-3);
+}
+.admin-now .admin-panel {
+  padding: var(--ad-space-3) var(--ad-space-4);
+}
+.admin-now .admin-panel-head {
+  margin-block-end: var(--ad-space-1);
+}
+.admin-app .admin-dash .admin-now .admin-panel-head h3 {
+  font-size: var(--ad-text-md);
+  line-height: var(--ad-text-md-lh);
+}
+.admin-now .admin-worklist li {
+  min-height: 48px;
+  padding-block: 6px;
+}
+.admin-now .admin-worklist-meta {
+  font-size: var(--ad-text-xs);
+  line-height: var(--ad-text-xs-lh);
+}
+.admin-now .admin-panel-foot {
+  margin-block-start: var(--ad-space-1);
+  padding-block-start: var(--ad-space-2);
+}
+.admin-now .admin-empty {
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+  align-items: center;
+  column-gap: var(--ad-space-3);
+  row-gap: 0;
+  padding: var(--ad-space-2) 0;
+  text-align: start;
+}
+.admin-now .admin-empty-icon {
+  grid-row: span 2;
+  width: 36px;
+  height: 40px;
+  margin: 0;
+}
+.admin-now .admin-empty-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.admin-app .admin-now .admin-empty h3 {
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+  font-weight: 600;
+  font-variation-settings: normal;
+}
+.admin-now .admin-empty p {
+  font-size: var(--ad-text-xs);
+  line-height: var(--ad-text-xs-lh);
+}
+.admin-now-head { grid-area: head; }
+.admin-now-stats { grid-area: stats; }
+.admin-now-waiting { grid-area: waiting; }
+.admin-now-low { grid-area: low; }
+
 .admin-worklist {
   display: grid;
   margin: 0;
@@ -56,16 +175,438 @@
 .admin-worklist-value.out {
   color: var(--ad-danger);
 }
-.admin-dash-quick {
+
+/* Sales and orders: one sunken frame, so it is obvious what the range picker scopes. */
+.admin-range {
+  display: grid;
+  gap: var(--ad-space-4);
+  min-width: 0;
+  padding: var(--ad-space-3);
+  border: 1px solid var(--ad-line);
+  border-radius: var(--ad-radius-lg);
+  background: var(--ad-surface-sunken);
+}
+.admin-range-head {
+  display: grid;
+  gap: var(--ad-space-3);
+  padding: var(--ad-space-1) var(--ad-space-1) 0;
+}
+.admin-range-scope {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: var(--ad-space-1) 0 0;
+  color: var(--ad-ink-2);
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+  font-weight: 500;
+}
+.admin-range-scope svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--ad-honey-edge);
+}
+.admin-range-foot {
+  padding-inline: var(--ad-space-1);
+  max-width: none;
+}
+
+/* Segmented range picker: plain links, the current one filled with ink. */
+.admin-segmented {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--ad-line-strong);
+  border-radius: var(--ad-radius-pill);
+  background: var(--ad-surface);
+}
+.admin-app .admin-segmented a {
+  display: inline-flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--ad-space-3);
+  border-radius: var(--ad-radius-pill);
+  color: var(--ad-ink-2);
+  font-size: var(--ad-text-sm);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.admin-app .admin-segmented a:hover {
+  background: var(--ad-surface-sunken);
+  color: var(--ad-ink);
+}
+.admin-app .admin-segmented a[aria-current="page"] {
+  background: var(--ad-ink);
+  color: var(--ad-surface);
+}
+@media (forced-colors: active) {
+  .admin-app .admin-segmented a[aria-current="page"] {
+    outline: 2px solid Highlight;
+  }
+}
+
+/* KPI band */
+.admin-kpi-success {
+  color: var(--ad-delivered-fg);
+}
+.admin-kpis .admin-stat-context {
+  display: grid;
+  gap: var(--ad-space-1);
+}
+.admin-kpi-meter {
+  display: block;
+  width: 100%;
+  height: 6px;
+  margin-block: var(--ad-space-1) 2px;
+  border-radius: var(--ad-radius-pill);
+}
+
+/* Status mix as one comb strip, each cell in its status colour. */
+.admin-comb-strip {
+  display: block;
+  width: 100%;
+  height: 12px;
+  margin-block: 0 var(--ad-space-4);
+  border-radius: var(--ad-radius-pill);
+  background: var(--ad-surface-sunken);
+}
+.admin-comb-strip rect,
+.admin-kpi-meter rect {
+  stroke: var(--ad-surface);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="pending"] { fill: var(--ad-honey); }
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="confirmed"] { fill: var(--ad-confirmed-fg); }
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="packed"] { fill: var(--ad-packed-fg); }
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="dispatched"] { fill: var(--ad-dispatched-fg); }
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="shipped"] { fill: var(--ad-shipped-fg); }
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="delivered"] { fill: var(--ad-delivered-fg); }
+:is(.admin-comb-strip, .admin-kpi-meter) rect[data-tone="cancelled"] { fill: var(--ad-cancelled-fg); }
+
+/* Order pipeline: six cells whose hexagons fill along one track, then a detached cancelled cell. */
+.admin-pipeline {
+  display: grid;
+  gap: var(--ad-space-2);
+}
+.admin-pipeline-stages {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--ad-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-app .admin-pipe-cell {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "hex count" "label label" "share share";
+  align-items: center;
+  column-gap: var(--ad-space-2);
+  min-height: 88px;
+  height: 100%;
+  padding: var(--ad-space-3);
+  border: 1px solid var(--ad-line);
+  border-radius: var(--ad-radius-md);
+  background: var(--ad-surface);
+  color: var(--ad-ink);
+  text-decoration: none;
+  transition:
+    border-color var(--ad-dur-fast) var(--ad-ease-out),
+    box-shadow var(--ad-dur-fast) var(--ad-ease-out);
+}
+.admin-app .admin-pipe-cell:hover {
+  border-color: var(--ad-line-strong);
+  box-shadow: var(--ad-shadow-1);
+  text-decoration: none;
+}
+.admin-pipe-hex {
+  grid-area: hex;
+  position: relative;
+  z-index: 1;
+  width: 28px;
+  height: 32px;
+}
+.admin-pipe-count {
+  grid-area: count;
+  font-size: var(--ad-text-2xl);
+  line-height: var(--ad-text-2xl-lh);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  text-align: end;
+}
+.admin-pipe-label {
+  grid-area: label;
+  margin-block-start: var(--ad-space-1);
+  color: var(--ad-ink-2);
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+  font-weight: 500;
+}
+.admin-pipe-share {
+  grid-area: share;
+  color: var(--ad-muted);
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.admin-pipe-cell[data-tone="pending"] { background: var(--ad-pending-bg); }
+.admin-pipe-cell[data-tone="confirmed"] { background: var(--ad-confirmed-bg); }
+.admin-pipe-cell[data-tone="packed"] { background: var(--ad-packed-bg); }
+.admin-pipe-cell[data-tone="dispatched"] { background: var(--ad-dispatched-bg); }
+.admin-pipe-cell[data-tone="shipped"] { background: var(--ad-shipped-bg); }
+.admin-pipe-cell[data-tone="delivered"] { background: var(--ad-delivered-bg); }
+.admin-pipe-cell[data-tone="cancelled"] { background: var(--ad-cancelled-bg); }
+.admin-pipe-cell[data-tone="pending"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-pending-fg); }
+.admin-pipe-cell[data-tone="confirmed"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-confirmed-fg); }
+.admin-pipe-cell[data-tone="packed"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-packed-fg); }
+.admin-pipe-cell[data-tone="dispatched"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-dispatched-fg); }
+.admin-pipe-cell[data-tone="shipped"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-shipped-fg); }
+.admin-pipe-cell[data-tone="delivered"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-delivered-fg); }
+.admin-pipe-cell[data-tone="cancelled"] :is(.admin-pipe-hex, .admin-pipe-count) { color: var(--ad-cancelled-fg); }
+/* An empty stage steps back to plain surface so busy stages stand out. */
+.admin-app .admin-pipe-cell[data-empty] {
+  background: var(--ad-surface);
+}
+.admin-app .admin-pipe-cell[data-empty] .admin-pipe-count {
+  color: var(--ad-muted);
+}
+.admin-app .admin-pipe-off {
+  border-style: dashed;
+  border-color: var(--ad-line-strong);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .admin-shell:not([data-booted]) .admin-pipeline-stages .admin-pipe-cell {
+    animation: admin-rise var(--ad-dur-slow) var(--ad-ease-out) both;
+    animation-delay: calc(var(--i, 0) * var(--ad-stagger));
+  }
+}
+
+/* Product sales */
+.admin-top-seller {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--ad-space-4);
+  gap: var(--ad-space-2) var(--ad-space-3);
+  margin: 0 0 var(--ad-space-4);
+  padding: var(--ad-space-3) var(--ad-space-4);
+  border: 1px solid var(--ad-honey-edge);
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-honey-soft);
+  color: var(--ad-ink);
 }
-.admin-dash-quick .admin-stat {
-  flex: 1 1 220px;
-  border-style: dashed;
+.admin-top-seller > span:nth-child(2) {
+  display: grid;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.admin-top-seller-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 40px;
+  background: var(--ad-honey);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.admin-top-seller-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.admin-top-seller-label {
+  color: var(--ad-ink-2);
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.admin-top-seller-figures {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.admin-app .admin-sort-link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--ad-line-strong);
+  text-underline-offset: 3px;
+}
+.admin-app .admin-sort-link[aria-current] {
+  color: var(--ad-ink);
+  text-decoration-color: currentColor;
+}
+.admin-bar-cell {
+  display: inline-grid;
+  justify-items: end;
+  gap: 4px;
+  min-width: 96px;
+}
+.admin-bar {
+  display: block;
+  width: 96px;
+  height: 4px;
+  border-radius: var(--ad-radius-pill);
+}
+.admin-bar rect[data-tone="units"] { fill: var(--ad-honey-edge); }
+.admin-bar rect[data-tone="revenue"] { fill: var(--ad-ink-2); }
+.admin-bar rect[data-tone="rest"] { fill: var(--ad-surface-sunken); }
+
+/* Inbox and audience: secondary, after the ledger. */
+.admin-dash-more {
+  display: grid;
+  gap: var(--ad-space-3);
+}
+.admin-app .admin-dash-more-title {
+  color: var(--ad-ink-2);
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-text-xs);
+  line-height: var(--ad-text-xs-lh);
+  font-weight: 600;
+  font-variation-settings: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Phones: the three quick actions share rows instead of stacking full width. */
+@media (max-width: 479.98px) {
+  .admin-page:has(> .admin-dash) .admin-head-actions > * {
+    flex: 1 1 auto;
+  }
+}
+/* Phones: smaller figures so two stats fit side by side. */
+@container dash (max-width: 599.98px) {
+  .admin-dash .admin-stat-value {
+    font-size: var(--ad-text-xl);
+    line-height: var(--ad-text-xl-lh);
+  }
+  .admin-dash .admin-stat {
+    padding: var(--ad-space-3);
+  }
+  .admin-dash .admin-stat-arrow {
+    inset-block-start: var(--ad-space-3);
+    inset-inline-end: var(--ad-space-3);
+  }
+}
+/* Tablets and the 1024 laptop column: picker beside the title, 3-up pipeline. */
+@container dash (min-width: 600px) {
+  .admin-dash :is(.admin-now-stats, .admin-more-stats) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .admin-now {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas: "head head" "stats stats" "waiting low";
+  }
+  .admin-now-waiting,
+  .admin-now-low {
+    display: flex;
+    flex-direction: column;
+  }
+  .admin-now-waiting > .admin-panel-foot,
+  .admin-now-low > .admin-panel-foot {
+    margin-block-start: auto;
+  }
+  .admin-range {
+    padding: var(--ad-space-5);
+  }
+  .admin-range-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+  .admin-pipeline-stages {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .admin-app .admin-pipe-off {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+    grid-template-areas: "hex count label share";
+    column-gap: var(--ad-space-3);
+    min-height: 56px;
+  }
+  .admin-pipe-off .admin-pipe-count {
+    text-align: start;
+  }
+  .admin-pipe-off .admin-pipe-label {
+    margin: 0;
+  }
+}
+/* Wide columns: four-up stats, lists side by side, and the six stages on one track. */
+@container dash (min-width: 960px) {
+  .admin-now {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  }
+  .admin-dash .admin-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .admin-range {
+    padding: var(--ad-space-6);
+  }
+  .admin-pipeline {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 1fr);
+    gap: var(--ad-space-4);
+  }
+  .admin-pipeline-stages {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  /* The track the hexagons sit on: reading left to right they fill with honey. */
+  .admin-pipeline-stages::before {
+    content: "";
+    position: absolute;
+    inset-inline: var(--ad-space-6);
+    inset-block-start: calc(var(--ad-space-3) + 15px);
+    height: 2px;
+    background: var(--ad-line-strong);
+  }
+  .admin-pipeline-stages .admin-pipe-cell {
+    background: transparent;
+    border-color: transparent;
+  }
+  .admin-pipeline-stages .admin-pipe-cell:not([data-empty]) {
+    border-color: var(--ad-line);
+  }
+  .admin-pipeline-stages .admin-pipe-cell[data-tone="pending"]:not([data-empty]) { background: var(--ad-pending-bg); }
+  .admin-pipeline-stages .admin-pipe-cell[data-tone="confirmed"]:not([data-empty]) { background: var(--ad-confirmed-bg); }
+  .admin-pipeline-stages .admin-pipe-cell[data-tone="packed"]:not([data-empty]) { background: var(--ad-packed-bg); }
+  .admin-pipeline-stages .admin-pipe-cell[data-tone="dispatched"]:not([data-empty]) { background: var(--ad-dispatched-bg); }
+  .admin-pipeline-stages .admin-pipe-cell[data-tone="shipped"]:not([data-empty]) { background: var(--ad-shipped-bg); }
+  .admin-pipeline-stages .admin-pipe-cell[data-tone="delivered"]:not([data-empty]) { background: var(--ad-delivered-bg); }
+  /* Empty stages are see-through, so their glyph masks the track it sits on. */
+  .admin-pipeline-stages .admin-pipe-cell[data-empty] .admin-pipe-hex {
+    background: var(--ad-surface);
+    box-shadow: 0 0 0 4px var(--ad-surface);
+  }
+  .admin-app .admin-pipe-off {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "hex count" "label label" "share share";
+    column-gap: var(--ad-space-2);
+    min-height: 88px;
+  }
+  .admin-pipe-off .admin-pipe-count {
+    text-align: end;
+  }
+  .admin-pipe-off .admin-pipe-label {
+    margin-block-start: var(--ad-space-1);
+  }
+}
+
+@media (forced-colors: active) {
+  .admin-comb-strip rect,
+  .admin-kpi-meter rect,
+  .admin-bar rect:not([data-tone="rest"]) {
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+  .admin-app .admin-pipe-cell {
+    border: 1px solid CanvasText;
+  }
+  .admin-pipeline-stages::before {
+    background: CanvasText;
+  }
 }
 
 /* ── Order detail ───────────────────────────────────────────────────── */
@@ -122,10 +663,11 @@
   width: 100%;
 }
 
-/* Status progress strip: four filling cells joined by a line. */
+/* Status progress strip: six filling cells joined by a line (a vertical
+   list on phones, where six labels cannot share one row). */
 .admin-progress {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   margin: 0;
   padding: var(--ad-space-4) var(--ad-space-2);
   border: 1px solid var(--ad-line);
@@ -193,6 +735,33 @@
   line-height: 18px;
   font-weight: 600;
 }
+@media (max-width: 639.98px) {
+  .admin-progress {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--ad-space-3);
+    padding: var(--ad-space-4);
+  }
+  .admin-progress li {
+    grid-template-columns: 26px auto minmax(0, 1fr);
+    align-items: center;
+    justify-items: start;
+    column-gap: var(--ad-space-2);
+    text-align: start;
+  }
+  .admin-progress li::before {
+    inset-block: -14px 22px;
+    inset-inline: 10px auto;
+    width: 2px;
+    height: auto;
+  }
+  .admin-progress .admin-hex {
+    width: 18px;
+    height: 20px;
+  }
+  .admin-progress-time {
+    grid-column: 2 / -1;
+  }
+}
 .admin-cancelled-banner {
   display: flex;
   align-items: center;
@@ -205,8 +774,41 @@
   font-weight: 600;
 }
 .admin-cancelled-banner .admin-hex {
+  flex: none;
   width: 22px;
   height: 24px;
+}
+.admin-cancelled-banner p {
+  margin: 0;
+}
+.admin-app .admin-cancelled-reason {
+  font-weight: 500;
+}
+.admin-timeline-detail {
+  color: var(--ad-ink-2);
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+  overflow-wrap: anywhere;
+}
+/* Courier details: a quiet disclosure under the next-step panel. */
+.admin-courier-edit {
+  padding: 0;
+}
+.admin-courier-edit > summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: var(--ad-space-2) var(--ad-space-4);
+  border-radius: var(--ad-radius-md);
+  color: var(--ad-ink);
+  font-weight: 600;
+  cursor: pointer;
+}
+.admin-courier-edit > summary:hover {
+  background: var(--ad-surface-sunken);
+}
+.admin-courier-edit > .admin-form {
+  padding: 0 var(--ad-space-4) var(--ad-space-4);
 }
 .admin-contact-actions {
   display: flex;
@@ -365,6 +967,10 @@
   }
   .admin-slip-to strong {
     font-size: 16pt;
+  }
+  .admin-slip-courier {
+    font-size: 12pt;
+    font-weight: 600;
   }
   .admin-slip-cod {
     padding: 4mm 5mm;
@@ -546,9 +1152,8 @@
   -webkit-mask: var(--mask-honeycomb) 0 0 / 32px auto repeat;
   mask: var(--mask-honeycomb) 0 0 / 32px auto repeat;
 }
-.admin-login-comb .admin-brand-mark {
-  width: 36px;
-  height: 40px;
+.admin-login-comb .admin-login-logo {
+  width: 56px;
 }
 .admin-login-wordmark {
   display: flex;
@@ -569,9 +1174,8 @@
     align-items: center;
     padding: var(--ad-space-12);
   }
-  .admin-login-comb .admin-brand-mark {
-    width: 52px;
-    height: 58px;
+  .admin-login-comb .admin-login-logo {
+    width: 128px;
   }
   .admin-app .admin-login-wordmark-text {
     font-size: 40px;
@@ -630,4 +1234,21 @@
 }
 .admin-fault .admin-empty-icon {
   margin: 0;
+}
+
+/* ── Subscribers ────────────────────────────────────────────────────── */
+.admin-break {
+  overflow-wrap: anywhere;
+}
+/* In-page confirmation reached from a row's Remove link (no modal, no JS). */
+.admin-confirm-panel {
+  display: grid;
+  gap: var(--ad-space-3);
+  border-color: color-mix(in oklab, var(--ad-danger) 35%, transparent);
+  box-shadow: inset 4px 0 0 var(--ad-danger);
+  scroll-margin-block-start: var(--ad-space-6);
+}
+.admin-app .admin-confirm-panel h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
 }

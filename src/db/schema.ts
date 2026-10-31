@@ -32,7 +32,8 @@ const timestamps = {
 };
 
 export const productStatus = pgEnum("product_status", ["active", "draft", "archived"]);
-export const orderStatus = pgEnum("order_status", ["pending", "confirmed", "shipped", "delivered", "cancelled"]);
+/** Lifecycle order. New values are only ever added (ALTER TYPE ... ADD VALUE), never removed. */
+export const orderStatus = pgEnum("order_status", ["pending", "confirmed", "packed", "dispatched", "shipped", "delivered", "cancelled"]);
 export const bannerPlacement = pgEnum("banner_placement", ["hero", "deal", "announcement"]);
 
 /** Singleton operational settings; secrets remain in the server environment. */
@@ -274,6 +275,12 @@ export const orders = pgTable(
     itemCount: integer("item_count").notNull(),
     /** HMAC of the client IP, for per-IP checkout rate limiting (no raw IPs stored). */
     ipHash: text("ip_hash"),
+    /** Set only when cancelled: a code from features/orders/cancel-reasons.ts, plus an optional note. */
+    cancelReason: text("cancel_reason"),
+    cancelNote: text("cancel_note"),
+    /** Set when the order is handed to a courier (TCS, Leopards, M&P, ...). */
+    courierName: text("courier_name"),
+    trackingNumber: text("tracking_number"),
     ...timestamps,
   },
   (t) => [
@@ -283,6 +290,7 @@ export const orders = pgTable(
     index("orders_ip_hash_created_idx").on(t.ipHash, t.createdAt),
     check("orders_totals_consistent", sql`${t.total} = ${t.subtotal} + ${t.shipping}`),
     check("orders_payment_method_cod", sql`${t.paymentMethod} = 'cod'`),
+    check("orders_cancel_reason_only_when_cancelled", sql`${t.cancelReason} is null or ${t.status} = 'cancelled'`),
   ],
 );
 
@@ -320,6 +328,10 @@ export const orderEvents = pgTable(
     fromStatus: orderStatus("from_status"),
     toStatus: orderStatus("to_status").notNull(),
     actor: text("actor").notNull(),
+    /** Cancel reason code (cancel events only). */
+    reason: text("reason"),
+    /** Free-text detail: the cancel note, or courier and tracking number on dispatch. */
+    note: text("note"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("order_events_order_idx").on(t.orderId, t.createdAt)],
@@ -365,4 +377,36 @@ export const loginAttempts = pgTable(
     index("login_attempts_email_created_idx").on(t.email, t.createdAt),
     index("login_attempts_ip_created_idx").on(t.ipHash, t.createdAt),
   ],
+);
+
+/** Newsletter sign-ups. Emails are stored lower-cased; no raw IP is stored. */
+export const newsletterSubscribers = pgTable(
+  "newsletter_subscribers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    /** Where the form was submitted ("footer", "about"). */
+    source: text("source").notNull().default("footer"),
+    /** HMAC of the client IP, used only for throttling. */
+    ipHash: text("ip_hash"),
+    unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("newsletter_subscribers_email_unique").on(t.email),
+    index("newsletter_subscribers_created_idx").on(t.createdAt),
+    index("newsletter_subscribers_ip_created_idx").on(t.ipHash, t.createdAt),
+    check("newsletter_subscribers_email_lowercase", sql`${t.email} = lower(${t.email})`),
+  ],
+);
+
+/** Public order-tracking lookups, kept only to rate-limit guessing per IP. */
+export const orderLookupAttempts = pgTable(
+  "order_lookup_attempts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    ipHash: text("ip_hash").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("order_lookup_attempts_ip_created_idx").on(t.ipHash, t.createdAt)],
 );

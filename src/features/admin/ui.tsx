@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowUpRight, ChevronDown, ChevronLeft, ChevronRight, Circle
 import type { OrderStatus } from "@/features/orders/status";
 import { orderStatusLabels } from "@/features/orders/status";
 import { FlashNotice } from "./flash-notice";
-import { hexLevel, type HexLevel, type PillTone } from "./status-display";
+import { HEX_LEVELS, hexLevel, type HexLevel, type PillTone } from "./status-display";
 
 export { pageNumber } from "./search-params";
 
@@ -63,18 +63,19 @@ export function AdminNotice({ error, saved, message, clear = "saved,error" }: { 
 
 /* ── Pager ──────────────────────────────────────────────────────────── */
 
-export function Pager({ page, hasNext, base, shown, pageSize = 20 }: { page: number; hasNext: boolean; base: string; shown?: number; pageSize?: number }) {
+export function Pager({ page, hasNext, base, shown, pageSize = 20, param = "page", label = "Pagination" }: { page: number; hasNext: boolean; base: string; shown?: number; pageSize?: number; param?: string; label?: string }) {
   if (page <= 1 && !hasNext) return null;
   const join = base.includes("?") ? "&" : "?";
+  const href = (target: number) => `${base}${join}${param}=${target}`;
   const first = (page - 1) * pageSize + 1;
   const status = shown ? `Showing ${first}–${first + shown - 1}` : `Page ${page}`;
-  return <nav aria-label="Pagination" className="admin-pager">
+  return <nav aria-label={label} className="admin-pager">
     {page > 1
-      ? <Link className="admin-button secondary" href={`${base}${join}page=${page - 1}`}><ChevronLeft aria-hidden="true" />Previous</Link>
+      ? <Link className="admin-button secondary" href={href(page - 1)}><ChevronLeft aria-hidden="true" />Previous</Link>
       : <span className="admin-button secondary" aria-disabled="true"><ChevronLeft aria-hidden="true" />Previous</span>}
     <span className="admin-muted">{status}</span>
     {hasNext
-      ? <Link className="admin-button secondary" href={`${base}${join}page=${page + 1}`}>Next<ChevronRight aria-hidden="true" /></Link>
+      ? <Link className="admin-button secondary" href={href(page + 1)}>Next<ChevronRight aria-hidden="true" /></Link>
       : <span className="admin-button secondary" aria-disabled="true">Next<ChevronRight aria-hidden="true" /></span>}
   </nav>;
 }
@@ -83,10 +84,10 @@ export function Pager({ page, hasNext, base, shown, pageSize = 20 }: { page: num
 
 const HEX = "M7 1.2 12.6 4.4V11.6L7 14.8 1.4 11.6V4.4Z";
 
-/** The "filling cell": an outline hexagon filled bottom-up by `level` thirds. Decorative. */
+/** The "filling cell": an outline hexagon filled bottom-up in fifths (one per stage). Decorative. */
 export function HexGlyph({ level, struck = false, className = "admin-hex" }: { level: HexLevel; struck?: boolean; className?: string }) {
   const clipId = useId();
-  const height = (16 * level) / 3;
+  const height = (16 * level) / HEX_LEVELS;
   return <svg className={className} viewBox="0 0 14 16" aria-hidden="true" focusable="false">
     {level > 0 && <>
       <clipPath id={clipId}><rect x="0" y={16 - height} width="14" height={height} /></clipPath>

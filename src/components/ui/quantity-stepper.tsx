@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { Minus, Plus } from "lucide-react";
 import { cx } from "@/lib/cx";
 
@@ -25,10 +24,10 @@ export function QuantityStepper({ id, value, onChange, min = 1, max, label, size
 
   return (
     <div className={cx("flex items-stretch overflow-hidden rounded-full border border-border-strong", size === "md" ? "h-12" : "h-10")}>
-      <StarButton type="button" onClick={() => onChange(clamp(value - 1))} disabled={value <= min} className={buttonClass}>
+      <button type="button" onClick={() => onChange(clamp(value - 1))} disabled={value <= min} className={buttonClass}>
         <Minus className="size-4" aria-hidden="true" />
         <span className="sr-only">Decrease quantity</span>
-      </StarButton>
+      </button>
       <label htmlFor={id} className="sr-only">
         {label}
       </label>
@@ -48,10 +47,10 @@ export function QuantityStepper({ id, value, onChange, min = 1, max, label, size
           size === "md" ? "w-12" : "w-10 text-sm",
         )}
       />
-      <StarButton type="button" onClick={() => onChange(clamp(value + 1))} disabled={value >= max} className={buttonClass}>
+      <button type="button" onClick={() => onChange(clamp(value + 1))} disabled={value >= max} className={buttonClass}>
         <Plus className="size-4" aria-hidden="true" />
         <span className="sr-only">Increase quantity</span>
-      </StarButton>
+      </button>
     </div>
   );
 }

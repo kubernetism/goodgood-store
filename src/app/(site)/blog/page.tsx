@@ -1,4 +1,3 @@
-import { StarLink } from "@/components/ui/star-controls";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -55,9 +54,9 @@ async function BlogContent({ searchParams }: Pick<PageProps<"/blog">, "searchPar
             <SearchX className="size-10 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
             <h2 className="mt-4 text-h4 font-semibold">No posts found</h2>
             <p className="mt-2">Try another keyword or browse all posts.</p>
-            <StarLink href="/blog" className={buttonClasses({ className: "mt-6" })}>
+            <Link href="/blog" className={buttonClasses({ className: "mt-6" })}>
               View all posts
-            </StarLink>
+            </Link>
           </div>
         ) : (
           <ul className="space-y-8">

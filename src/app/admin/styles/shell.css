@@ -44,7 +44,7 @@
 .admin-app .admin-brand {
   display: flex;
   align-items: center;
-  gap: var(--ad-space-3);
+  gap: var(--ad-space-2);
   min-height: var(--ad-control-h);
   border-radius: var(--ad-radius-sm);
   color: var(--ad-on-comb);
@@ -54,11 +54,20 @@
   color: var(--ad-on-comb);
   text-decoration: none;
 }
-.admin-brand-mark {
-  width: 30px;
-  height: 34px;
+/* The company seal: round, gold-rimmed. A hairline honey ring and a soft
+   drop lift it off the comb so the dark outer band never merges with it. */
+.admin-brand-logo {
+  display: block;
   flex: none;
-  color: var(--ad-honey);
+  width: 36px;
+  aspect-ratio: 1278 / 1230;
+  border-radius: 50%;
+  box-shadow: var(--ad-logo-ring);
+}
+.admin-brand-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .admin-brand-text {
   display: grid;
@@ -175,20 +184,94 @@
   color: var(--ad-on-comb);
   text-decoration: none;
 }
-.admin-app .admin-nav-link[aria-current="page"] {
-  background: var(--ad-comb-2);
-  box-shadow: inset 3px 0 0 var(--ad-honey);
-  color: var(--ad-on-comb);
-  font-weight: 600;
-}
 .admin-nav-link > svg {
   width: 18px;
   height: 18px;
   flex: none;
   color: var(--ad-on-comb-muted);
 }
+
+/*
+ * Active item = a honeycomb cell. A deep-gold fill carries a darker comb
+ * tessellation that fades in from behind the label (::before), and the icon
+ * sits in a solid honey hexagon (::after). Both are decoration on top of
+ * aria-current, which carries the meaning; forced colours get an outline.
+ */
+.admin-app .admin-nav-link[aria-current="page"],
+.admin-app .admin-tab:is([aria-current="page"], [data-active]) {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(100deg, var(--ad-hive-base) 0%, var(--ad-hive-base-2) 100%);
+  color: var(--ad-on-comb);
+}
+.admin-app .admin-nav-link[aria-current="page"] {
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--ad-hive-line) 55%, transparent);
+  font-weight: 600;
+}
+.admin-nav-link[aria-current="page"]::before,
+.admin-tab:is([aria-current="page"], [data-active])::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--ad-hive-line);
+  opacity: 0.7;
+  -webkit-mask:
+    var(--mask-honeycomb) 0 50% / 18px auto repeat,
+    linear-gradient(to right, transparent -30%, black 55%);
+  -webkit-mask-composite: source-in;
+  mask:
+    var(--mask-honeycomb) 0 50% / 18px auto repeat,
+    linear-gradient(to right, transparent -30%, black 55%);
+  mask-composite: intersect;
+}
+/* The honey cell behind the icon: 24 x 27, centred on the 18px icon. */
+.admin-nav-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: calc(var(--ad-space-3) - 3px);
+  z-index: -1;
+  width: 24px;
+  height: 27px;
+  translate: 0 -50%;
+  background: var(--ad-honey);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  pointer-events: none;
+}
 .admin-nav-link[aria-current="page"] > svg {
-  color: var(--ad-honey);
+  color: var(--ad-comb);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .admin-nav-link[aria-current="page"]::before,
+  .admin-tab:is([aria-current="page"], [data-active])::after {
+    animation: admin-fade var(--ad-dur-slow) var(--ad-ease-out) both;
+  }
+  .admin-nav-link[aria-current="page"]::after,
+  .admin-tab:is([aria-current="page"], [data-active])::before {
+    animation: admin-cell-in var(--ad-dur-base) var(--ad-ease-out) both;
+  }
+}
+@keyframes admin-cell-in {
+  from {
+    opacity: 0;
+    scale: 0.6;
+  }
+}
+@media (forced-colors: active) {
+  .admin-app .admin-nav-link[aria-current="page"],
+  .admin-app .admin-tab:is([aria-current="page"], [data-active]) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+  .admin-nav-link[aria-current="page"]::before,
+  .admin-nav-link[aria-current="page"]::after,
+  .admin-tab:is([aria-current="page"], [data-active])::before,
+  .admin-tab:is([aria-current="page"], [data-active])::after {
+    display: none;
+  }
 }
 .admin-nav-label {
   flex: 1;
@@ -251,9 +334,8 @@
   min-height: var(--ad-topbar-h);
   padding: 0 var(--ad-space-4);
 }
-.admin-topbar .admin-brand-mark {
-  width: 24px;
-  height: 27px;
+.admin-topbar .admin-brand-logo {
+  width: 34px;
 }
 .admin-topbar .admin-brand-name {
   font-size: 16px;
@@ -351,18 +433,20 @@
   width: 22px;
   height: 22px;
 }
-.admin-app .admin-tab:is([aria-current="page"], [data-active]) {
-  color: var(--ad-on-comb);
+.admin-tab:is([aria-current="page"], [data-active]) > svg {
+  color: var(--ad-honey);
 }
+/* Bottom bar: a small honey hexagon hangs from the top edge above the icon. */
 .admin-tab:is([aria-current="page"], [data-active])::before {
   content: "";
   position: absolute;
-  inset-block-start: 0;
-  inset-inline: 22%;
-  height: 3px;
-  border-end-start-radius: 3px;
-  border-end-end-radius: 3px;
+  inset-block-start: 1px;
+  inset-inline-start: calc(50% - 5px);
+  width: 10px;
+  height: 11px;
   background: var(--ad-honey);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  pointer-events: none;
 }
 .admin-tab .admin-nav-badge {
   position: absolute;

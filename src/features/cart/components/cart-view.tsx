@@ -1,7 +1,5 @@
 "use client";
 
-import { StarLink } from "@/components/ui/star-controls";
-import { StarButton } from "@/components/ui/star-controls";
 import Link from "next/link";
 import { ShoppingBasket, X } from "lucide-react";
 import { buttonClasses } from "@/components/ui/button";
@@ -33,9 +31,9 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
         <ShoppingBasket className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />
         <h2 className="mt-4 text-h4 font-semibold">{unavailable.length ? "No available items in your cart" : "Your cart is empty"}</h2>
         <p className="mt-2 max-w-sm">Fill it with raw honey from our partner apiaries.</p>
-        <StarLink href="/shop" className={buttonClasses({ className: "mt-6" })}>
+        <Link href="/shop" className={buttonClasses({ className: "mt-6" })}>
           Browse the shop
-        </StarLink>
+        </Link>
       </div>
       </div>
     );
@@ -87,14 +85,14 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
                 <p className="w-20 text-right font-display font-semibold text-strong tabular-nums">
                   {formatPrice(line.lineTotal)}
                 </p>
-                <StarButton
+                <button
                   type="button"
                   onClick={() => cartActions.remove(line.slug)}
                   className="flex size-11 items-center justify-center rounded-full text-muted transition-colors duration-200 hover:bg-tile hover:text-danger"
                 >
                   <X className="size-4" aria-hidden="true" />
                   <span className="sr-only">Remove {line.product.name}</span>
-                </StarButton>
+                </button>
               </div>
             </li>
           ))}
@@ -103,13 +101,13 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
           <Link href="/shop" className="text-sm font-semibold text-primary-ink underline underline-offset-2 hover:no-underline">
             Continue shopping
           </Link>
-          <StarButton
+          <button
             type="button"
             onClick={() => cartActions.clear()}
             className="text-sm font-semibold text-muted underline underline-offset-2 hover:text-danger"
           >
             Clear cart
-          </StarButton>
+          </button>
         </div>
       </section>
 
@@ -118,9 +116,9 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
           Cart Total
         </h2>
         <OrderSummary totals={totals} />
-        <StarLink href="/checkout" className={buttonClasses({ className: "mt-6 w-full" })}>
+        <Link href="/checkout" className={buttonClasses({ className: "mt-6 w-full" })}>
           Proceed to checkout
-        </StarLink>
+        </Link>
       </section>
     </div>
     </div>

@@ -120,10 +120,14 @@
   /* Elevation: warm-tinted shadows instead of neutral black. */
   --shadow-card: 0 6px 24px rgb(74 51 26 / 0.08);
   --shadow-card-hover: 0 12px 32px rgb(74 51 26 / 0.14);
+  /* Fixed bottom bars (checkout pay bar) lift off the page upwards. */
+  --shadow-bar: 0 -8px 24px rgb(43 29 14 / 0.18);
 
   /* Motion */
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --animate-fade-up: fade-up 600ms var(--ease-out-soft) both;
+  /* A row that just changed (checkout stock update) glows honey, then settles. */
+  --animate-tint-fade: tint-fade 1200ms var(--ease-out-soft) both;
 }
 
 /*
@@ -135,6 +139,15 @@
 :root {
   --mask-honey-drip: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22480%22%20height%3D%2272%22%20viewBox%3D%220%200%20480%2072%22%20preserveAspectRatio%3D%22none%22%3E%3Cpath%20d%3D%22M0%200H480V18Q472.8%2020.5%20465.5%2018C457.3%2018%20455.3%2021%20455.3%2034C455.3%2045.7%20458.5%2048.3%20458.5%2053.5A6.5%206.5%200%200%201%20445.5%2053.5C445.5%2048.3%20448.8%2045.7%20448.8%2034C448.8%2021%20446.8%2018%20438.5%2018Q427%2020.5%20415.5%2018C408.3%2018%20406.3%2021%20406.3%2023.2C406.3%2024.1%20408.5%2025.9%20408.5%2029.5A4.5%204.5%200%200%201%20399.5%2029.5C399.5%2025.9%20401.8%2024.1%20401.8%2023.2C401.8%2021%20399.8%2018%20392.5%2018Q378.8%2020.5%20365%2018C357%2018%20355%2021%20355%2029.7C355%2036.8%20358%2039.2%20358%2044A6%206%200%200%201%20346%2044C346%2039.2%20349%2036.8%20349%2029.7C349%2021%20347%2018%20339%2018Q326.5%2020.5%20314%2018C305.5%2018%20303.5%2021%20303.5%2037.4C303.5%2052.6%20307%2055.4%20307%2061A7%207%200%200%201%20293%2061C293%2055.4%20296.5%2052.6%20296.5%2037.4C296.5%2021%20294.5%2018%20286%2018Q274%2020.5%20262%2018C254.5%2018%20252.5%2021%20252.5%2024.8C252.5%2027%20255%2029%20255%2033A5%205%200%200%201%20245%2033C245%2029%20247.5%2027%20247.5%2024.8C247.5%2021%20245.5%2018%20238%2018Q223.8%2020.5%20209.5%2018C201.3%2018%20199.3%2021%20199.3%2032.2C199.3%2041.7%20202.5%2044.3%20202.5%2049.5A6.5%206.5%200%200%201%20189.5%2049.5C189.5%2044.3%20192.8%2041.7%20192.8%2032.2C192.8%2021%20190.8%2018%20182.5%2018Q169.8%2020.5%20157%2018C150%2018%20148%2021%20148%2021.6C148%2021.2%20150%2022.8%20150%2026A4%204%200%200%201%20142%2026C142%2022.8%20144%2021.2%20144%2021.6C144%2021%20142%2018%20135%2018Q122.5%2020.5%20110%2018C101.5%2018%2099.5%2021%2099.5%2035.5C99.5%2048.6%20103%2051.4%20103%2057A7%207%200%200%201%2089%2057C89%2051.4%2092.5%2048.6%2092.5%2035.5C92.5%2021%2090.5%2018%2082%2018Q67.3%2020.5%2052.5%2018C44.8%2018%2042.8%2021%2042.8%2027.2C42.8%2031.9%2045.5%2034.1%2045.5%2038.5A5.5%205.5%200%200%201%2034.5%2038.5C34.5%2034.1%2037.3%2031.9%2037.3%2027.2C37.3%2021%2035.3%2018%2027.5%2018Q13.8%2020.5%200%2018Z%22%2F%3E%3C%2Fsvg%3E");
   --mask-honeycomb: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'24.25'%20height%3D'42'%20viewBox%3D'0%200%2024.25%2042'%3E%3Cpath%20d%3D'M0%20-14L12.12%20-7L12.12%207L0%2014L-12.12%207L-12.12%20-7ZM24.25%20-14L36.37%20-7L36.37%207L24.25%2014L12.12%207L12.12%20-7ZM12.12%207L24.25%2014L24.25%2028L12.12%2035L0%2028L0%2014ZM0%2028L12.12%2035L12.12%2049L0%2056L-12.12%2049L-12.12%2035ZM24.25%2028L36.37%2035L36.37%2049L24.25%2056L12.12%2049L12.12%2035Z'%20fill%3D'none'%20stroke%3D'black'%20stroke-width%3D'1.25'%2F%3E%3C%2Fsvg%3E");
+}
+
+@keyframes tint-fade {
+  from {
+    background-color: var(--color-primary-tint);
+  }
+  to {
+    background-color: transparent;
+  }
 }
 
 /* Declared outside @theme so the scroll-driven .reveal utility can use it too. */
@@ -199,6 +212,24 @@
 
   [id] {
     scroll-margin-top: 6rem;
+  }
+
+  /* Checkout: focused fields must never sit under the sticky header or the
+     fixed phone pay bar (WCAG 2.4.11). scroll-padding covers anchor jumps,
+     scroll-margin covers Tab focus. */
+  html:has([data-checkout]) {
+    scroll-padding-top: 6.5rem;
+  }
+  [data-checkout] :is(input, select, textarea, button, a, [tabindex]) {
+    scroll-margin-block: 6.5rem 2rem;
+  }
+  @media (max-width: 1023.98px) {
+    html:has([data-checkout]) {
+      scroll-padding-bottom: 7rem;
+    }
+    [data-checkout] :is(input, select, textarea, button, a, [tabindex]) {
+      scroll-margin-block: 6.5rem 7rem;
+    }
   }
 
   dialog::backdrop {

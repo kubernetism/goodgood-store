@@ -1,6 +1,5 @@
 "use client";
 
-import { StarButton } from "@/components/ui/star-controls";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { motion, useAnimationFrame, useInView, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
@@ -52,10 +51,9 @@ export function SlidingRow({ label, items, speed = 18, fullWidth = false, classN
     return () => observer.disconnect();
   }, [items.length, step]);
 
-  useAnimationFrame((_, delta) => {
-    if (!ready || !canLoop || reduceMotion || paused || hovered || focused || dragging || !inView || document.hidden || document.documentElement.dataset.storeScrolling === "true") return;
-    offset.set(wrapRowOffset(offset.get() + (speed * Math.min(delta, 40)) / 1000, step.get() * items.length));
-  });
+  // Mount the ticker only while the row can move, so offscreen, paused or
+  // held (hover, focus, drag) rows don't keep Motion's frame loop awake.
+  const canAnimate = ready && canLoop && !reduceMotion && !paused && !hovered && !focused && !dragging && inView;
 
   function move(direction: -1 | 1) {
     setPaused(true);
@@ -143,6 +141,9 @@ export function SlidingRow({ label, items, speed = 18, fullWidth = false, classN
           }
         }}
       >
+        {canAnimate && (
+          <RowTicker offset={offset} step={step} count={items.length} speed={speed} />
+        )}
         <ul ref={listRef} className="sliding-row__list">
           {items.map((item, index) => (
             <SlidingItem key={item.key} index={index} count={items.length} offset={offset} step={step} staticMode={reduceMotion}>
@@ -153,22 +154,36 @@ export function SlidingRow({ label, items, speed = 18, fullWidth = false, classN
       </div>
       {canLoop && (
         <div className="mt-5 flex justify-center gap-2" aria-label={`${label} controls`}>
-          <StarButton type="button" className="sliding-row__control" aria-label={`Previous ${label.toLowerCase()}`} onClick={() => move(-1)}>
+          <button type="button" className="sliding-row__control" aria-label={`Previous ${label.toLowerCase()}`} onClick={() => move(-1)}>
             <ArrowLeft className="size-4" aria-hidden="true" />
-          </StarButton>
+          </button>
           {!reduceMotion && (
-            <StarButton type="button" className="sliding-row__control gap-2 px-4" aria-label={`${paused ? "Play" : "Pause"} ${label.toLowerCase()}`} onClick={() => setPaused((value) => !value)}>
+            <button type="button" className="sliding-row__control gap-2 px-4" aria-label={`${paused ? "Play" : "Pause"} ${label.toLowerCase()}`} onClick={() => setPaused((value) => !value)}>
               {paused ? <Play className="size-4" aria-hidden="true" /> : <Pause className="size-4" aria-hidden="true" />}
               <span className="text-meta font-medium">{paused ? "Play" : "Pause"}</span>
-            </StarButton>
+            </button>
           )}
-          <StarButton type="button" className="sliding-row__control" aria-label={`Next ${label.toLowerCase()}`} onClick={() => move(1)}>
+          <button type="button" className="sliding-row__control" aria-label={`Next ${label.toLowerCase()}`} onClick={() => move(1)}>
             <ArrowRight className="size-4" aria-hidden="true" />
-          </StarButton>
+          </button>
         </div>
       )}
     </div>
   );
+}
+
+/** Advances the row each frame; renders nothing. */
+function RowTicker({ offset, step, count, speed }: {
+  offset: MotionValue<number>;
+  step: MotionValue<number>;
+  count: number;
+  speed: number;
+}) {
+  useAnimationFrame((_, delta) => {
+    if (document.hidden || document.documentElement.dataset.storeScrolling === "true") return;
+    offset.set(wrapRowOffset(offset.get() + (speed * Math.min(delta, 40)) / 1000, step.get() * count));
+  });
+  return null;
 }
 
 function SlidingItem({ index, count, offset, step, staticMode, children }: {
