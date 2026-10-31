@@ -12,7 +12,8 @@ import { createSessionToken, isWellFormedToken, keyedHash } from "./tokens";
 /*
  * Admin sessions: a random token in an httpOnly cookie, its keyed hash in
  * `admin_sessions`. Every admin page, Server Action and Route Handler calls
- * requireAdmin() on the server; proxy.ts only does an optimistic redirect.
+ * requireAdmin() on the server; that check is the only gate (there is no
+ * proxy.ts, and a proxy redirect would never be a security boundary anyway).
  */
 
 export const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;

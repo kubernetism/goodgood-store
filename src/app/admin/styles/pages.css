@@ -1,0 +1,633 @@
+/*
+ * Page-specific admin styles: dashboard, order detail and print slip,
+ * messages, site content index, settings and login.
+ */
+
+/* ── Dashboard ──────────────────────────────────────────────────────── */
+.admin-dash-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ad-space-4);
+}
+@media (min-width: 1024px) {
+  .admin-dash-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.admin-worklist {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-worklist li {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+  min-height: 56px;
+  padding-block: var(--ad-space-2);
+  border-block-end: 1px solid var(--ad-line);
+}
+.admin-worklist li:last-child {
+  border-block-end: 0;
+}
+.admin-worklist-main {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.admin-worklist-title {
+  color: var(--ad-ink);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.admin-worklist-meta {
+  color: var(--ad-muted);
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+}
+.admin-worklist-value {
+  color: var(--ad-ink);
+  font-weight: 600;
+  text-align: end;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.admin-worklist-value.out {
+  color: var(--ad-danger);
+}
+.admin-dash-quick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ad-space-4);
+}
+.admin-dash-quick .admin-stat {
+  flex: 1 1 220px;
+  border-style: dashed;
+}
+
+/* ── Order detail ───────────────────────────────────────────────────── */
+.admin-order-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "actions" "main";
+  gap: var(--ad-space-4);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .admin-order-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    grid-template-areas: "main actions";
+  }
+  .admin-order-aside {
+    position: sticky;
+    inset-block-start: var(--ad-space-6);
+  }
+}
+.admin-order-main {
+  grid-area: main;
+  display: grid;
+  gap: var(--ad-space-4);
+  min-width: 0;
+}
+.admin-order-aside {
+  grid-area: actions;
+  display: grid;
+  gap: var(--ad-space-4);
+  min-width: 0;
+}
+.admin-order-number {
+  font-family: var(--ad-font-mono);
+  font-weight: 500;
+  font-variation-settings: normal;
+  letter-spacing: 0;
+}
+.admin-next-step {
+  display: grid;
+  gap: var(--ad-space-3);
+}
+.admin-next-step .admin-button.block {
+  min-height: 52px;
+  font-size: var(--ad-text-base);
+}
+.admin-next-step-secondary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ad-space-2);
+}
+.admin-next-step-secondary .admin-button,
+.admin-next-step-secondary .admin-copy-shipping {
+  width: 100%;
+}
+
+/* Status progress strip: four filling cells joined by a line. */
+.admin-progress {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: var(--ad-space-4) var(--ad-space-2);
+  border: 1px solid var(--ad-line);
+  border-radius: var(--ad-radius-md);
+  background: var(--ad-surface);
+  list-style: none;
+}
+.admin-progress li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 2px;
+  min-width: 0;
+  color: var(--ad-muted);
+  text-align: center;
+}
+.admin-progress li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 11px;
+  inset-inline-end: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--ad-line);
+  z-index: 0;
+}
+.admin-progress li:first-child::before {
+  display: none;
+}
+.admin-progress li[data-state="done"]::before,
+.admin-progress li[data-state="current"]::before {
+  background: var(--ad-ink-2);
+}
+.admin-progress .admin-hex {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 24px;
+  padding: 0 2px;
+  background: var(--ad-surface);
+  box-sizing: content-box;
+}
+.admin-progress li[data-state="done"],
+.admin-progress li[data-state="current"] {
+  color: var(--ad-ink);
+}
+.admin-progress-label {
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+  font-weight: 600;
+}
+.admin-progress-time {
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  color: var(--ad-muted);
+  font-variant-numeric: tabular-nums;
+}
+.admin-progress-now {
+  padding: 0 6px;
+  border-radius: var(--ad-radius-pill);
+  background: var(--ad-honey);
+  color: var(--ad-ink);
+  font-size: var(--ad-text-2xs);
+  line-height: 18px;
+  font-weight: 600;
+}
+.admin-cancelled-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+  padding: var(--ad-space-4);
+  border: 1px solid color-mix(in oklab, var(--ad-cancelled-fg) 30%, transparent);
+  border-radius: var(--ad-radius-md);
+  background: var(--ad-cancelled-bg);
+  color: var(--ad-cancelled-fg);
+  font-weight: 600;
+}
+.admin-cancelled-banner .admin-hex {
+  width: 22px;
+  height: 24px;
+}
+.admin-contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ad-space-1) var(--ad-space-2);
+  margin-block-start: var(--ad-space-1);
+}
+.admin-contact-actions .admin-button {
+  min-height: var(--ad-control-h);
+  padding-inline: var(--ad-space-3);
+}
+.admin-cod {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ad-space-1) var(--ad-space-3);
+  margin-block-start: var(--ad-space-4);
+  padding: var(--ad-space-3) var(--ad-space-4);
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-honey-soft);
+  color: var(--ad-ink);
+  font-weight: 600;
+}
+.admin-cod strong {
+  font-size: var(--ad-text-lg);
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.admin-totals {
+  display: grid;
+  gap: var(--ad-space-1);
+  margin: var(--ad-space-4) 0 0 auto;
+  max-width: 320px;
+}
+.admin-totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ad-space-4);
+}
+.admin-totals dt {
+  color: var(--ad-muted);
+}
+.admin-totals dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.admin-totals > div:last-child {
+  padding-block-start: var(--ad-space-1);
+  border-block-start: 1px solid var(--ad-line);
+  font-weight: 600;
+}
+.admin-timeline {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-timeline li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: var(--ad-space-3);
+  padding-block-end: var(--ad-space-4);
+}
+.admin-timeline li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  inset-block: 20px 0;
+  inset-inline-start: 8px;
+  width: 2px;
+  background: var(--ad-line);
+}
+.admin-timeline .admin-hex {
+  margin-block-start: 3px;
+  color: var(--ad-ink-2);
+}
+.admin-timeline-text {
+  display: grid;
+}
+.admin-timeline-text > span:last-child {
+  color: var(--ad-muted);
+  font-size: var(--ad-text-sm);
+}
+
+/* Order items keep a real table at every width, in its own scroller. */
+.admin-items-table td,
+.admin-items-table th {
+  white-space: nowrap;
+}
+.admin-items-table td:first-child {
+  white-space: normal;
+  min-width: 180px;
+}
+
+/* ── Print slip ─────────────────────────────────────────────────────── */
+.admin-print-only {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 14mm;
+  }
+  .admin-app {
+    min-height: 0;
+    background: var(--ad-print-paper);
+    color: var(--ad-print-ink);
+  }
+  .admin-screen-only,
+  .admin-notice {
+    display: none !important;
+  }
+  .admin-print-only {
+    display: block;
+  }
+  .admin-slip {
+    display: grid;
+    gap: 6mm;
+    color: var(--ad-print-ink);
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+  .admin-slip * {
+    color: var(--ad-print-ink) !important;
+    background: none !important;
+    box-shadow: none !important;
+  }
+  .admin-slip-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6mm;
+    padding-block-end: 3mm;
+    border-block-end: 2px solid var(--ad-print-ink);
+  }
+  .admin-slip-number {
+    font-family: var(--ad-font-mono);
+    font-size: 28pt;
+    line-height: 1;
+    font-weight: 500;
+  }
+  .admin-slip-block {
+    break-inside: avoid;
+  }
+  .admin-slip-label {
+    margin-block-end: 1mm;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .admin-slip-to {
+    font-size: 14pt;
+    line-height: 1.45;
+  }
+  .admin-slip-to strong {
+    font-size: 16pt;
+  }
+  .admin-slip-cod {
+    padding: 4mm 5mm;
+    border: 2px solid var(--ad-print-ink);
+    font-size: 16pt;
+    font-weight: 600;
+    break-inside: avoid;
+  }
+  .admin-slip table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10.5pt;
+  }
+  .admin-slip th,
+  .admin-slip td {
+    padding: 1.5mm 2mm;
+    border-block-end: 1px solid var(--ad-print-ink);
+    text-align: start;
+  }
+  .admin-slip .num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+  .admin-slip-from {
+    padding-block-start: 3mm;
+    border-block-start: 1px dashed var(--ad-print-ink);
+    font-size: 10pt;
+  }
+}
+
+/* ── Messages ───────────────────────────────────────────────────────── */
+.admin-unread-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-inline-end: 6px;
+  border-radius: 50%;
+  background: var(--ad-honey-edge);
+  vertical-align: middle;
+}
+.admin-message-body {
+  max-width: var(--ad-measure);
+  padding: var(--ad-space-4);
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-canvas);
+  color: var(--ad-ink);
+  font-size: var(--ad-text-base);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ── Site content ───────────────────────────────────────────────────── */
+.admin-content-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ad-space-6);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .admin-content-layout {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+  .admin-content-index {
+    position: sticky;
+    inset-block-start: var(--ad-space-6);
+  }
+}
+.admin-content-index ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-content-index a {
+  display: flex;
+  align-items: center;
+  min-height: var(--ad-control-h);
+  padding: 0 var(--ad-space-3);
+  border-radius: var(--ad-radius-sm);
+  color: var(--ad-ink-2);
+  font-size: var(--ad-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+.admin-content-index a:hover {
+  background: var(--ad-honey-soft);
+  color: var(--ad-ink);
+}
+.admin-content-index details > summary {
+  display: flex;
+  align-items: center;
+  min-height: var(--ad-control-h);
+  padding: 0 var(--ad-space-4);
+  border: 1px solid var(--ad-line-strong);
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-surface);
+  font-weight: 600;
+  cursor: pointer;
+}
+@media (min-width: 1024px) {
+  @supports selector(::details-content) {
+    .admin-content-index details > summary {
+      display: none;
+    }
+    .admin-content-index details::details-content {
+      content-visibility: visible;
+    }
+  }
+}
+.admin-content-group {
+  display: grid;
+  gap: var(--ad-space-3);
+  scroll-margin-block-start: var(--ad-space-6);
+}
+.admin-slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: var(--ad-space-3);
+}
+.admin-slot {
+  display: grid;
+  align-content: start;
+  gap: var(--ad-space-3);
+}
+.admin-slot-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ad-space-2);
+}
+.admin-slot[data-dirty] {
+  border-color: var(--ad-honey-edge);
+}
+.admin-yt-preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-surface-sunken);
+}
+.admin-yt-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Login ──────────────────────────────────────────────────────────── */
+.admin-login {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+}
+@media (min-width: 1024px) {
+  .admin-login {
+    grid-template-columns: 40% minmax(0, 1fr);
+  }
+}
+.admin-login-comb {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  min-height: 120px;
+  padding: var(--ad-space-5) var(--ad-space-4);
+  overflow: hidden;
+  background: var(--ad-comb);
+  color: var(--ad-on-comb);
+}
+.admin-login-comb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ad-on-comb);
+  opacity: 0.08;
+  -webkit-mask: var(--mask-honeycomb) 0 0 / 32px auto repeat;
+  mask: var(--mask-honeycomb) 0 0 / 32px auto repeat;
+}
+.admin-login-comb .admin-brand-mark {
+  width: 36px;
+  height: 40px;
+}
+.admin-login-wordmark {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+}
+.admin-app .admin-login-wordmark-text {
+  margin: 0;
+  color: var(--ad-on-comb);
+  font-family: var(--ad-font-display);
+  font-size: var(--ad-text-xl);
+  line-height: 1.15;
+  font-weight: 600;
+  font-variation-settings: "SOFT" 50;
+}
+@media (min-width: 1024px) {
+  .admin-login-comb {
+    align-items: center;
+    padding: var(--ad-space-12);
+  }
+  .admin-login-comb .admin-brand-mark {
+    width: 52px;
+    height: 58px;
+  }
+  .admin-app .admin-login-wordmark-text {
+    font-size: 40px;
+  }
+  .admin-login-wordmark {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--ad-space-5);
+  }
+}
+.admin-login-pane {
+  display: grid;
+  place-items: center;
+  padding: var(--ad-space-8) var(--ad-space-4);
+}
+.admin-login-card {
+  display: grid;
+  gap: var(--ad-space-5);
+  width: min(100%, 400px);
+}
+.admin-login-card .admin-button.block {
+  min-height: 48px;
+}
+.admin-password {
+  position: relative;
+}
+.admin-app .admin-password > input {
+  padding-inline-end: 84px;
+}
+.admin-password-toggle {
+  position: absolute;
+  inset-block: 2px;
+  inset-inline-end: 2px;
+  min-width: 72px;
+  padding: 0 var(--ad-space-3);
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ad-link);
+  font: 600 var(--ad-text-sm) / 1 var(--ad-font-ui);
+  cursor: pointer;
+}
+.admin-password-toggle:hover {
+  background: var(--ad-honey-soft);
+}
+.admin-login-back {
+  justify-self: center;
+}
+
+/* ── Error and not-found panels ─────────────────────────────────────── */
+.admin-fault {
+  display: grid;
+  justify-items: start;
+  gap: var(--ad-space-3);
+  max-width: 560px;
+}
+.admin-fault .admin-empty-icon {
+  margin: 0;
+}

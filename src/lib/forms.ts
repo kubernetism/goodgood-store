@@ -24,14 +24,9 @@ export type FormState<Field extends string> =
 // Pragmatic email check: one @, no spaces, a dot in the domain. Deliverability
 // is the email provider's job; this only catches typos.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PHONE_PATTERN = /^\+?[\d\s().-]{7,20}$/;
 
 export function isEmail(value: string): boolean {
   return value.length <= 254 && EMAIL_PATTERN.test(value);
-}
-
-export function isPhone(value: string): boolean {
-  return PHONE_PATTERN.test(value) && (value.match(/\d/g)?.length ?? 0) >= 7;
 }
 
 /** Reads the named text fields from FormData as trimmed strings ("" when missing). */

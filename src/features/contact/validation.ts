@@ -1,4 +1,5 @@
-import { hasErrors, isEmail, isPhone, type FieldErrors, type ValidationResult } from "@/lib/forms";
+import { normalizePakistaniMobile } from "@/features/checkout/validation";
+import { hasErrors, isEmail, type FieldErrors, type ValidationResult } from "@/lib/forms";
 
 export const contactServices = [
   { value: "home-delivery", label: "Order or delivery question" },
@@ -17,6 +18,7 @@ export type ContactMessage = {
   name: string;
   email: string;
   service: ContactService;
+  /** Optional; E.164 when given, e.g. +923001234567 (same rule as checkout). */
   phone: string | null;
   message: string;
 };
@@ -35,7 +37,8 @@ export function validateContact(
   const service = contactServices.find((option) => option.value === input.service);
   if (!service) errors.service = "Please choose the service you need.";
 
-  if (input.phone && !isPhone(input.phone)) errors.phone = "Enter a valid phone number, e.g. +1 212 555 0189.";
+  const phone = input.phone ? normalizePakistaniMobile(input.phone) : null;
+  if (input.phone && !phone) errors.phone = "Enter a Pakistani mobile number, e.g. 0300 1234567 or +92 300 1234567.";
 
   if (input.message.length < 10) errors.message = "Please tell us a little more (at least 10 characters).";
   else if (input.message.length > 2000) errors.message = "Message must be 2,000 characters or fewer.";
@@ -50,7 +53,7 @@ export function validateContact(
       name: input.name,
       email: input.email,
       service: service.value,
-      phone: input.phone || null,
+      phone,
       message: input.message,
     },
   };

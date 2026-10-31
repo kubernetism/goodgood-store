@@ -1,6 +1,6 @@
 # Store administration
 
-The protected admin portal is at `/admin`. It manages orders, products, categories, blog posts, testimonials, on-site banners, the media library, and content image/video slots. Product prices and order totals are stored as integer paisa. Checkout accepts cash on delivery and Pakistani delivery addresses only.
+The protected admin portal is at `/admin`. It manages orders, contact messages, products, categories, blog posts, testimonials, on-site banners, the media library, and content image/video slots. Product prices and order totals are stored as integer paisa. Checkout accepts cash on delivery and Pakistani delivery addresses only.
 
 ## First-time setup
 
@@ -25,9 +25,11 @@ Blog statistics start from zero when tracking is installed; the sample view coun
 
 - Order status transitions are forward-only; cancelling an open order restores its stock. The admin retains order snapshots and status history.
 - Orders remain pending until an admin confirms them. Confirmed orders have a print-friendly shipping sheet; printing does not change the order status. The order list can copy the customer's shipping details.
-- The order list defaults to today in Pakistan time. Use Order dates to show all dates or an inclusive date range; status tabs and pagination keep the selected filters.
+- Open orders (pending, confirmed, shipped) default to all dates, so an older pending order is never hidden; delivered and cancelled orders default to today in Pakistan time. Use Order dates to show today, all dates or an inclusive date range; a date you choose carries across status tabs and pagination, and each tab count matches the list it opens. The Overview and the nav badge count all pending orders.
+- On an order, one button moves it to the next status (Mark as confirmed, shipped, delivered). Cancelling is a separate, confirmed action that returns the items to stock. Call and WhatsApp links sit next to the customer's phone number.
+- Contact form enquiries are saved under Admin → Messages. Review the inbox regularly; no automatic email notification or reply is sent. Messages submitted before storage was added cannot be recovered from the form. The privacy policy calls for deletion after 24 months unless the enquiry relates to an open issue: review and delete eligible messages in the inbox, and handle individual deletion requests there. Deletion is manual; there is no automatic retention scheduler.
 - In Admin → Settings, set an order WhatsApp number to offer a prefilled WhatsApp message after successful checkout. The customer reviews the complete order and must tap Send in WhatsApp; placing the order itself does not guarantee a WhatsApp message was sent. A confirmation-page link is available if a browser blocks the new window. No WhatsApp API credentials are needed for this customer-initiated flow.
 - The initial test project contains a cancelled, clearly marked test order, an inactive test announcement and a test image. They are not real sales or promotions.
 - `.env.local` is ignored by Git. Treat the database and storage credentials as secrets. A separate `PREVIOUS_` group in that file preserves prior connection settings for rollback; use the new values by default.
 - Neon free-plan limits can change. Check current database and object-storage allowances in the Neon console before going live, and monitor usage. A hosting plan suitable for a commercial store is still needed; no deployment is performed by this setup.
-- Login throttling uses the forwarded client IP supplied by the hosting proxy. Deploy behind a trusted proxy that overwrites untrusted forwarded-IP headers.
+- Login throttling uses the forwarded client IP supplied by the hosting proxy. Deploy behind a trusted proxy that overwrites untrusted forwarded-IP headers. Sign-in is blocked for 15 minutes after 5 failed attempts for one email from the same IP, 20 failed attempts from one IP, or 50 failed attempts for one email from any IP, so someone guessing from elsewhere cannot lock the owner out with a handful of tries.

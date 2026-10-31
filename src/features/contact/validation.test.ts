@@ -30,6 +30,20 @@ describe("validateContact", () => {
     expect(result).toEqual({ ok: true, data: { ...valid, phone: null, consent: undefined } });
   });
 
+  it("normalises a Pakistani mobile number like checkout does", () => {
+    for (const phone of ["0300 1234567", "0300-1234567", "+92 300 1234567", "00923001234567"]) {
+      const result = validateContact({ ...valid, phone });
+      expect(result).toMatchObject({ ok: true, data: { phone: "+923001234567" } });
+    }
+  });
+
+  it("rejects non-Pakistani or landline numbers with the checkout-style hint", () => {
+    for (const phone of ["+1 212 555 0189", "042 35761234", "0300 12345"]) {
+      const result = validateContact({ ...valid, phone });
+      expect(result).toEqual({ ok: false, fieldErrors: { phone: "Enter a Pakistani mobile number, e.g. 0300 1234567 or +92 300 1234567." } });
+    }
+  });
+
   it("reports every invalid field", () => {
     const result = validateContact({ name: "A", email: "nope", service: "x", phone: "12", message: "hi", consent: "" });
     expect(result.ok).toBe(false);
@@ -53,6 +67,11 @@ describe("contact & newsletter actions", () => {
     for (const [key, value] of Object.entries({ ...valid, ...overrides })) formData.set(key, value);
     return formData;
   }
+
+  it("stores the optional mobile in E.164 form", async () => {
+    await sendContactMessage({ status: "idle" }, contactForm({ phone: "0321 7654321" }));
+    expect(mocks.insert).toHaveBeenCalledWith(expect.objectContaining({ phone: "+923217654321" }));
+  });
 
   it("saves a valid message and acknowledges it by first name", async () => {
     const result = await sendContactMessage({ status: "idle" }, contactForm());

@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -27,7 +27,27 @@ export async function setMessageRead(form: FormData) {
   if (!rows.length) fail("/admin/messages", "Message not found.");
   revalidatePath("/admin/messages");
   revalidatePath(`/admin/messages/${id}`);
-  redirect(`/admin/messages/${id}?saved=1`);
+  // "Mark as unread" returns to the inbox; staying on the message would mark it read again on open.
+  redirect(read === "yes" ? `/admin/messages/${id}?saved=1` : "/admin/messages?unread=1");
+}
+
+/**
+ * Called once the message page has actually been viewed (not on prefetch).
+ * Best-effort: a failure only leaves the message unread, so it never throws.
+ */
+export async function markMessageOpened(id: unknown): Promise<void> {
+  await requireAdmin();
+  if (!z.uuid().safeParse(id).success) return;
+  const messageId = String(id);
+  let rows: { id: string }[];
+  try {
+    rows = await db.update(contactMessages).set({ isRead: true }).where(and(eq(contactMessages.id, messageId), eq(contactMessages.isRead, false))).returning({ id: contactMessages.id });
+  } catch (cause) {
+    console.error("Marking message as read failed", cause);
+    return;
+  }
+  // Refreshes the inbox and the unread badge; the action response re-renders the open page too.
+  if (rows.length) revalidatePath("/admin/messages");
 }
 
 export async function deleteMessage(form: FormData) {

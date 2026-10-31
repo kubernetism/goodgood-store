@@ -1,1 +1,5 @@
-export default function Loading() { return <div className="admin-loading">Loading…</div>; }
+import { PageSkeleton } from "@/features/admin/skeleton";
+
+export default function Loading() {
+  return <PageSkeleton />;
+}

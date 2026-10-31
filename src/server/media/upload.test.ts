@@ -11,13 +11,13 @@ beforeEach(() => {
   vi.clearAllMocks();
   mocks.put.mockResolvedValue({ key: "images/test.png", url: "https://example.invalid/test.png" });
   mocks.remove.mockResolvedValue(undefined);
-  mocks.returning.mockResolvedValue([{ id: "123", alt: "Honey jar" }]);
+  mocks.returning.mockResolvedValue([{ id: "123", alt: "Honey jar", url: "https://media.example/jar.png" }]);
   mocks.insert.mockReturnValue({ values: () => ({ returning: mocks.returning }) });
 });
 
 describe("image upload", () => {
   it("stores a valid image and returns a selectable media record", async () => {
-    await expect(storeUploadedImage(png(), " Honey jar ")).resolves.toEqual({ image: { id: "123", alt: "Honey jar" } });
+    await expect(storeUploadedImage(png(), " Honey jar ")).resolves.toEqual({ image: { id: "123", alt: "Honey jar", url: "https://media.example/jar.png" } });
     expect(mocks.put).toHaveBeenCalledOnce();
     expect(mocks.insert).toHaveBeenCalledOnce();
   });

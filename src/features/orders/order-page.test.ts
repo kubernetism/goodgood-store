@@ -6,6 +6,7 @@ vi.mock("@/db/client", () => ({ db: { select: mocks.select } }));
 vi.mock("@/server/auth/session", () => ({ requireAdmin: mocks.requireAdmin }));
 vi.mock("@/features/admin/actions", () => ({ changeOrderStatus: vi.fn() }));
 import OrderPage from "@/app/admin/(protected)/orders/[id]/page";
+import { formatPrice } from "@/lib/format";
 
 const id = "f84da7af-a29d-4638-85e9-d1705a694d18";
 const order = {
@@ -45,4 +46,41 @@ describe("admin order details", () => {
     expect(html).not.toContain("Print shipping details");
     expect(html).toContain("Confirmed");
   });
+
+  it("offers one forward step as a single button and keeps Cancel separate and confirmed (O3)", async () => {
+    mockQueries({ ...order, status: "pending" });
+    const html = renderToStaticMarkup(await OrderPage({ params: Promise.resolve({ id }), searchParams: Promise.resolve({}) }));
+    expect(html).toContain("Mark as confirmed");
+    expect(html).toContain('name="status" value="confirmed"');
+    expect(html).not.toContain("<select");
+    // Cancel lives in its own form with a required confirmation checkbox.
+    expect(html).toContain('name="status" value="cancelled"');
+    const confirmBox = /<input type="checkbox"[^>]*name="confirm"[^>]*>/.exec(html)?.[0] ?? "";
+    expect(confirmBox).toContain('value="yes"');
+    expect(confirmBox).toContain("required");
+    expect(html).toContain("Cancel this order and return 2 items to stock");
+  });
+
+  it("offers no status buttons for a delivered order", async () => {
+    mockQueries({ ...order, status: "delivered" });
+    const html = renderToStaticMarkup(await OrderPage({ params: Promise.resolve({ id }), searchParams: Promise.resolve({}) }));
+    expect(html).toContain("This order is complete.");
+    expect(html).not.toContain('name="status"');
+  });
+
+  it("links the customer phone for calls and WhatsApp (O4)", async () => {
+    mockQueries(order);
+    const html = renderToStaticMarkup(await OrderPage({ params: Promise.resolve({ id }), searchParams: Promise.resolve({}) }));
+    expect(html).toContain('href="tel:+923001234567"');
+    expect(html).toContain('href="https://wa.me/923001234567"');
+  });
+
+  it("prints a courier slip with the amount to collect and the store's Peshawar address", async () => {
+    mockQueries(order);
+    const html = renderToStaticMarkup(await OrderPage({ params: Promise.resolve({ id }), searchParams: Promise.resolve({}) }));
+    expect(html).toContain(`Collect on delivery: ${formatPrice(order.total)}`);
+    expect(html).toContain("Peshawar, Pakistan.");
+    expect(html).toContain("Honey by Abdul Sami Enterprises");
+  });
 });
+

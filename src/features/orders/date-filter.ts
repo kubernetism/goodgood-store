@@ -1,9 +1,12 @@
 import { dateToPktLocal, pktLocalToDate } from "@/lib/pk-time";
+import type { OrderStatus } from "./status";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+export type OrderDateMode = "today" | "all" | "range";
+
 export type OrderDateFilter = {
-  mode: "today" | "all" | "range";
+  mode: OrderDateMode;
   /** Pakistan calendar dates, suitable for date inputs. */
   from: string;
   to: string;
@@ -13,13 +16,22 @@ export type OrderDateFilter = {
   error: string | null;
 };
 
+/**
+ * Open orders (pending, confirmed, shipped) default to all dates so older
+ * work is never hidden; finished orders (delivered, cancelled) default to today.
+ */
+export function defaultOrderDateMode(status: OrderStatus): "today" | "all" {
+  return status === "delivered" || status === "cancelled" ? "today" : "all";
+}
+
 /** A date range uses Pakistan calendar days, independent of the server's timezone. */
 export function parseOrderDateFilter(
   params: { date?: string; from?: string; to?: string },
   now: Date = new Date(),
+  defaultMode: "today" | "all" = "today",
 ): OrderDateFilter {
   const today = dateToPktLocal(now).slice(0, 10);
-  const selected = params.date || "today";
+  const selected = params.date || defaultMode;
   if (selected === "all") return { mode: "all", from: today, to: today, start: null, end: null, error: null };
   if (selected === "today") {
     const start = pktLocalToDate(`${today}T00:00`)!;

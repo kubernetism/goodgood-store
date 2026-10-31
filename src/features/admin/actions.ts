@@ -233,12 +233,17 @@ export async function deleteMedia(form: FormData) {
   await requireAdmin();
   const id = value(form, "id");
   if (!validId(id) || value(form, "confirm") !== "yes") error("/admin/media", "Confirm deletion first.");
-  const [image] = await db.select().from(media).where(eq(media.id, id)).limit(1);
+  // Row first: a dangling row would show a broken image everywhere it is used,
+  // while an orphaned storage object is invisible and harmless.
+  let deleted: { storageKey: string }[];
+  try {
+    deleted = await db.delete(media).where(eq(media.id, id)).returning({ storageKey: media.storageKey });
+  } catch (cause) { console.error("Media deletion failed", cause); error("/admin/media", "Could not delete the image. Please try again."); }
+  const [image] = deleted;
   if (!image) error("/admin/media", "Image not found.");
   try {
     await getMediaStorage().remove(image.storageKey);
-    await db.delete(media).where(eq(media.id, id));
-  } catch (cause) { console.error("Media deletion failed", cause); error("/admin/media", "Could not delete the image. Please try again."); }
+  } catch (cause) { console.error("Media object removal failed; the stored file is now orphaned", { storageKey: image.storageKey, cause }); }
   updateTag(CACHE_TAGS.content); updateTag(CACHE_TAGS.catalog); updateTag(CACHE_TAGS.banners); updateTag(CACHE_TAGS.blog);
   revalidatePath("/admin/media");
   success("/admin/media");

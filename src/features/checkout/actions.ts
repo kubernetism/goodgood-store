@@ -10,7 +10,7 @@ import { describeAdjustments, prepareOrder, type PurchasableProduct } from "@/fe
 import { formatOrderNumber } from "@/features/orders/status";
 import { CACHE_TAGS } from "@/lib/cache-tags";
 import { readFields, type FieldErrors } from "@/lib/forms";
-import { getClientIpHash } from "@/server/request";
+import { getClientIp, getClientIpHash } from "@/server/request";
 import { isCheckViolation } from "@/server/db-errors";
 import { checkoutFields, validateBilling, type CheckoutField } from "./validation";
 import { getOrderWhatsappNumber } from "@/features/admin/whatsapp-settings-data";
@@ -84,13 +84,17 @@ export async function placeOrder(_previous: CheckoutState, formData: FormData): 
 
   if (!billing.ok || lines.length === 0) return errorState("Please fix the highlighted fields and try again.");
 
-  const ipHash = await getClientIpHash();
-  const [recent] = await db
-    .select({ value: count() })
-    .from(orders)
-    .where(and(eq(orders.ipHash, ipHash), gt(orders.createdAt, new Date(Date.now() - ORDER_WINDOW_MS))));
-  if ((recent?.value ?? 0) >= MAX_ORDERS_PER_WINDOW) {
-    return errorState("You have placed several orders in a few minutes. Please wait a little, or call us to order.");
+  // Without a forwarded IP every visitor would share one bucket, so the per-IP
+  // limit is skipped and no hash is stored (same rule as the contact form).
+  const ipHash = await getClientIp() === "unknown" ? null : await getClientIpHash();
+  if (ipHash) {
+    const [recent] = await db
+      .select({ value: count() })
+      .from(orders)
+      .where(and(eq(orders.ipHash, ipHash), gt(orders.createdAt, new Date(Date.now() - ORDER_WINDOW_MS))));
+    if ((recent?.value ?? 0) >= MAX_ORDERS_PER_WINDOW) {
+      return errorState("You have placed several orders in a few minutes. Please wait a little, or call us to order.");
+    }
   }
 
   const prepared = prepareOrder(lines, await loadPurchasable(lines.map((line) => line.slug)));

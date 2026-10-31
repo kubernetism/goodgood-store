@@ -1,0 +1,491 @@
+/*
+ * Admin shell: sidebar (>= 1024px), top bar and bottom bar (< 1024px),
+ * the More sheet (Popover API), the main column and the one page-load reveal.
+ */
+.admin-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100dvh;
+}
+@media (min-width: 1024px) {
+  .admin-shell {
+    grid-template-columns: var(--ad-sidebar-w) minmax(0, 1fr);
+  }
+}
+
+/* The sticky bottom bar must never cover a focused element (WCAG 2.4.11). */
+@media (max-width: 1023.98px) {
+  /* Literal 64px: the --ad-* tokens live on .admin-app, below <html>. */
+  html:has(.admin-shell) {
+    scroll-padding-block-end: calc(64px + env(safe-area-inset-bottom) + 16px);
+  }
+  /* Long editors also have a sticky save bar (about 76px) above the bottom bar. */
+  html:has(.admin-save-bar) {
+    scroll-padding-block-end: calc(64px + 76px + env(safe-area-inset-bottom) + 16px);
+  }
+}
+@media (min-width: 1024px) {
+  html:has(.admin-save-bar) {
+    scroll-padding-block-end: calc(76px + 16px);
+  }
+}
+
+/* ── Comb surfaces (sidebar, bars, More sheet) ──────────────────────── */
+.admin-sidebar,
+.admin-topbar,
+.admin-bottombar,
+.admin-more {
+  --ad-focus: var(--ad-focus-on-comb);
+  background: var(--ad-comb);
+  color: var(--ad-on-comb);
+}
+
+/* ── Brand lockup ───────────────────────────────────────────────────── */
+.admin-app .admin-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+  min-height: var(--ad-control-h);
+  border-radius: var(--ad-radius-sm);
+  color: var(--ad-on-comb);
+  text-decoration: none;
+}
+.admin-app .admin-brand:hover {
+  color: var(--ad-on-comb);
+  text-decoration: none;
+}
+.admin-brand-mark {
+  width: 30px;
+  height: 34px;
+  flex: none;
+  color: var(--ad-honey);
+}
+.admin-brand-text {
+  display: grid;
+  min-width: 0;
+}
+.admin-brand-name {
+  font-family: var(--ad-font-display);
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  line-height: 22px;
+  font-weight: 560;
+  font-variation-settings: "SOFT" 50;
+}
+.admin-brand-sub {
+  color: var(--ad-on-comb-muted);
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────── */
+.admin-sidebar {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    position: sticky;
+    inset-block-start: 0;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ad-space-6);
+    height: 100dvh;
+    overflow-y: auto;
+    padding: var(--ad-space-5) var(--ad-space-3) var(--ad-space-4);
+    scrollbar-width: thin;
+  }
+  .admin-sidebar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--ad-on-comb);
+    opacity: 0.06;
+    -webkit-mask:
+      var(--mask-honeycomb) 0 0 / 28px auto repeat,
+      linear-gradient(to top, black 0%, transparent 55%);
+    -webkit-mask-composite: source-in;
+    mask:
+      var(--mask-honeycomb) 0 0 / 28px auto repeat,
+      linear-gradient(to top, black 0%, transparent 55%);
+    mask-composite: intersect;
+  }
+  .admin-sidebar > header {
+    padding-inline: var(--ad-space-2);
+  }
+}
+.admin-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ad-space-5);
+}
+.admin-nav-group {
+  display: grid;
+  gap: 2px;
+}
+.admin-app .admin-nav-heading {
+  margin: 0 0 var(--ad-space-1);
+  padding-inline: var(--ad-space-3);
+  color: var(--ad-on-comb-muted);
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  font-weight: 600;
+  font-variation-settings: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.admin-nav ul {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-nav-footer {
+  margin-block-start: auto;
+}
+.admin-app .admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-2);
+  min-height: 40px;
+  padding: 0 var(--ad-space-3);
+  border-radius: var(--ad-radius-sm);
+  color: var(--ad-on-comb);
+  font-size: var(--ad-text-md);
+  line-height: var(--ad-text-md-lh);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--ad-dur-fast) var(--ad-ease-out);
+}
+@media (pointer: coarse) {
+  .admin-app .admin-nav-link {
+    min-height: 44px;
+  }
+}
+.admin-app .admin-nav-link:hover {
+  background: var(--ad-comb-2);
+  color: var(--ad-on-comb);
+  text-decoration: none;
+}
+.admin-app .admin-nav-link[aria-current="page"] {
+  background: var(--ad-comb-2);
+  box-shadow: inset 3px 0 0 var(--ad-honey);
+  color: var(--ad-on-comb);
+  font-weight: 600;
+}
+.admin-nav-link > svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--ad-on-comb-muted);
+}
+.admin-nav-link[aria-current="page"] > svg {
+  color: var(--ad-honey);
+}
+.admin-nav-label {
+  flex: 1;
+  min-width: 0;
+}
+.admin-nav-badge {
+  min-width: 22px;
+  padding: 0 6px;
+  border-radius: var(--ad-radius-pill);
+  background: var(--ad-honey);
+  color: var(--ad-ink);
+  font-size: var(--ad-text-2xs);
+  line-height: 20px;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.admin-account {
+  display: grid;
+  gap: var(--ad-space-1);
+  padding: var(--ad-space-3) var(--ad-space-3) 0;
+  border-block-start: 1px solid var(--ad-comb-2);
+}
+.admin-account-email {
+  color: var(--ad-on-comb-muted);
+  font-size: var(--ad-text-xs);
+  line-height: var(--ad-text-xs-lh);
+  overflow-wrap: anywhere;
+}
+.admin-app .admin-signout {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ad-space-2);
+  min-height: 40px;
+  margin-inline-start: calc(var(--ad-space-3) * -1);
+  padding: 0 var(--ad-space-3);
+  border: 0;
+  border-radius: var(--ad-radius-sm);
+  background: transparent;
+  color: var(--ad-on-comb);
+  font-size: var(--ad-text-sm);
+  font-weight: 500;
+  cursor: pointer;
+}
+.admin-app .admin-signout:hover {
+  background: var(--ad-comb-2);
+}
+.admin-signout svg {
+  width: 18px;
+  height: 18px;
+  color: var(--ad-on-comb-muted);
+}
+
+/* ── Top bar (< 1024px, not sticky) ─────────────────────────────────── */
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ad-space-3);
+  min-height: var(--ad-topbar-h);
+  padding: 0 var(--ad-space-4);
+}
+.admin-topbar .admin-brand-mark {
+  width: 24px;
+  height: 27px;
+}
+.admin-topbar .admin-brand-name {
+  font-size: 16px;
+}
+.admin-app .admin-topbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ad-space-1);
+  min-height: var(--ad-control-h);
+  padding: 0 var(--ad-space-2);
+  border-radius: var(--ad-radius-sm);
+  color: var(--ad-on-comb);
+  font-size: var(--ad-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+.admin-topbar-link svg {
+  width: 18px;
+  height: 18px;
+}
+@media (min-width: 1024px) {
+  .admin-topbar {
+    display: none;
+  }
+}
+
+/* ── Main column ────────────────────────────────────────────────────── */
+.admin-main {
+  width: 100%;
+  max-width: var(--ad-content-max);
+  min-width: 0;
+  padding: var(--ad-space-5) var(--ad-space-4)
+    calc(var(--ad-bottombar-h) + env(safe-area-inset-bottom) + var(--ad-space-8));
+}
+.admin-main:focus {
+  outline: none;
+}
+@media (min-width: 768px) {
+  .admin-main {
+    padding-inline: var(--ad-space-8);
+    padding-block-start: var(--ad-space-8);
+  }
+}
+@media (min-width: 1024px) {
+  .admin-main {
+    padding: var(--ad-space-10) clamp(24px, 4vw, 56px) var(--ad-space-16);
+  }
+}
+
+/* ── Bottom bar (< 1024px) ──────────────────────────────────────────── */
+.admin-bottombar {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 20;
+  padding-block-end: env(safe-area-inset-bottom);
+  box-shadow: var(--ad-shadow-bar);
+}
+.admin-bottombar ul {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  height: var(--ad-bottombar-h);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.admin-app .admin-tab {
+  position: relative;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ad-on-comb-muted);
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.admin-app .admin-tab:hover {
+  color: var(--ad-on-comb);
+  text-decoration: none;
+}
+.admin-app .admin-tab:focus-visible {
+  outline-offset: -4px;
+}
+.admin-tab > svg {
+  width: 22px;
+  height: 22px;
+}
+.admin-app .admin-tab:is([aria-current="page"], [data-active]) {
+  color: var(--ad-on-comb);
+}
+.admin-tab:is([aria-current="page"], [data-active])::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 22%;
+  height: 3px;
+  border-end-start-radius: 3px;
+  border-end-end-radius: 3px;
+  background: var(--ad-honey);
+}
+.admin-tab .admin-nav-badge {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: calc(50% + 6px);
+  min-width: 20px;
+  line-height: 18px;
+}
+@media (min-width: 1024px) {
+  .admin-bottombar {
+    display: none;
+  }
+}
+
+/* ── More sheet (Popover API: Esc and light dismiss for free) ───────── */
+.admin-more {
+  position: fixed;
+  inset: auto 0 calc(var(--ad-bottombar-h) + env(safe-area-inset-bottom)) 0;
+  width: 100%;
+  max-width: none;
+  max-height: min(78dvh, 640px);
+  margin: 0;
+  overflow-y: auto;
+  padding: var(--ad-space-4) var(--ad-space-3) var(--ad-space-4);
+  border: 0;
+  border-start-start-radius: var(--ad-radius-lg);
+  border-start-end-radius: var(--ad-radius-lg);
+  box-shadow: var(--ad-shadow-2);
+  overscroll-behavior: contain;
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity var(--ad-dur-base) var(--ad-ease-out),
+    translate var(--ad-dur-base) var(--ad-ease-out),
+    overlay var(--ad-dur-base) allow-discrete,
+    display var(--ad-dur-base) allow-discrete;
+}
+.admin-more:not(:popover-open) {
+  opacity: 0;
+  translate: 0 16px;
+}
+@starting-style {
+  .admin-more:popover-open {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+.admin-more::backdrop {
+  background: var(--ad-backdrop);
+}
+.admin-more .admin-nav {
+  gap: var(--ad-space-4);
+}
+.admin-more .admin-account {
+  margin-block-start: var(--ad-space-4);
+}
+@media (min-width: 1024px) {
+  .admin-more {
+    display: none;
+  }
+}
+
+/* ── The one orchestrated reveal (first load of the shell only) ─────── */
+@media (prefers-reduced-motion: no-preference) {
+  .admin-sidebar::before {
+    animation: admin-fade 480ms var(--ad-ease-out) both;
+  }
+  .admin-sidebar .admin-nav-item {
+    animation: admin-slide-in var(--ad-dur-slow) var(--ad-ease-out) both;
+    animation-delay: calc(var(--i, 0) * var(--ad-stagger));
+  }
+  .admin-page {
+    animation: admin-fade 160ms var(--ad-ease-out) both;
+  }
+  .admin-shell:not([data-booted]) .admin-page > :nth-child(-n + 6) {
+    animation: admin-rise var(--ad-dur-slow) var(--ad-ease-out) both;
+  }
+  .admin-shell:not([data-booted]) .admin-page > :nth-child(2) { animation-delay: 40ms; }
+  .admin-shell:not([data-booted]) .admin-page > :nth-child(3) { animation-delay: 80ms; }
+  .admin-shell:not([data-booted]) .admin-page > :nth-child(4) { animation-delay: 120ms; }
+  .admin-shell:not([data-booted]) .admin-page > :nth-child(5) { animation-delay: 160ms; }
+  .admin-shell:not([data-booted]) .admin-page > :nth-child(6) { animation-delay: 200ms; }
+}
+@keyframes admin-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes admin-slide-in {
+  from {
+    opacity: 0;
+    translate: -6px 0;
+  }
+}
+@keyframes admin-rise {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+@keyframes admin-sheet-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+  }
+}
+
+/* ── Print: chrome never reaches paper ──────────────────────────────── */
+@media print {
+  .admin-sidebar,
+  .admin-topbar,
+  .admin-bottombar,
+  .admin-more {
+    display: none !important;
+  }
+  .admin-shell {
+    display: block;
+  }
+  .admin-main {
+    max-width: none;
+    padding: 0;
+  }
+  .admin-page {
+    animation: none !important;
+  }
+}

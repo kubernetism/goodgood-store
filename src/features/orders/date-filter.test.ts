@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseOrderDateFilter } from "./date-filter";
+import { defaultOrderDateMode, parseOrderDateFilter } from "./date-filter";
 
 describe("order date filter", () => {
   it("defaults to the current Pakistan day even when UTC is still the previous day", () => {
@@ -33,4 +33,18 @@ describe("order date filter", () => {
       expect(filter.end).toBeNull();
     }
   });
+
+  it("defaults open statuses to all dates and finished statuses to today (O1)", () => {
+    expect(defaultOrderDateMode("pending")).toBe("all");
+    expect(defaultOrderDateMode("confirmed")).toBe("all");
+    expect(defaultOrderDateMode("shipped")).toBe("all");
+    expect(defaultOrderDateMode("delivered")).toBe("today");
+    expect(defaultOrderDateMode("cancelled")).toBe("today");
+  });
+
+  it("uses the caller's default when no date is given, so older pending orders stay visible", () => {
+    expect(parseOrderDateFilter({}, new Date("2026-10-30T12:00:00Z"), "all")).toMatchObject({ mode: "all", start: null, end: null, error: null });
+    expect(parseOrderDateFilter({ date: "today" }, new Date("2026-10-30T12:00:00Z"), "all")).toMatchObject({ mode: "today", error: null });
+  });
 });
+

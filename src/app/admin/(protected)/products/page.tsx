@@ -1,23 +1,80 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { and, asc, eq, ilike, lte, or } from "drizzle-orm";
+import { Package, Pencil } from "lucide-react";
 import { db } from "@/db/client";
-import { categories, products } from "@/db/schema";
-import { AdminHeading, AdminNotice, Pager, pageNumber } from "@/features/admin/ui";
+import { categories, media, productImages, products } from "@/db/schema";
 import { ProductVisibility } from "@/features/admin/product-visibility";
+import { LOW_STOCK_THRESHOLD, stockLevel } from "@/features/admin/status-display";
+import { AdminTable, TBody, Td, Th, THead, Tr } from "@/features/admin/table";
+import { AdminHeading, AdminNotice, EmptyState, ListFilters, Pager, pageNumber, SelectField, StatusPill } from "@/features/admin/ui";
 import { formatPrice } from "@/lib/format";
+import { containsPattern } from "@/lib/search";
 import { requireAdmin } from "@/server/auth/session";
 
 export const instant = false;
+export const metadata: Metadata = { title: "Products" };
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; stock?: string; page?: string; saved?: string; error?: string }> }) {
   await requireAdmin();
-  const p = await searchParams; const q = (p.q ?? "").trim().slice(0, 100); const page = pageNumber(p.page);
+  const p = await searchParams;
+  const q = (p.q ?? "").trim().slice(0, 100);
+  const page = pageNumber(p.page);
   const status = p.status === "active" || p.status === "draft" || p.status === "archived" ? p.status : undefined;
-  const rows = await db.select({ product: products, category: categories.name, categoryActive: categories.isActive }).from(products).innerJoin(categories, eq(categories.id, products.categoryId)).where(and(q ? or(ilike(products.name, `%${q}%`), ilike(products.slug, `%${q}%`)) : undefined, status ? eq(products.status, status) : undefined, p.stock === "low" ? lte(products.stock, 5) : undefined)).orderBy(asc(products.sortOrder), asc(products.name)).limit(21).offset((page - 1) * 20);
-  const query = new URLSearchParams(); if (q) query.set("q", q); if (status) query.set("status", status); if (p.stock === "low") query.set("stock", "low");
-  return <><AdminHeading title="Products" description="Manage prices, stock and product details." href="/admin/products/new" action="Add product" /><AdminNotice {...p} /><div className="admin-panel" style={{ marginTop: 16 }}>
-    <form action="/admin/products" className="admin-search"><input name="q" defaultValue={q} placeholder="Search products" aria-label="Search products" /><select name="status" defaultValue={status ?? ""} aria-label="Product status"><option value="">All statuses</option><option value="active">Active</option><option value="draft">Inactive</option><option value="archived">Archived (inactive)</option></select><select name="stock" defaultValue={p.stock ?? ""} aria-label="Stock filter"><option value="">All stock</option><option value="low">Low stock</option></select><button className="admin-button secondary">Search</button></form>
-    <p className="admin-muted">Check Active to show a product on the website. Changes save automatically.</p>
-    <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Product</th><th>Category</th><th>Status</th><th>Stock</th><th>Price</th><th>Actions</th></tr></thead><tbody>{rows.slice(0, 20).map(({ product, category, categoryActive }) => <tr key={product.id}><td><Link href={`/admin/products/${product.id}`}>{product.name}</Link><br /><span className="admin-muted">{product.slug}</span></td><td>{category}{!categoryActive && <><br /><span className="admin-muted">Category inactive; product hidden</span></>}</td><td><ProductVisibility key={product.status} id={product.id} name={product.name} active={product.status === "active"} archived={product.status === "archived"} /></td><td>{product.stock}</td><td>{formatPrice(product.price)}</td><td><div className="admin-actions"><Link href={`/admin/products/${product.id}`} aria-label={`Edit ${product.name}`}>Edit</Link><Link href={`/admin/products/${product.id}?delete=1#delete-product`} aria-label={`Delete ${product.name}`}>Delete</Link></div></td></tr>)}</tbody></table></div>{rows.length === 0 && <p className="admin-muted">No products found.</p>}<Pager page={page} hasNext={rows.length > 20} base={`/admin/products${query.size ? `?${query}` : ""}`} />
-  </div></>;
+  const lowStock = p.stock === "low";
+  const rows = await db
+    .select({ product: products, category: categories.name, categoryActive: categories.isActive, imageUrl: media.url, imageAlt: media.alt })
+    .from(products)
+    .innerJoin(categories, eq(categories.id, products.categoryId))
+    .leftJoin(productImages, and(eq(productImages.productId, products.id), eq(productImages.position, 0)))
+    .leftJoin(media, eq(media.id, productImages.mediaId))
+    .where(and(q ? or(ilike(products.name, containsPattern(q)), ilike(products.slug, containsPattern(q))) : undefined, status ? eq(products.status, status) : undefined, lowStock ? lte(products.stock, LOW_STOCK_THRESHOLD) : undefined))
+    .orderBy(asc(products.sortOrder), asc(products.name))
+    .limit(21)
+    .offset((page - 1) * 20);
+  const query = new URLSearchParams(); if (q) query.set("q", q); if (status) query.set("status", status); if (lowStock) query.set("stock", "low");
+  const shown = rows.slice(0, 20);
+  const filtered = Boolean(q || status || lowStock);
+
+  return <div className="admin-page">
+    <AdminHeading eyebrow="Catalogue" title="Products" description="Manage prices, stock and product details." href="/admin/products/new" action="Add product" />
+    <AdminNotice {...p} />
+    <section className="admin-panel" aria-label="Products">
+      <ListFilters action="/admin/products" label="Filter products" q={q} placeholder="Name or slug" activeCount={(status ? 1 : 0) + (lowStock ? 1 : 0)} resetHref="/admin/products">
+        <SelectField label="Status" name="status" defaultValue={status ?? ""} options={[{ value: "", label: "All statuses" }, { value: "active", label: "Shown on website" }, { value: "draft", label: "Hidden" }, { value: "archived", label: "Archived" }]} />
+        <SelectField label="Stock" name="stock" defaultValue={lowStock ? "low" : ""} options={[{ value: "", label: "All stock" }, { value: "low", label: `Low stock (${LOW_STOCK_THRESHOLD} or fewer)` }]} />
+      </ListFilters>
+      {shown.length > 0 ? <>
+        <p className="admin-hint">The website switch saves immediately. Products in a hidden category stay hidden.</p>
+        <AdminTable label="Products">
+          <THead><Th>Product</Th><Th>Category</Th><Th>Website</Th><Th num>Stock</Th><Th num>Price</Th><Th><span className="sr-only">Actions</span></Th></THead>
+          <TBody>{shown.map(({ product, category, categoryActive, imageUrl, imageAlt }) => {
+            const level = stockLevel(product.stock);
+            return <Tr key={product.id}>
+              <Td slot="title"><div className="admin-with-thumb">
+                <span className="admin-thumb">{imageUrl && <Image src={imageUrl} alt={imageAlt ?? ""} fill sizes="40px" />}</span>
+                <div><Link href={`/admin/products/${product.id}`}>{product.name}</Link><span className="admin-cell-sub admin-mono">{product.slug}</span></div>
+              </div></Td>
+              <Td label="Category">{category}{!categoryActive && <> <StatusPill tone="attention" label="Category hidden" /></>}</Td>
+              <Td label="Website"><ProductVisibility id={product.id} name={product.name} active={product.status === "active"} archived={product.status === "archived"} /></Td>
+              <Td label="Stock" num className="admin-card-inline">
+                <span className={level === "out" ? "admin-field-error" : undefined}>{product.stock}</span>
+                {level === "out" && <> <StatusPill tone="danger" label="Out" /></>}{level === "low" && <> <StatusPill tone="attention" label="Low" /></>}
+              </Td>
+              <Td label="Price" num>{formatPrice(product.price)}</Td>
+              <Td slot="actions"><div className="admin-row-actions">
+                <Link className="admin-button quiet sm" href={`/admin/products/${product.id}`} aria-label={`Edit ${product.name}`}><Pencil aria-hidden="true" />Edit</Link>
+                <Link className="admin-button danger-quiet sm" href={`/admin/products/${product.id}?delete=1#delete-product`} aria-label={`Delete ${product.name}`}>Delete…</Link>
+              </div></Td>
+            </Tr>;
+          })}</TBody>
+        </AdminTable>
+      </> : <EmptyState icon={<Package />} title={filtered ? "No products match these filters" : "No products yet"}
+        actions={filtered ? <Link className="admin-button secondary" href="/admin/products">Clear filters</Link> : <Link className="admin-button" href="/admin/products/new">Add product</Link>}>
+        {filtered ? "Try a different search, status or stock filter." : "Add your first honey to start selling."}
+      </EmptyState>}
+      <Pager page={page} hasNext={rows.length > 20} base={`/admin/products${query.size ? `?${query}` : ""}`} shown={shown.length} />
+    </section>
+  </div>;
 }

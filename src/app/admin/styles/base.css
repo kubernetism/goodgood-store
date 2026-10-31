@@ -1,0 +1,174 @@
+/*
+ * Admin base: typography, links, focus, layout rhythm and reduced motion.
+ * Unlayered on purpose: these rules must beat Tailwind's layered preflight
+ * and storefront base styles. Every selector is scoped to .admin-app.
+ */
+.admin-app {
+  min-height: 100dvh;
+  background: var(--ad-canvas);
+  color: var(--ad-ink);
+  font-family: var(--ad-font-ui);
+  font-size: var(--ad-text-base);
+  line-height: var(--ad-text-base-lh);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.admin-app *,
+.admin-app *::before,
+.admin-app *::after {
+  box-sizing: border-box;
+}
+.admin-app ::selection {
+  background: var(--ad-honey-soft);
+  color: var(--ad-ink);
+}
+
+.admin-app h1,
+.admin-app h2,
+.admin-app h3 {
+  margin: 0;
+  color: var(--ad-ink);
+  font-family: var(--ad-font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 50;
+  text-wrap: balance;
+}
+.admin-app h1 {
+  font-size: var(--ad-text-xl);
+  line-height: var(--ad-text-xl-lh);
+  font-weight: 600;
+}
+.admin-app h2 {
+  font-size: var(--ad-text-lg);
+  line-height: var(--ad-text-lg-lh);
+  font-weight: 560;
+}
+.admin-app h3 {
+  font-size: var(--ad-text-md);
+  line-height: var(--ad-text-md-lh);
+  font-weight: 600;
+  font-family: var(--ad-font-ui);
+  font-variation-settings: normal;
+}
+@media (min-width: 768px) {
+  .admin-app h1 {
+    font-size: var(--ad-text-2xl);
+    line-height: var(--ad-text-2xl-lh);
+    letter-spacing: -0.01em;
+  }
+}
+
+.admin-app p {
+  margin: 0;
+}
+/* Zero-specificity element rules so every component class can restyle links. */
+:where(.admin-app) a {
+  color: var(--ad-link);
+  text-decoration-line: underline;
+  text-underline-offset: 0.18em;
+}
+:where(.admin-app) a:hover {
+  text-decoration-thickness: 2px;
+}
+.admin-app strong {
+  font-weight: 600;
+}
+
+/* Focus: ink on light surfaces (15.5:1), honey on comb surfaces (10:1). */
+.admin-app :focus-visible {
+  outline: 2px solid var(--ad-focus);
+  outline-offset: 2px;
+}
+.admin-on-comb {
+  --ad-focus: var(--ad-focus-on-comb);
+}
+
+/* Utility classes (no Tailwind utilities in admin markup except sr-only). */
+.admin-muted {
+  color: var(--ad-muted);
+  font-size: var(--ad-text-sm);
+  line-height: var(--ad-text-sm-lh);
+}
+.admin-hint {
+  max-width: var(--ad-measure);
+  color: var(--ad-muted);
+  font-size: var(--ad-text-xs);
+  line-height: var(--ad-text-xs-lh);
+  text-wrap: pretty;
+}
+.admin-num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.admin-mono {
+  font-family: var(--ad-font-mono);
+  font-size: 0.875em;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.admin-eyebrow {
+  margin: 0;
+  color: var(--ad-muted);
+  font-size: var(--ad-text-2xs);
+  line-height: var(--ad-text-2xs-lh);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.admin-stack {
+  display: grid;
+  gap: var(--ad-space-4);
+  align-content: start;
+}
+.admin-stack-sm {
+  display: grid;
+  gap: var(--ad-space-2);
+  align-content: start;
+}
+.admin-stack-lg {
+  display: grid;
+  gap: var(--ad-space-6);
+  align-content: start;
+}
+/* Vertical rhythm between header, notices and panels on every page. */
+.admin-page {
+  display: grid;
+  gap: var(--ad-space-4);
+  align-content: start;
+  min-width: 0;
+}
+.admin-page > .admin-head {
+  margin-block-end: var(--ad-space-2);
+}
+.admin-page > .admin-danger-zone:first-of-type,
+.admin-page > .admin-danger-group {
+  margin-block-start: var(--ad-space-6);
+}
+.admin-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ad-space-4);
+  align-items: start;
+}
+@media (min-width: 768px) {
+  .admin-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ad-space-2) var(--ad-space-3);
+  align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-app *,
+  .admin-app *::before,
+  .admin-app *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

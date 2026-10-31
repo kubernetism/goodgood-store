@@ -5,7 +5,7 @@ import { media } from "@/db/schema";
 import { checkImageUpload, extensionFor, MAX_UPLOAD_BYTES } from "./image-file";
 import { getMediaStorage } from "./storage";
 
-export type UploadResult = { image: { id: string; alt: string }; error?: never } | { image?: never; error: string };
+export type UploadResult = { image: { id: string; alt: string; url: string }; error?: never } | { image?: never; error: string };
 
 /** Shared validation and storage for both the media library and inline uploaders. */
 export async function storeUploadedImage(file: FormDataEntryValue | null, altText: FormDataEntryValue | null): Promise<UploadResult> {
@@ -20,7 +20,7 @@ export async function storeUploadedImage(file: FormDataEntryValue | null, altTex
     storage = getMediaStorage();
     const stored = await storage.put(key, checked.bytes, checked.type);
     uploaded = true;
-    const [image] = await db.insert(media).values({ storageKey: stored.key, url: stored.url, alt, contentType: checked.type, sizeBytes: checked.bytes.length, width: checked.size?.width, height: checked.size?.height }).returning({ id: media.id, alt: media.alt });
+    const [image] = await db.insert(media).values({ storageKey: stored.key, url: stored.url, alt, contentType: checked.type, sizeBytes: checked.bytes.length, width: checked.size?.width, height: checked.size?.height }).returning({ id: media.id, alt: media.alt, url: media.url });
     if (!image) throw new Error("No media record was returned.");
     return { image };
   } catch (cause) {

@@ -1,0 +1,145 @@
+/*
+ * Admin design tokens ("The Hive Ledger", docs/design/admin-redesign.md §3.2).
+ *
+ * Every token is scoped to .admin-app so the storefront never sees them, and
+ * this is the only admin stylesheet allowed to contain colour literals.
+ * Contrast ratios (WCAG 2.x relative luminance) are noted where they matter.
+ * Light theme only in v1: a dark theme would redefine this whole block.
+ */
+.admin-app {
+  /* Surfaces */
+  --ad-canvas: #f7f2e8;
+  --ad-surface: #fffcf6;
+  --ad-surface-sunken: #f1e9da;
+  --ad-line: #e4d8c4; /* decorative dividers only, never a control boundary */
+  --ad-line-strong: #8c7760; /* control borders: 4.17 on surface, 3.82 on canvas */
+
+  /* Text */
+  --ad-ink: #24180b; /* 16.94 surface / 15.55 canvas */
+  --ad-ink-2: #4f3f2e; /* 9.85 / 9.04 */
+  --ad-muted: #6b5a46; /* 6.46 / 5.93 / 5.48 sunken */
+  --ad-link: #8a5a00; /* 5.79 / 5.31 */
+
+  /* Honey: a fill with ink on it, never text on light surfaces */
+  --ad-honey: #ffb800;
+  --ad-honey-hover: #f2a900;
+  --ad-honey-press: #e39e00;
+  --ad-honey-edge: #a87700;
+  --ad-honey-soft: #fff1cc;
+
+  /* Comb: sidebar and bars */
+  --ad-comb: #22170c;
+  --ad-comb-2: #36261a;
+  --ad-on-comb: #f6ead6; /* 14.77 on comb / 12.19 on comb-2 */
+  --ad-on-comb-muted: #c9b38f; /* 8.64 on comb */
+
+  /* Focus */
+  --ad-focus: #24180b;
+  --ad-focus-on-comb: #ffb800;
+
+  /* Feedback */
+  --ad-danger: #b42318;
+  --ad-danger-hover: #931c13;
+  --ad-on-danger: #ffffff;
+  --ad-danger-soft: #fdecea;
+  --ad-danger-ink: #8f1f14;
+  --ad-success-soft: #e8f3e5;
+  --ad-success-ink: #245c29;
+  --ad-info-soft: #fbf3e2;
+
+  /* Status recipes (bg / fg; fg carries text and glyph) */
+  --ad-pending-bg: #fff0c2;
+  --ad-pending-fg: #6a4300; /* 7.66 */
+  --ad-confirmed-bg: #e2f1ee;
+  --ad-confirmed-fg: #135e55; /* 6.54 */
+  --ad-shipped-bg: #e9ecf8;
+  --ad-shipped-fg: #33408f; /* 7.85 */
+  --ad-delivered-bg: #e6f2e3;
+  --ad-delivered-fg: #2b5e27; /* 6.65 */
+  --ad-cancelled-bg: #f5e6e2;
+  --ad-cancelled-fg: #7d2e22; /* 7.57 */
+  --ad-neutral-bg: #efe7dc;
+  --ad-neutral-fg: #5e4b39; /* 6.74 */
+  --ad-switch-on: #2b5e27;
+
+  /* Media tiles: transparent-image checkerboard */
+  --ad-checker: #e9dfcd;
+
+  /* Print */
+  --ad-print-ink: #000000;
+  --ad-print-paper: #ffffff;
+
+  /* Native select chevron (ink) */
+  --ad-select-chevron: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'16'%20height%3D'16'%20viewBox%3D'0%200%2016%2016'%3E%3Cpath%20d%3D'M4%206l4%204%204-4'%20fill%3D'none'%20stroke%3D'%2324180b'%20stroke-width%3D'1.75'%20stroke-linecap%3D'round'%20stroke-linejoin%3D'round'%2F%3E%3C%2Fsvg%3E");
+
+  /* Type */
+  --ad-font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --ad-font-ui: var(--font-admin-ui), "Segoe UI", system-ui, sans-serif;
+  --ad-font-mono: var(--font-admin-mono), ui-monospace, Menlo, Consolas, monospace;
+  --ad-text-2xs: 12px;
+  --ad-text-2xs-lh: 16px;
+  --ad-text-xs: 13px;
+  --ad-text-xs-lh: 18px;
+  --ad-text-sm: 14px;
+  --ad-text-sm-lh: 20px;
+  --ad-text-md: 15px;
+  --ad-text-md-lh: 22px;
+  --ad-text-base: 16px;
+  --ad-text-base-lh: 24px;
+  --ad-text-lg: 19px;
+  --ad-text-lg-lh: 26px;
+  --ad-text-xl: 24px;
+  --ad-text-xl-lh: 30px;
+  --ad-text-2xl: 32px;
+  --ad-text-2xl-lh: 38px;
+  --ad-text-stat: 32px;
+  --ad-text-stat-lh: 36px;
+
+  /* Spacing (4px base) */
+  --ad-space-1: 4px;
+  --ad-space-2: 8px;
+  --ad-space-3: 12px;
+  --ad-space-4: 16px;
+  --ad-space-5: 20px;
+  --ad-space-6: 24px;
+  --ad-space-8: 32px;
+  --ad-space-10: 40px;
+  --ad-space-12: 48px;
+  --ad-space-16: 64px;
+
+  /* Radii: nested radius = outer radius - padding */
+  --ad-radius-sm: 6px;
+  --ad-radius-md: 10px;
+  --ad-radius-lg: 14px;
+  --ad-radius-pill: 999px;
+
+  /* Elevation */
+  --ad-shadow-1: 0 1px 2px rgb(36 24 11 / 0.06);
+  --ad-shadow-2: 0 10px 28px rgb(36 24 11 / 0.14), 0 2px 6px rgb(36 24 11 / 0.08);
+  --ad-shadow-bar: 0 -1px 0 rgb(36 24 11 / 0.25), 0 -8px 24px rgb(36 24 11 / 0.12);
+  --ad-backdrop: rgb(34 23 12 / 0.55);
+
+  /* Layout */
+  --ad-sidebar-w: 248px;
+  --ad-content-max: 1240px;
+  --ad-topbar-h: 56px;
+  --ad-bottombar-h: 64px;
+  --ad-control-h: 44px;
+  --ad-control-h-sm: 36px;
+  --ad-measure: 68ch;
+
+  /* Motion */
+  --ad-dur-fast: 120ms;
+  --ad-dur-base: 200ms;
+  --ad-dur-slow: 320ms;
+  --ad-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ad-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ad-stagger: 40ms;
+}
+
+/* Touch screens get bigger controls. */
+@media (pointer: coarse) {
+  .admin-app {
+    --ad-control-h: 48px;
+  }
+}
