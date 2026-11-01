@@ -1,0 +1,234 @@
+/*
+ * About page. Every class is prefixed `about-`: Next keeps page stylesheets
+ * loaded after navigating away, so unprefixed names could leak into other
+ * routes. Layered as components so Tailwind utilities still win.
+ * Motion is transform/opacity only and skipped under prefers-reduced-motion.
+ * Sections with scroll-driven parts use overflow: clip, never hidden: hidden
+ * makes the section a scroll container, so view() timelines stop tracking the page.
+ */
+@layer components {
+  /* Pointy-top hexagon, matching the comb in the logo and loader. */
+  .about-hex {
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  /* Hero: keep the copy legible over the verse band without hiding it. */
+  .about-hero__scrim {
+    background: linear-gradient(90deg, rgb(27 17 8 / 0.82) 0%, rgb(27 17 8 / 0.55) 50%, rgb(27 17 8 / 0.2) 100%);
+  }
+  .about-hero__copy {
+    text-shadow: 0 2px 12px rgb(27 17 8 / 0.5);
+  }
+
+  /* Jar label: paper card, double rule inside the edge, set at a slight tilt. */
+  .about-label {
+    rotate: -1.5deg;
+  }
+  .about-label__card {
+    box-shadow:
+      inset 0 0 0 6px var(--color-ivory),
+      inset 0 0 0 7px rgb(138 90 0 / 0.55),
+      inset 0 0 0 10px var(--color-ivory),
+      inset 0 0 0 11px rgb(138 90 0 / 0.3),
+      0 24px 48px rgb(0 0 0 / 0.35);
+  }
+
+  /* Story: drop cap in the display face; honey fill, brown ink (9.42:1). */
+  .about-dropcap::first-letter {
+    float: left;
+    margin: 0.3rem 0.75rem 0 0;
+    padding: 0.35rem 0.6rem 0.3rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: var(--color-strong);
+    font-family: var(--font-serif);
+    font-size: 3.25rem;
+    font-style: italic;
+    line-height: 1;
+  }
+
+  /* Hive → jar thread. The rail sits at --rail-x; steps hang off it. */
+  .about-thread {
+    --rail-x: 1.375rem;
+    --node: 2.75rem;
+  }
+  .about-thread__rail {
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: calc(var(--rail-x) - 2px);
+    width: 4px;
+    /* clip, not hidden: a hidden-overflow box is a scroll container, which
+       would become the fill's view timeline and pin its progress. */
+    overflow: clip;
+    border-radius: 9999px;
+    background: rgb(138 90 0 / 0.16);
+  }
+  .about-thread__fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, var(--color-honey-300), var(--color-primary) 40%, var(--color-amber-600));
+    transform-origin: 50% 0;
+  }
+  .about-step {
+    padding-left: calc(var(--rail-x) * 2 + 1.25rem);
+  }
+  .about-step__node {
+    position: absolute;
+    top: 0;
+    left: calc(var(--rail-x) - var(--node) / 2);
+    display: grid;
+    place-items: center;
+    width: var(--node);
+    height: calc(var(--node) * 1.12);
+    background: var(--color-primary-ink);
+    color: var(--color-strong);
+  }
+  /* Wax cell inside the brown outline; the honey layer fades in over it. */
+  .about-step__node::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    clip-path: inherit;
+    background: var(--color-primary-tint);
+  }
+  .about-step__honey {
+    position: absolute;
+    inset: 2px;
+    background: var(--color-primary);
+  }
+  .about-step__card {
+    padding-top: 0.25rem;
+  }
+
+  /* lg+: centred rail, steps alternate left and right of it. */
+  @media (min-width: 64rem) {
+    .about-thread {
+      --rail-x: 50%;
+      --node: 3.25rem;
+    }
+    .about-step {
+      width: 50%;
+      padding-left: 0;
+      padding-right: calc(var(--node) / 2 + 2.5rem);
+      text-align: right;
+    }
+    .about-step__node {
+      left: auto;
+      right: calc(var(--node) / -2);
+    }
+    .about-step__meta {
+      justify-content: flex-end;
+    }
+    .about-step:nth-of-type(even) {
+      margin-left: 50%;
+      padding-right: 0;
+      padding-left: calc(var(--node) / 2 + 2.5rem);
+      text-align: left;
+    }
+    .about-step:nth-of-type(even) .about-step__node {
+      right: auto;
+      left: calc(var(--node) / -2);
+    }
+    .about-step:nth-of-type(even) .about-step__meta {
+      justify-content: flex-start;
+    }
+    .about-step + .about-step {
+      margin-top: -1.5rem;
+    }
+  }
+
+  /* Promise band: a brown rule drawn through each refused shortcut. */
+  .about-strike {
+    position: relative;
+    display: inline-block;
+  }
+  .about-strike::after {
+    content: "";
+    position: absolute;
+    top: 55%;
+    left: -0.15em;
+    right: -0.15em;
+    height: 0.09em;
+    min-height: 2px;
+    border-radius: 9999px;
+    background: var(--color-strong);
+    transform-origin: 0 50%;
+  }
+
+  /* Team portraits: arched frame, staggered like a row of frames from lg. */
+  .about-arch {
+    border-radius: 9999px 9999px var(--radius-lg) var(--radius-lg);
+  }
+  @media (min-width: 64rem) {
+    .about-member:nth-child(even) {
+      margin-top: 3rem;
+    }
+  }
+}
+
+@keyframes about-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotate(3deg);
+  }
+}
+@keyframes about-pour {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes about-node-fill {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes about-strike {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* The label settles in after the headline (which never animates: it is the LCP). */
+  .about-label {
+    animation: about-label-in 900ms var(--ease-out-soft) 200ms both;
+  }
+
+  @supports (animation-timeline: view()) {
+    /* The honey has poured as far as a line 60% down the viewport: the
+       insets shrink the view to a 1% band there, so "cover" runs from the
+       rail's top crossing that line to its bottom crossing it. */
+    .about-thread__fill,
+    .about-step__honey {
+      animation-timeline: view(block 59% 40%);
+      animation-range: cover 0% cover 100%;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+    }
+    .about-thread__fill {
+      animation-name: about-pour;
+    }
+    .about-step__honey {
+      animation-name: about-node-fill;
+    }
+    .about-strike::after {
+      animation: about-strike linear both;
+      animation-timeline: view();
+      animation-range: entry 60% cover 45%;
+    }
+  }
+}
+
+/*
+ * Workaround, deliberately unlayered so it beats the `flex-1` utility: the
+ * shared NewsletterForm "wide" variant stacks its input in a flex column
+ * below `sm`, where `flex: 1 1 0%` collapses the input to ~18px tall.
+ * Remove once the form uses `sm:flex-1` itself.
+ */
+@media (max-width: 39.98rem) {
+  .about-newsletter input[type="email"] {
+    flex-basis: auto;
+  }
+}
