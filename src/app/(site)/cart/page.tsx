@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/layout/page-hero";
 import { Container } from "@/components/ui/container";
+import { CartHeader } from "@/features/cart/components/cart-header";
 import { CartView } from "@/features/cart/components/cart-view";
 import { getCartCatalog } from "@/features/products/catalog";
 import { getCatalog } from "@/features/products/catalog-data";
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 export default async function CartPage() {
   return (
     <>
-      <PageHero title="Shopping Cart" eyebrow="Almost there" crumbs={[{ label: "Shop", href: "/shop" }, { label: "Cart" }]} />
-      <Container className="py-16 lg:py-24">
+      <CartHeader />
+      <Container className="pt-6 pb-12 lg:pt-10 lg:pb-20">
         <CartView catalog={getCartCatalog(await getCatalog())} />
       </Container>
     </>

@@ -1,0 +1,70 @@
+/*
+ * Cart page styles (scoped to [data-cart] and .cart-* classes).
+ * Motion is transform/opacity only and is skipped under prefers-reduced-motion.
+ */
+
+/* Focused controls never hide under the sticky header or the phone checkout
+   bar (WCAG 2.4.11). Mirrors the checkout rules in globals.css. */
+html:has([data-cart]) {
+  scroll-padding-top: 6.5rem;
+}
+[data-cart] :is(input, button, a, [tabindex]) {
+  scroll-margin-block: 6.5rem 2rem;
+}
+@media (max-width: 1023.98px) {
+  html:has([data-cart]) {
+    scroll-padding-bottom: 7rem;
+  }
+  [data-cart] :is(input, button, a, [tabindex]) {
+    scroll-margin-block: 6.5rem 7rem;
+  }
+}
+
+/* Free-delivery meter: a honey "fill level" inside a cream track.
+   --cart-fill is 0..1; scaleX keeps the change on the compositor. */
+.cart-meter {
+  position: relative;
+  height: 0.625rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px rgb(138 90 0 / 0.18);
+}
+.cart-meter__fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(var(--cart-fill, 0));
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--color-honey-300), var(--color-primary) 55%, var(--color-amber-600));
+}
+/* A soft gloss along the top edge, like light on a jar. */
+.cart-meter__fill::after {
+  content: "";
+  position: absolute;
+  inset: 1px 0 auto;
+  height: 35%;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.45);
+}
+
+/* Order summary card: a honey rule along the top edge. */
+.cart-summary-card {
+  box-shadow:
+    inset 0 4px 0 var(--color-primary),
+    var(--shadow-card);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cart-meter__fill {
+    transition: transform 500ms var(--ease-out-soft);
+  }
+
+  /* Lines rise in one after another on first paint (delay set inline). */
+  .cart-line {
+    animation: fade-up 500ms var(--ease-out-soft) both;
+  }
+
+  .cart-bar {
+    transition: transform 200ms var(--ease-out-soft);
+  }
+}
