@@ -1,0 +1,214 @@
+/*
+ * Home page. Every class is prefixed `home-`: Next keeps page stylesheets
+ * loaded after navigating away, so unprefixed names could leak into other
+ * routes. Layered as components so Tailwind utilities still win.
+ * Motion is transform/opacity only and skipped under prefers-reduced-motion.
+ * Sections holding `.reveal` content use overflow: clip, never hidden: hidden
+ * makes the section a scroll container and freezes its view() timelines.
+ */
+@layer components {
+  /* Pointy-top hexagon, matching the comb in the logo, About and the Journal. */
+  .home-hex {
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  }
+
+  /* Arched "hive window" used by the hero label, shelf jars and variety tiles. */
+  .home-arch {
+    border-radius: 9999px 9999px var(--radius-md) var(--radius-md);
+  }
+
+  /* ---------- Hero ---------- */
+
+  .home-hero__copy {
+    text-shadow: 0 2px 12px rgb(27 17 8 / 0.45);
+  }
+
+  /* Round stamp on the label's shoulder; the ring of text rotates with scroll. */
+  .home-stamp {
+    filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.35));
+  }
+  .home-stamp__ring {
+    transform-origin: 50% 50%;
+  }
+
+  /* Paper jar label, the same treatment as the About hero card. */
+  .home-label {
+    rotate: -2deg;
+  }
+  .home-label__card {
+    box-shadow:
+      inset 0 0 0 5px var(--color-ivory),
+      inset 0 0 0 6px rgb(124 72 25 / 0.5),
+      inset 0 0 0 9px var(--color-ivory),
+      inset 0 0 0 10px rgb(124 72 25 / 0.28),
+      0 24px 48px rgb(0 0 0 / 0.35);
+  }
+
+  /* ---------- Trust ledger ---------- */
+
+  /* Printed double rule, top and bottom, like the edge of a label. */
+  .home-ledger {
+    position: relative;
+    border-block: 2px solid var(--color-strong);
+  }
+  .home-ledger::before {
+    content: "";
+    position: absolute;
+    inset: 4px 0;
+    border-block: 1px solid rgb(43 29 14 / 0.3);
+    pointer-events: none;
+  }
+
+  /* Hairlines between promises: stacked on phones, 2x2 on tablets, one row from lg. */
+  .home-ledger__item + .home-ledger__item {
+    border-top: 1px solid rgb(43 29 14 / 0.15);
+  }
+  @media (min-width: 40rem) {
+    .home-ledger__item:nth-child(2) {
+      border-top: 0;
+    }
+  }
+  @media (min-width: 64rem) {
+    .home-ledger__item + .home-ledger__item {
+      border-top: 0;
+      border-left: 1px solid rgb(43 29 14 / 0.15);
+    }
+    .home-ledger__item {
+      padding-inline: 1.5rem;
+    }
+    .home-ledger__item:first-child {
+      padding-left: 0;
+    }
+    .home-ledger__item:last-child {
+      padding-right: 0;
+    }
+  }
+
+  /* ---------- Shelf cards ---------- */
+
+  .home-card {
+    transition:
+      transform 300ms var(--ease-out-soft),
+      box-shadow 300ms var(--ease-out-soft);
+  }
+  .home-card__media img,
+  .home-card__media > span {
+    transition: transform 500ms var(--ease-out-soft);
+  }
+
+  /* Phones: the shelf and journal scroll sideways; the edges fade so the overflow reads. */
+  .home-rail {
+    -webkit-mask: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+    mask: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+  }
+  @media (min-width: 40rem) {
+    .home-rail {
+      -webkit-mask: none;
+      mask: none;
+    }
+  }
+
+  /* ---------- Varieties ---------- */
+
+  .home-variety__media {
+    transition: transform 400ms var(--ease-out-soft);
+  }
+  .home-variety__arrow {
+    transition: transform 250ms var(--ease-out-soft);
+  }
+
+  /* ---------- Story ---------- */
+
+  .home-step__no {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+  }
+  .home-story__media {
+    box-shadow:
+      0 0 0 6px rgb(43 29 14 / 0.9),
+      0 28px 56px rgb(43 29 14 / 0.28);
+  }
+
+  /* ---------- Testimonials ---------- */
+
+  .home-quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-variation-settings: "SOFT" 100;
+    text-wrap: pretty;
+  }
+  .home-quote__mark {
+    font-family: var(--font-serif);
+    font-variation-settings: "SOFT" 100, "opsz" 144;
+    line-height: 0.7;
+  }
+}
+
+@keyframes home-label-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) rotate(4deg);
+  }
+}
+@keyframes home-spin {
+  to {
+    transform: rotate(240deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Copy settles in after the headline; the H1 is the LCP and never animates. */
+  .home-hero__copy > :not(h1) {
+    animation: fade-up 600ms var(--ease-out-soft) both;
+  }
+  .home-hero__copy > p {
+    animation-delay: 80ms;
+  }
+  .home-hero__copy > div {
+    animation-delay: 160ms;
+  }
+  .home-hero__copy > ul {
+    animation-delay: 240ms;
+  }
+  .home-label {
+    animation: home-label-in 900ms var(--ease-out-soft) 300ms both;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .home-stamp__ring {
+      animation: home-spin linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  .home-card:hover,
+  .home-card:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .home-card:hover .home-card__media img,
+  .home-card:focus-within .home-card__media img {
+    transform: scale(1.04);
+  }
+
+  .home-variety:hover .home-variety__media,
+  .home-variety:focus-visible .home-variety__media {
+    transform: translateY(-6px);
+  }
+  .home-variety:hover .home-variety__arrow,
+  .home-variety:focus-visible .home-variety__arrow {
+    transform: translateX(4px);
+  }
+}
+
+/*
+ * Workaround, deliberately unlayered so it beats the `flex-1` utility: the
+ * shared NewsletterForm "wide" variant stacks its input in a flex column
+ * below `sm`, where `flex: 1 1 0%` collapses the input. Same fix as About.
+ */
+@media (max-width: 39.98rem) {
+  .home-newsletter input[type="email"] {
+    flex-basis: auto;
+  }
+}

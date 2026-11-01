@@ -19,7 +19,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       <main id="main" tabIndex={-1} className="home-honey-theme -mt-20 flex-1 bg-surface outline-none">
         {children}
       </main>
-      {/* The promises already appear as drip cards under the hero. */}
+      {/* The promises already appear in the trust ledger under the hero. */}
       <SiteFooter showFeatures={false} />
     </>
   );
