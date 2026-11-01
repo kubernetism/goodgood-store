@@ -11,6 +11,8 @@ export const CACHE_TAGS = {
   banners: "banners",
   blog: "blog",
   testimonials: "testimonials",
+  /** Team members on the About page. */
+  team: "team",
   settings: "store-settings",
 } as const;
 

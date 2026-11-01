@@ -14,6 +14,7 @@
     "db:seed": "node --env-file-if-exists=.env.local --import tsx scripts/seed.mts",
     "db:seed-blog": "node --env-file-if-exists=.env.local --import tsx scripts/seed-blog.mts",
     "db:seed-testimonials": "node --env-file-if-exists=.env.local --import tsx scripts/seed-testimonials.mts",
+    "db:seed-team": "node --env-file-if-exists=.env.local --import tsx scripts/seed-team.mts",
     "db:seed-admin": "node --env-file-if-exists=.env.local --import tsx scripts/seed-admin.mts",
     "db:studio": "node --env-file-if-exists=.env.local ./node_modules/drizzle-kit/bin.cjs studio"
   },

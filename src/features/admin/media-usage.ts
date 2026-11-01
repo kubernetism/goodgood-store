@@ -2,7 +2,8 @@
  * Where a media item is used, and what deleting it does. Mirrors the foreign
  * keys in src/db/schema.ts: product_images cascades (the photo leaves the
  * product's gallery); categories, banners, blog covers and content slots are
- * set null (they fall back to their placeholder). Testimonials have no image.
+ * set null (they fall back to their placeholder), as are team member photos.
+ * Testimonials have no image.
  */
 
 export type MediaUsage = {
@@ -11,9 +12,10 @@ export type MediaUsage = {
   banners: string[];
   blogPosts: string[];
   contentSlots: string[];
+  teamMembers: string[];
 };
 
-export const emptyMediaUsage = (): MediaUsage => ({ products: [], categories: [], banners: [], blogPosts: [], contentSlots: [] });
+export const emptyMediaUsage = (): MediaUsage => ({ products: [], categories: [], banners: [], blogPosts: [], contentSlots: [], teamMembers: [] });
 
 const groups = [
   ["products", "Product gallery", "Product galleries"],
@@ -21,6 +23,7 @@ const groups = [
   ["banners", "Banner", "Banners"],
   ["blogPosts", "Blog cover", "Blog covers"],
   ["contentSlots", "Site content slot", "Site content slots"],
+  ["teamMembers", "Team member", "Team members"],
 ] as const satisfies ReadonlyArray<readonly [keyof MediaUsage, string, string]>;
 
 /** Non-empty usage groups, labelled for display ("Product galleries: Sidr, Acacia"). */
@@ -42,6 +45,7 @@ export function mediaDeleteWarning(usage: MediaUsage): string {
     usage.banners.length ? count(usage.banners.length, "banner", "banners") : "",
     usage.blogPosts.length ? count(usage.blogPosts.length, "blog post", "blog posts") : "",
     usage.contentSlots.length ? count(usage.contentSlots.length, "content slot", "content slots") : "",
+    usage.teamMembers.length ? count(usage.teamMembers.length, "team member", "team members") : "",
   ].filter(Boolean);
   return [
     "Deleting this image is permanent.",

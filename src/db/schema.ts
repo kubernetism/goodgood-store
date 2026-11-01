@@ -34,7 +34,7 @@ const timestamps = {
 export const productStatus = pgEnum("product_status", ["active", "draft", "archived"]);
 /** Lifecycle order. New values are only ever added (ALTER TYPE ... ADD VALUE), never removed. */
 export const orderStatus = pgEnum("order_status", ["pending", "confirmed", "packed", "dispatched", "shipped", "delivered", "cancelled"]);
-export const bannerPlacement = pgEnum("banner_placement", ["hero", "deal", "announcement"]);
+export const bannerPlacement = pgEnum("banner_placement", ["hero", "deal", "announcement", "popup"]);
 
 /** Singleton operational settings; secrets remain in the server environment. */
 export const storeSettings = pgTable("store_settings", {
@@ -226,6 +226,39 @@ export const testimonials = pgTable("testimonials", {
   check("testimonials_quote_not_blank", sql`length(trim(${t.quote})) > 0`),
 ]);
 
+/**
+ * People on the About page. The photo is a media item (URL and alt text live
+ * there); contact fields are null when not set and are shown publicly when set.
+ */
+export const teamMembers = pgTable("team_members", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  role: text("role").notNull(),
+  bio: text("bio").notNull().default(""),
+  photoId: uuid("photo_id").references(() => media.id, { onDelete: "set null" }),
+  email: text("email"),
+  /** E.164, e.g. +923001234567. */
+  phone: text("phone"),
+  phoneOnWhatsapp: boolean("phone_on_whatsapp").notNull().default(false),
+  facebookUrl: text("facebook_url"),
+  instagramUrl: text("instagram_url"),
+  linkedinUrl: text("linkedin_url"),
+  xUrl: text("x_url"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isPublished: boolean("is_published").notNull().default(false),
+  ...timestamps,
+}, (t) => [
+  index("team_members_published_order_idx").on(t.isPublished, t.sortOrder, t.createdAt, t.id),
+  check("team_members_name_not_blank", sql`length(trim(${t.name})) > 0`),
+  check("team_members_role_not_blank", sql`length(trim(${t.role})) > 0`),
+  check("team_members_email_lowercase", sql`${t.email} is null or ${t.email} = lower(${t.email})`),
+  check("team_members_phone_e164", sql`${t.phone} is null or ${t.phone} ~ '^\\+[1-9][0-9]{7,14}$'`),
+  check(
+    "team_members_links_https",
+    sql`(${t.facebookUrl} is null or ${t.facebookUrl} ~ '^https://') and (${t.instagramUrl} is null or ${t.instagramUrl} ~ '^https://') and (${t.linkedinUrl} is null or ${t.linkedinUrl} ~ '^https://') and (${t.xUrl} is null or ${t.xUrl} ~ '^https://')`,
+  ),
+]);
+
 export const banners = pgTable(
   "banners",
   {
@@ -238,6 +271,8 @@ export const banners = pgTable(
     ctaHref: text("cta_href").notNull().default(""),
     /** Deal banners: the product whose price and link are shown. */
     productId: uuid("product_id").references(() => products.id, { onDelete: "set null" }),
+    /** Pop-up banners: YouTube video id (11 chars) played in the landing-page pop-up. */
+    youtubeId: text("youtube_id"),
     isActive: boolean("is_active").notNull().default(true),
     startsAt: timestamp("starts_at", { withTimezone: true }),
     endsAt: timestamp("ends_at", { withTimezone: true }),
@@ -247,6 +282,9 @@ export const banners = pgTable(
   (t) => [
     index("banners_placement_idx").on(t.placement, t.isActive, t.sortOrder),
     check("banners_dates_ordered", sql`${t.startsAt} is null or ${t.endsAt} is null or ${t.endsAt} > ${t.startsAt}`),
+    // Format only: "pop-ups need a video" stays in the app schema, because a
+    // CHECK naming the new 'popup' enum value cannot share its migration.
+    check("banners_youtube_id_format", sql`${t.youtubeId} is null or ${t.youtubeId} ~ '^[A-Za-z0-9_-]{11}$'`),
   ],
 );
 

@@ -13,6 +13,7 @@ export type AdminNavIcon =
   | "content"
   | "blog"
   | "quote"
+  | "team"
   | "images"
   | "subscribers"
   | "settings";
@@ -43,6 +44,7 @@ export const adminNavGroups: ReadonlyArray<AdminNavGroup> = [
       { href: "/admin/content", label: "Site content", icon: "content" },
       { href: "/admin/blog", label: "Blog", icon: "blog" },
       { href: "/admin/testimonials", label: "Testimonials", icon: "quote" },
+      { href: "/admin/team", label: "Team", icon: "team" },
       { href: "/admin/subscribers", label: "Subscribers", icon: "subscribers" },
       { href: "/admin/media", label: "Media", icon: "images" },
     ],

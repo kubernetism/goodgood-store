@@ -57,6 +57,20 @@
       "when": 1793431294349,
       "tag": "0007_workable_jack_power",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793476118540,
+      "tag": "0008_dry_ozymandias",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793549710674,
+      "tag": "0009_team_members",
+      "breakpoints": true
     }
   ]
 }

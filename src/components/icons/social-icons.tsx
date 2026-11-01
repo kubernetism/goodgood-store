@@ -46,6 +46,15 @@ function InstagramIcon(props: IconProps) {
   );
 }
 
+function LinkedinIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {...strokeProps} {...props}>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="3" />
+      <path d="M7.5 10.5v6M7.5 7.5h.01M11.5 16.5v-6M11.5 13a2.5 2.5 0 0 1 5 0v3.5" />
+    </svg>
+  );
+}
+
 function DribbbleIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {...strokeProps} {...props}>
@@ -66,10 +75,21 @@ function YoutubeIcon(props: IconProps) {
   );
 }
 
+/** Speech bubble with a handset, drawn in the stroke style above. Always pair it with the word "WhatsApp". */
+export function WhatsAppIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {...strokeProps} {...props}>
+      <path d="M3.5 20.5 4.9 16A8.5 8.5 0 1 1 8 19.1Z" />
+      <path d="M9.2 8.4c.3-.6.8-.6 1.1-.1l.7 1.4c.1.3 0 .6-.2.8l-.5.5a5.6 5.6 0 0 0 2.7 2.7l.5-.5c.2-.2.5-.3.8-.2l1.4.7c.5.3.5.8-.1 1.1-1 .7-2.3.8-3.6.1a8.2 8.2 0 0 1-3-3c-.6-1.2-.6-2.6.2-3.5Z" />
+    </svg>
+  );
+}
+
 const icons: Record<SocialNetwork, (props: IconProps) => React.JSX.Element> = {
   facebook: FacebookIcon,
   x: XIcon,
   instagram: InstagramIcon,
+  linkedin: LinkedinIcon,
   dribbble: DribbbleIcon,
   youtube: YoutubeIcon,
 };

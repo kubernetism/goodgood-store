@@ -1252,3 +1252,43 @@
   margin: 0;
   overflow-wrap: anywhere;
 }
+
+/* ── Banners: video pop-up ──────────────────────────────────────────── */
+/* Pop-ups play a video, so the image/product picker does not apply. */
+.admin-banner-form:has(select[name="placement"] option[value="popup"]:checked) .admin-banner-media {
+  display: none;
+}
+.admin-popup-video {
+  display: grid;
+  gap: var(--ad-space-3);
+}
+.admin-popup-preview {
+  display: flex;
+  align-items: center;
+  gap: var(--ad-space-3);
+}
+.admin-popup-preview:empty {
+  display: none;
+}
+/* hqdefault.jpg letterboxes Shorts; a centred 9:16 crop is the real frame. */
+.admin-popup-thumb {
+  flex: none;
+  width: 4.5rem;
+  height: auto;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: var(--ad-radius-sm);
+  background: var(--ad-surface-sunken);
+  border: 1px solid var(--ad-line);
+}
+
+/* ── Team ───────────────────────────────────────────────────────────── */
+/* Up/down order arrows; in card mode they sit with the row actions. */
+.admin-team-move {
+  display: inline-flex;
+  gap: var(--ad-space-1);
+}
+.admin-team-move .admin-icon-button[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: progress;
+}

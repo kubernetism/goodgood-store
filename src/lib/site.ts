@@ -28,6 +28,8 @@ export const siteConfig = {
     primary: contactPeople[0],
     email: "support@abdulsamienterprises.com",
     hours: "Monday–Friday, 9:00am–5:00pm PKT",
+    /** The same hours, structured for the contact page's open/closed status and JSON-LD (kept in sync by a test). */
+    openingHours: { days: [1, 2, 3, 4, 5], opens: 9 * 60, closes: 17 * 60 },
     onlineOrders: "Online orders anytime",
   },
   socials: [
@@ -38,7 +40,7 @@ export const siteConfig = {
   ],
 } as const;
 
-export type SocialNetwork = "facebook" | "x" | "instagram" | "dribbble" | "youtube";
+export type SocialNetwork = "facebook" | "x" | "instagram" | "linkedin" | "dribbble" | "youtube";
 
 export type NavLink = { label: string; href: string };
 

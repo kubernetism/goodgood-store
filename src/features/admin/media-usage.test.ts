@@ -16,8 +16,11 @@ describe("media usage", () => {
     ]);
   });
   it("explains what loses the image when it is deleted", () => {
-    const warning = mediaDeleteWarning({ products: ["Sidr Honey"], categories: ["Raw", "Wild"], banners: ["Eid deal"], blogPosts: [], contentSlots: ["Home page: Hero photo"] });
-    expect(warning).toBe("Deleting this image is permanent. It will be removed from the photo gallery of 1 product. 2 categories, 1 banner, 1 content slot will lose it and show a placeholder instead.");
+    const warning = mediaDeleteWarning({ products: ["Sidr Honey"], categories: ["Raw", "Wild"], banners: ["Eid deal"], blogPosts: [], contentSlots: ["Home page: Hero photo"], teamMembers: ["Salman Sami"] });
+    expect(warning).toBe("Deleting this image is permanent. It will be removed from the photo gallery of 1 product. 2 categories, 1 banner, 1 content slot, 1 team member will lose it and show a placeholder instead.");
+  });
+  it("labels team member photos", () => {
+    expect(mediaUsageGroups({ ...emptyMediaUsage(), teamMembers: ["Salman Sami", "Mubashir Khan"] })).toEqual([{ label: "Team members", names: ["Salman Sami", "Mubashir Khan"] }]);
   });
   it("shortens long name lists", () => {
     expect(summariseNames(["A", "B"])).toBe("A, B");

@@ -20,6 +20,7 @@ describe("isMoreActive", () => {
     expect(isMoreActive("/admin/settings")).toBe(true);
     expect(isMoreActive("/admin/categories")).toBe(true);
     expect(isMoreActive("/admin/subscribers")).toBe(true);
+    expect(isMoreActive("/admin/team/new")).toBe(true);
   });
   it("is false for bottom bar destinations", () => {
     expect(isMoreActive("/admin")).toBe(false);
@@ -29,9 +30,9 @@ describe("isMoreActive", () => {
 });
 
 describe("adminNavGroups", () => {
-  it("groups the eleven section destinations by job (Settings sits in the footer)", () => {
+  it("groups the twelve section destinations by job (Settings sits in the footer)", () => {
     expect(adminNavGroups.map((group) => group.label)).toEqual(["Today", "Catalogue", "Website"]);
-    expect(adminNavGroups.flatMap((group) => group.items).length).toBe(11);
+    expect(adminNavGroups.flatMap((group) => group.items).length).toBe(12);
     expect(adminNavGroups.find((group) => group.label === "Website")?.items.map((item) => item.href)).toContain("/admin/subscribers");
   });
 });

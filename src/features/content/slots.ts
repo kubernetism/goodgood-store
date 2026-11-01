@@ -79,7 +79,7 @@ export const slotDefinitions: ReadonlyArray<SlotDefinition> = [
       key: teamMemberSlotKey(member.name),
       group: "About page",
       label: `Team: ${member.name}`,
-      hint: `${member.role}. Portrait photo (9:10).`,
+      hint: `${member.role}. Portrait photo (9:10). Placeholder team: shown only until you publish a member under Team.`,
       kind: "image",
     }),
   ),
@@ -94,7 +94,7 @@ export const slotDefinitions: ReadonlyArray<SlotDefinition> = [
     key: SLOT_KEYS.contactMap,
     group: "Contact page",
     label: "Map or shop photo",
-    hint: "Very wide image under the contact form (16:6 on desktop, 4:3 on phones), e.g. a map screenshot.",
+    hint: "Shop photo in the “Visit the shop” card on the Contact page. Landscape 3:2 on phones; cropped near-square on tablets and desktops, so keep the subject centred.",
     kind: "image",
   },
   {

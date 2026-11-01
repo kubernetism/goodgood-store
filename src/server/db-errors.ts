@@ -26,3 +26,8 @@ export function isUniqueViolation(error: unknown, constraint?: string): boolean 
 export function isForeignKeyViolation(error: unknown): boolean {
   return findPgError(error)?.code === "23503";
 }
+
+/** 42P01: undefined_table (e.g. a migration that has not been applied yet). */
+export function isUndefinedTable(error: unknown): boolean {
+  return findPgError(error)?.code === "42P01";
+}

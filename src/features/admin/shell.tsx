@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import {
-  House, Images, LogOut, Mail, MailPlus, Megaphone, Menu, NotebookPen, Package, PanelsTopLeft, Quote, ReceiptText, Settings, Store, Tags,
+  House, Images, LogOut, Mail, MailPlus, Megaphone, Menu, NotebookPen, Package, PanelsTopLeft, Quote, ReceiptText, Settings, Store, Tags, UsersRound,
   type LucideIcon,
 } from "lucide-react";
 import { logout } from "./auth-actions";
@@ -18,7 +18,7 @@ import brandLogo from "../../../images/logo/abdulSamiEnterprisesLogo.png";
 
 const icons: Record<AdminNavIcon, LucideIcon> = {
   house: House, orders: ReceiptText, mail: Mail, package: Package, tags: Tags, megaphone: Megaphone,
-  content: PanelsTopLeft, blog: NotebookPen, quote: Quote, images: Images, subscribers: MailPlus, settings: Settings,
+  content: PanelsTopLeft, blog: NotebookPen, quote: Quote, team: UsersRound, images: Images, subscribers: MailPlus, settings: Settings,
 };
 
 export type NavBadges = Partial<Record<NonNullable<AdminNavItem["badge"]>, { text: string; ariaLabel: string } | null>>;
