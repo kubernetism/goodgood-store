@@ -7,7 +7,7 @@ import { banners } from "@/db/schema";
 import { bannerScheduleStatus, bannerStatusDisplay } from "@/features/admin/status-display";
 import { AdminTable, TBody, Td, Th, THead, Tr } from "@/features/admin/table";
 import { AdminHeading, AdminNotice, EmptyState, ListFilters, Pager, pageNumber, SelectField, StatusPill } from "@/features/admin/ui";
-import { placementLabel } from "@/features/banners/model";
+import { bannerPlacements, isBannerPlacement, placementLabel } from "@/features/banners/model";
 import { formatPktDateTime } from "@/lib/pk-time";
 import { containsPattern } from "@/lib/search";
 import { requireAdmin } from "@/server/auth/session";
@@ -20,7 +20,7 @@ export default async function BannersPage({ searchParams }: { searchParams: Prom
   const p = await searchParams;
   const page = pageNumber(p.page);
   const q = (p.q ?? "").trim().slice(0, 100);
-  const placement = p.placement === "hero" || p.placement === "deal" || p.placement === "announcement" ? p.placement : undefined;
+  const placement = isBannerPlacement(p.placement) ? p.placement : undefined;
   const rows = await db.select().from(banners).where(and(q ? ilike(banners.title, containsPattern(q)) : undefined, placement ? eq(banners.placement, placement) : undefined)).orderBy(asc(banners.sortOrder), desc(banners.createdAt)).limit(21).offset((page - 1) * 20);
   const query = new URLSearchParams(); if (q) query.set("q", q); if (placement) query.set("placement", placement);
   const shown = rows.slice(0, 20);
@@ -31,7 +31,7 @@ export default async function BannersPage({ searchParams }: { searchParams: Prom
     <AdminNotice {...p} />
     <section className="admin-panel" aria-label="Banners">
       <ListFilters action="/admin/banners" label="Filter banners" q={q} placeholder="Banner title" activeCount={placement ? 1 : 0} resetHref="/admin/banners">
-        <SelectField label="Placement" name="placement" defaultValue={placement ?? ""} options={[{ value: "", label: "All placements" }, { value: "hero", label: "Home hero" }, { value: "deal", label: "Deal band" }, { value: "announcement", label: "Announcement bar" }]} />
+        <SelectField label="Placement" name="placement" defaultValue={placement ?? ""} options={[{ value: "", label: "All placements" }, ...bannerPlacements.map(({ value, label }) => ({ value, label }))]} />
       </ListFilters>
       {shown.length ? <AdminTable label="Banners">
         <THead><Th>Banner</Th><Th>Status</Th><Th>Placement</Th><Th>Window (PKT)</Th><Th><span className="sr-only">Actions</span></Th></THead>

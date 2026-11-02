@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { subscribeToNewsletter } from "@/features/newsletter/actions";
 import { sendContactMessage } from "./actions";
-import { validateContact } from "./validation";
+import { contactFields, validateContact, validateContactField } from "./validation";
 
 const mocks = vi.hoisted(() => ({
   insert: vi.fn(),
@@ -50,6 +50,36 @@ describe("validateContact", () => {
     if (!result.ok) {
       expect(Object.keys(result.fieldErrors).sort()).toEqual(["consent", "email", "message", "name", "phone", "service"]);
     }
+  });
+});
+
+describe("validateContactField", () => {
+  it("agrees with validateContact for every field", () => {
+    const invalid = { name: "A", email: "nope", service: "x", phone: "12", message: "hi", consent: "" };
+    const result = validateContact(invalid);
+    if (result.ok) throw new Error("expected errors");
+    for (const field of contactFields) expect(validateContactField(field, invalid[field])).toBe(result.fieldErrors[field]);
+    for (const field of contactFields) expect(validateContactField(field, valid[field])).toBeUndefined();
+  });
+
+  it("trims like the server before checking lengths", () => {
+    expect(validateContactField("message", "   short   ")).toMatch(/at least 10/);
+    expect(validateContactField("name", "  Al  ")).toBeUndefined();
+  });
+
+  it("enforces the message limits used by the character counter", () => {
+    expect(validateContactField("message", "x".repeat(10))).toBeUndefined();
+    expect(validateContactField("message", "x".repeat(2000))).toBeUndefined();
+    expect(validateContactField("message", "x".repeat(2001))).toBe("Message must be 2,000 characters or fewer.");
+  });
+
+  it("treats the phone as optional", () => {
+    expect(validateContactField("phone", "")).toBeUndefined();
+    expect(validateContactField("phone", "0300 1234567")).toBeUndefined();
+  });
+
+  it("asks people to choose a topic in plain words", () => {
+    expect(validateContactField("service", "")).toBe("Choose what your message is about.");
   });
 });
 

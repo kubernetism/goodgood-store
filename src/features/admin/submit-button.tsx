@@ -2,6 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 import type { ReactNode } from "react";
+import { HoneycombMark } from "@/components/ui/honeycomb-mark";
 
 type Variant = "primary" | "secondary" | "quiet" | "danger" | "danger-quiet";
 
@@ -32,6 +33,6 @@ export function SubmitButton({ children, pendingLabel = "Saving…", variant = "
     aria-disabled={pending || undefined}
     onClick={(event) => { if (pending) event.preventDefault(); }}
   >
-    {pending ? <><span className="admin-spinner" aria-hidden="true" />{pendingLabel}</> : children}
+    {pending ? <><HoneycombMark tone="ink" size={20} />{pendingLabel}</> : children}
   </button>;
 }

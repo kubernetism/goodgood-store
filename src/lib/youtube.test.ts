@@ -13,11 +13,23 @@ describe("parseYouTubeUrl", () => {
     [`https://www.youtube.com/embed/${ID}`],
     [`https://www.youtube-nocookie.com/embed/${ID}`],
     [`https://www.youtube.com/shorts/${ID}`],
+    [`https://www.youtube.com/shorts/${ID}?feature=share`],
+    [`youtube.com/shorts/${ID}`],
+    [`https://m.youtube.com/shorts/${ID}?si=abc123`],
     [`https://www.youtube.com/live/${ID}?feature=share`],
     [`youtube.com/watch?v=${ID}`],
     [`  ${ID}  `],
   ])("extracts the id from %s", (input) => {
     expect(parseYouTubeUrl(input)?.id).toBe(ID);
+  });
+
+  it("reads the id from the shop's YouTube Shorts link", () => {
+    expect(parseYouTubeUrl("https://youtube.com/shorts/he8fKbFFot4")).toEqual({ id: "he8fKbFFot4", start: null });
+  });
+
+  it("rejects a shorts URL without a valid id", () => {
+    expect(parseYouTubeUrl("https://youtube.com/shorts/")).toBeNull();
+    expect(parseYouTubeUrl("https://youtube.com/shorts/tooShort")).toBeNull();
   });
 
   it("reads start times in seconds or h/m/s form", () => {
@@ -49,6 +61,15 @@ describe("youtube URLs", () => {
     expect(url.pathname).toBe(`/embed/${ID}`);
     expect(url.searchParams.get("start")).toBe("30");
     expect(url.searchParams.get("autoplay")).toBe("1");
+  });
+
+  it("mutes only when asked, so autoplay is allowed without a click", () => {
+    const muted = new URL(youtubeEmbedUrl({ id: ID, start: null }, { autoplay: true, mute: true }));
+    expect(muted.searchParams.get("mute")).toBe("1");
+    expect(muted.searchParams.get("playsinline")).toBe("1");
+    const still = new URL(youtubeEmbedUrl({ id: ID, start: null }, { autoplay: false }));
+    expect(still.searchParams.has("autoplay")).toBe(false);
+    expect(still.searchParams.has("mute")).toBe(false);
   });
 
   it("builds the thumbnail URL", () => {

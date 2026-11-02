@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Banknote, LoaderCircle, MessageCircle, Truck } from "lucide-react";
+import { Banknote, MessageCircle, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HoneycombMark } from "@/components/ui/honeycomb-mark";
 import { MediaImage } from "@/components/ui/media-image";
 import { freeShippingProgress, type CartTotals } from "@/features/cart/pricing";
 import { categoryIcon } from "@/features/products/category-icons";
@@ -149,7 +150,7 @@ export function PlaceOrderButton({ total, pending, blocked, id, showTotal = true
       <Button type="submit" disabled={pending || blocked} aria-describedby={blocked ? blockedId : undefined} className={className}>
         {pending ? (
           <>
-            <LoaderCircle className="size-4 motion-safe:animate-spin" aria-hidden="true" />
+            <HoneycombMark tone="ink" size={24} />
             Placing your order…
           </>
         ) : showTotal ? (

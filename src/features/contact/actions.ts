@@ -5,7 +5,7 @@ import { and, count, eq, gt } from "drizzle-orm";
 import { db } from "@/db/client";
 import { contactMessages } from "@/db/schema";
 import { getClientIp, getClientIpHash } from "@/server/request";
-import { contactFields, validateContact, type ContactField } from "./validation";
+import { CONTACT_RATE_LIMIT_MESSAGE, contactFields, validateContact, type ContactField } from "./validation";
 
 /** Save validated enquiries for the admin team to review. */
 export async function sendContactMessage(
@@ -33,7 +33,7 @@ export async function sendContactMessage(
         gt(contactMessages.createdAt, new Date(Date.now() - 10 * 60 * 1000)),
       ));
       if ((recent?.value ?? 0) >= 5) {
-        return { status: "error", message: "You've sent several messages recently. Please wait a few minutes before trying again.", fieldErrors: {}, values: input };
+        return { status: "error", message: CONTACT_RATE_LIMIT_MESSAGE, fieldErrors: {}, values: input };
       }
     }
     await db.insert(contactMessages).values({ ...result.data, consent: true, ipHash });

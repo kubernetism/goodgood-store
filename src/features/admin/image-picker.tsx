@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Check, ImagePlus, Search, X } from "lucide-react";
 import { useEffect, useId, useRef, useState, useTransition, type RefObject } from "react";
 import { createPortal } from "react-dom";
+import { HoneycombMark } from "@/components/ui/honeycomb-mark";
 import { uploadImageInline } from "./actions";
 import { useMediaOptions, type ImageOption } from "./media-options";
 
@@ -130,7 +131,7 @@ export function ImagePickerDialog({ title, mode, initial, anchor, container, onC
             <p id={`${id}-alt-hint`} className="admin-hint">Describe what is in the photo, e.g. “Sidr honey 500 g jar on a wooden table”.</p>
             <input id={`${id}-alt`} form={formId} aria-describedby={`${id}-alt-hint`} value={alt} onChange={(event) => setAlt(event.target.value)} maxLength={250} readOnly={pending} />
           </div>
-          <div><button className="admin-button secondary" type="button" aria-disabled={pending || undefined} onClick={() => { if (!pending) upload(fileRef.current?.files?.[0], alt); }}>{pending ? <><span className="admin-spinner" aria-hidden="true" />Uploading…</> : mode === "single" ? "Upload and use" : "Upload and select"}</button></div>
+          <div><button className="admin-button secondary" type="button" aria-disabled={pending || undefined} onClick={() => { if (!pending) upload(fileRef.current?.files?.[0], alt); }}>{pending ? <><HoneycombMark tone="ink" size={20} />Uploading…</> : mode === "single" ? "Upload and use" : "Upload and select"}</button></div>
           {error && <p className="admin-field-error" role="alert">{error}</p>}
         </div>
       </details>

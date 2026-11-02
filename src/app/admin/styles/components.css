@@ -190,19 +190,10 @@
   opacity: 0.78;
   transform: none;
 }
-.admin-spinner {
-  width: 14px;
-  height: 14px;
-  flex: none;
-  border: 2px solid currentColor;
-  border-inline-end-color: transparent;
-  border-radius: 50%;
-  animation: admin-spin 700ms linear infinite;
-}
-@keyframes admin-spin {
-  to {
-    rotate: 360deg;
-  }
+/* Honeycomb loader in Hive Ledger colours; the ink tone (buttons) keeps currentColor. */
+.admin-app .hc:not(.hc--ink) {
+  --hc-line: var(--ad-honey-edge);
+  --hc-wax: rgb(255 184 0 / 0.12);
 }
 /* Unstyled button that looks like an inline link (sign out etc.). */
 .admin-link-button {
@@ -1777,8 +1768,15 @@ a.admin-stat[data-attention]:hover {
 
 /* ── Skeletons ──────────────────────────────────────────────────────── */
 .admin-skeleton {
+  position: relative;
   display: grid;
   gap: var(--ad-space-4);
+}
+/* Sits at the end of the title row (below the full-width line): a status for screen readers, the comb for everyone. */
+.admin-skeleton-status {
+  position: absolute;
+  inset-block-start: calc(14px + var(--ad-space-4));
+  inset-inline-end: 0;
 }
 .admin-skel {
   border-radius: var(--ad-radius-sm);

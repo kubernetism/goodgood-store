@@ -6,6 +6,7 @@ import { useActionState, useEffect, useRef, useState, type FormEvent, type Mouse
 import { CircleCheck, ChevronDown, Mail, Pencil, Phone, ShoppingBasket, TriangleAlert, User } from "lucide-react";
 import { buttonClasses } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
+import { HoneycombLoader } from "@/components/ui/honeycomb-mark";
 import { SelectField, TextAreaField, TextField } from "@/components/ui/field";
 import { UnavailableCartItems } from "@/features/cart/components/unavailable-cart-items";
 import { cartActions, useCartLines } from "@/features/cart/cart-store";
@@ -474,9 +475,11 @@ function CheckoutSkeleton() {
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23.75rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_26.25rem] xl:gap-16">
       <div className="space-y-5">
-        <p role="status" className="sr-only">Loading checkout…</p>
         <div aria-hidden="true" className="h-14 rounded-md bg-tile motion-safe:animate-pulse lg:hidden" />
-        <div aria-hidden="true" className="h-72 rounded-md bg-tile motion-safe:animate-pulse" />
+        <div className="relative">
+          <div aria-hidden="true" className="h-72 rounded-md bg-tile motion-safe:animate-pulse" />
+          <HoneycombLoader label="Loading checkout…" showLabel className="absolute inset-0 justify-center" />
+        </div>
         <div aria-hidden="true" className="h-80 rounded-md bg-tile motion-safe:animate-pulse" />
         <div aria-hidden="true" className="h-44 rounded-md bg-tile motion-safe:animate-pulse" />
       </div>

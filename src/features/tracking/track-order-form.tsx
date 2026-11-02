@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
 import { Hash, PackageSearch, Phone, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HoneycombMark } from "@/components/ui/honeycomb-mark";
 import { FormStatus, TextField } from "@/components/ui/field";
 import { readFields, type FieldErrors } from "@/lib/forms";
 import { cx } from "@/lib/cx";
@@ -88,6 +89,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder: string }) {
               hint="The number the courier calls, as entered at checkout."
             />
             <Button type="submit" disabled={isPending} className="w-full">
+              {isPending && <HoneycombMark tone="ink" size={24} />}
               {isPending ? "Looking up…" : "Track order"}
             </Button>
           </form>
@@ -102,7 +104,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder: string }) {
           <TrackingResult order={state.order} headingRef={resultHeading} />
         ) : (
           <div className="flex h-full min-h-64 flex-col items-center justify-center rounded-lg border border-dashed border-border-strong/50 bg-tile px-6 py-12 text-center">
-            <PackageSearch className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />
+            {isPending ? <HoneycombMark size={48} /> : <PackageSearch className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />}
             <p className="mt-4 font-heading text-lg font-bold text-strong">Your order&apos;s journey appears here</p>
             <p className="mt-2 max-w-sm text-sm text-body">From the moment we confirm it to the day it reaches your door.</p>
           </div>

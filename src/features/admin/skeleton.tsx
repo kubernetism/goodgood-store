@@ -1,7 +1,9 @@
+import { HoneycombLoader } from "@/components/ui/honeycomb-mark";
+
 /** Loading placeholders shaped like the final layout, so nothing jumps (CLS). */
 export function PageSkeleton() {
-  return <div className="admin-skeleton" role="status">
-    <span className="sr-only">Loading…</span>
+  return <div className="admin-skeleton">
+    <HoneycombLoader size={40} className="admin-skeleton-status" />
     <div className="admin-skel admin-skel-line" aria-hidden="true" />
     <div className="admin-skel admin-skel-title" aria-hidden="true" />
     <div className="admin-panel admin-stack-sm" aria-hidden="true">

@@ -59,9 +59,17 @@ export function parseYouTubeUrl(input: string): YouTubeVideo | null {
   return { id, start: parseStart(url.searchParams.get("t") ?? url.searchParams.get("start")) };
 }
 
-export function youtubeEmbedUrl(video: YouTubeVideo, { autoplay = true }: { autoplay?: boolean } = {}): string {
+/**
+ * `mute` lets browsers honour autoplay without a click (unmuted autoplay is
+ * blocked); visitors unmute from the player controls.
+ */
+export function youtubeEmbedUrl(
+  video: YouTubeVideo,
+  { autoplay = true, mute = false }: { autoplay?: boolean; mute?: boolean } = {},
+): string {
   const params = new URLSearchParams({ rel: "0", modestbranding: "1", playsinline: "1" });
   if (autoplay) params.set("autoplay", "1");
+  if (mute) params.set("mute", "1");
   if (video.start) params.set("start", String(video.start));
   return `https://www.youtube-nocookie.com/embed/${video.id}?${params}`;
 }

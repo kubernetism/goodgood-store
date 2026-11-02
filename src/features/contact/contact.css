@@ -1,0 +1,108 @@
+/*
+ * Contact page motion. Transform and opacity only; everything here is
+ * skipped under prefers-reduced-motion, where content simply appears.
+ */
+
+/* Below-the-fold sections skip style/layout/paint until they near the
+   viewport (anchor jumps and find-in-page still work). Each section sets
+   --deferred-height to its measured content height per breakpoint, so the
+   scrollbar barely moves when it renders; "auto" then remembers the real size. */
+.contact-deferred {
+  content-visibility: auto;
+  contain-intrinsic-size: auto var(--deferred-height, 40rem);
+}
+
+/* Hexagon used for icon badges and monograms (pointy top, like the comb). */
+.hex-clip {
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+/* Keeps the hero copy legible over the verse band without hiding it. */
+.contact-hero__scrim {
+  background: linear-gradient(90deg, rgb(27 17 8 / 0.78) 0%, rgb(27 17 8 / 0.5) 45%, rgb(27 17 8 / 0) 75%);
+}
+.contact-hero__copy {
+  text-shadow: 0 2px 12px rgb(27 17 8 / 0.5);
+}
+
+/* Hanging office sign: the strings meet on a nail 2.5rem above the card. */
+.office-sign {
+  transform-origin: 50% -2.5rem;
+}
+
+.office-sign__card {
+  box-shadow: 0 18px 40px rgb(0 0 0 / 0.35);
+}
+
+.office-sign__content {
+  transition: opacity 200ms var(--ease-out-soft);
+}
+
+/* Filled dot = open, hollow ring = closed; the text says which as well. */
+.status-dot {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 9999px;
+}
+
+@keyframes sign-swing {
+  0% { transform: rotate(-7deg); }
+  35% { transform: rotate(4.5deg); }
+  60% { transform: rotate(-2deg); }
+  80% { transform: rotate(0.75deg); }
+  100% { transform: none; }
+}
+
+@keyframes status-pulse {
+  from { transform: scale(1); opacity: 0.55; }
+  to { transform: scale(2.6); opacity: 0; }
+}
+
+@keyframes content-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* The success panel's drip pours down from the card's top edge. */
+@keyframes drip-pour {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Swings once when the live status replaces the static hours. */
+  .office-sign[data-live] {
+    animation: sign-swing 1200ms var(--ease-out-soft) both;
+  }
+  .office-sign[data-live] .office-sign__content,
+  .office-pill[data-live] {
+    animation: content-in 240ms var(--ease-out-soft) both;
+  }
+  /* Three pulses only (WCAG 2.2.2: nothing moves for more than 5 seconds),
+     and only on the tablet/desktop sign: on phones the pill sits above the
+     fold, where a looping change would hold back the page's visual settle. */
+  .office-sign .status-dot--open::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--color-primary);
+    animation: status-pulse 1600ms ease-out 3;
+  }
+
+  .success-drip {
+    transform-origin: top;
+    animation: drip-pour 800ms var(--ease-out-soft) both;
+  }
+  .success-content {
+    animation: fade-up 600ms var(--ease-out-soft) 120ms both;
+  }
+
+  /* Radio indicator dot grows in when chosen. */
+  .topic-indicator__dot {
+    transition: transform 120ms var(--ease-out-soft);
+  }
+}

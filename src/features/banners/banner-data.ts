@@ -31,6 +31,7 @@ export async function getActiveBanners(): Promise<ActiveBanners> {
       startsAt: banners.startsAt,
       endsAt: banners.endsAt,
       sortOrder: banners.sortOrder,
+      youtubeId: banners.youtubeId,
       productSlug: products.slug,
       imageUrl: media.url,
       imageAlt: media.alt,
@@ -55,6 +56,7 @@ export async function getActiveBanners(): Promise<ActiveBanners> {
       startsAt: row.startsAt?.toISOString() ?? null,
       endsAt: row.endsAt?.toISOString() ?? null,
       sortOrder: row.sortOrder,
+      youtubeId: row.youtubeId,
       productSlug: row.productSlug,
       image:
         row.imageUrl && row.imageAlt

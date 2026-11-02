@@ -1,0 +1,192 @@
+/*
+ * Honeycomb mark: loader and order celebration (see honeycomb-mark.tsx).
+ * Layered as components so Tailwind utilities (size, margin) still win.
+ * Only transform and opacity animate. Reduced motion shows the finished comb.
+ */
+@layer components {
+  .hc {
+    --hc-line: #c98a12;
+    --hc-wax: rgb(245 168 0 / 0.1);
+    flex: none;
+    overflow: visible;
+  }
+  :where(.on-dark) .hc {
+    --hc-line: #e8a92a;
+    --hc-wax: rgb(247 201 72 / 0.08);
+  }
+  .hc--ink {
+    --hc-line: currentColor;
+  }
+  .hc__wax {
+    fill: var(--hc-wax);
+  }
+  .hc--ink .hc__wax {
+    fill: currentColor;
+    fill-opacity: 0.12;
+  }
+  .hc__outline {
+    fill: none;
+    stroke: var(--hc-line);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+  }
+  .hc__cell,
+  .hc__level,
+  .hc__drop {
+    transform-box: fill-box;
+  }
+  .hc__cell {
+    transform-origin: center;
+  }
+  .hc__drop {
+    fill: #f5a800;
+    opacity: 0;
+    transform-origin: 50% 0;
+  }
+  .hc__tick {
+    fill: none;
+    stroke: #2b1d0e;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 60;
+  }
+
+  /* Loader: each cell fills in turn (delays inline), holds, fades and drains. */
+  .hc--loader .hc__level {
+    animation: hc-fill 2.8s cubic-bezier(0.45, 0.05, 0.3, 1) infinite;
+  }
+  .hc--loader .hc__wave {
+    animation: hc-slosh 1.1s linear infinite;
+  }
+
+  /* Celebration, once: pop, fill, tick, drop. Four sloshes end where they began. */
+  .hc--play .hc__cell {
+    animation: hc-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .hc--play .hc__level {
+    animation: hc-fill-once 0.9s cubic-bezier(0.45, 0.05, 0.3, 1) both;
+  }
+  .hc--play .hc__wave {
+    animation: hc-slosh 1.1s linear 0.5s 4;
+  }
+  .hc--play .hc__tick {
+    animation: hc-draw 0.45s ease-out 1.55s both;
+  }
+  .hc--play .hc__drop {
+    animation: hc-drip 1.1s cubic-bezier(0.55, 0, 0.8, 0.4) 1.75s both;
+  }
+  [data-celebrate="play"] .hc-rise {
+    animation: hc-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .hc-sparks {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hc-spark {
+    position: absolute;
+    background: #f7c948;
+    clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+    animation: hc-float 2.4s ease-out both;
+  }
+
+  /* Fast loads never flash the loader: it fades in after 150 ms. */
+  .hc-status--delayed {
+    animation: hc-appear 0.2s ease-out 0.15s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hc *,
+    .hc-rise {
+      animation: none !important;
+    }
+    .hc--loader .hc__level {
+      opacity: 0.85;
+    }
+    .hc__drop,
+    .hc-sparks {
+      display: none;
+    }
+  }
+}
+
+@keyframes hc-fill {
+  0% {
+    transform: translateY(62px);
+  }
+  38%,
+  72% {
+    transform: none;
+    opacity: 1;
+  }
+  88% {
+    transform: none;
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(62px);
+    opacity: 0;
+  }
+}
+@keyframes hc-slosh {
+  to {
+    transform: translateX(-56px);
+  }
+}
+@keyframes hc-pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+@keyframes hc-fill-once {
+  from {
+    transform: translateY(62px);
+  }
+}
+@keyframes hc-draw {
+  from {
+    stroke-dashoffset: 60;
+  }
+}
+@keyframes hc-drip {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.6);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(4px) scaleY(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(90px);
+  }
+}
+@keyframes hc-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes hc-float {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-140px) rotate(90deg);
+  }
+}
+@keyframes hc-appear {
+  from {
+    opacity: 0;
+  }
+}

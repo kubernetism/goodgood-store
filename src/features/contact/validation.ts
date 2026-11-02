@@ -14,6 +14,13 @@ export type ContactService = (typeof contactServices)[number]["value"];
 export const contactFields = ["name", "email", "service", "phone", "message", "consent"] as const;
 export type ContactField = (typeof contactFields)[number];
 
+/** Returned by the Server Action when one client sends too many messages; the form shows it as "Please wait". */
+export const CONTACT_RATE_LIMIT_MESSAGE = "You've sent several messages recently. Please wait a few minutes before trying again.";
+
+export const MESSAGE_MIN_LENGTH = 10;
+export const MESSAGE_MAX_LENGTH = 2000;
+export const NAME_MAX_LENGTH = 80;
+
 export type ContactMessage = {
   name: string;
   email: string;
@@ -23,28 +30,49 @@ export type ContactMessage = {
   message: string;
 };
 
+/**
+ * One rule per field, shared by the browser (inline feedback as people type)
+ * and the Server Action (the authoritative check). Values arrive trimmed.
+ */
+const fieldRules: Record<ContactField, (value: string) => string | undefined> = {
+  name: (value) => {
+    if (value.length < 2) return "Please enter your name.";
+    if (value.length > NAME_MAX_LENGTH) return `Name must be ${NAME_MAX_LENGTH} characters or fewer.`;
+  },
+  email: (value) => {
+    if (!value) return "Please enter your email address.";
+    if (!isEmail(value)) return "Enter an email address like name@example.com.";
+  },
+  service: (value) => {
+    if (!contactServices.some((option) => option.value === value)) return "Choose what your message is about.";
+  },
+  phone: (value) => {
+    if (value && !normalizePakistaniMobile(value)) return "Enter a Pakistani mobile number, e.g. 0300 1234567 or +92 300 1234567.";
+  },
+  message: (value) => {
+    if (value.length < MESSAGE_MIN_LENGTH) return `Please tell us a little more (at least ${MESSAGE_MIN_LENGTH} characters).`;
+    if (value.length > MESSAGE_MAX_LENGTH) return "Message must be 2,000 characters or fewer.";
+  },
+  consent: (value) => {
+    if (value !== "on") return "Please agree to the privacy policy so we can reply.";
+  },
+};
+
+/** Error for one field, or undefined when it is valid. Trims like readFields does. */
+export function validateContactField(field: ContactField, value: string): string | undefined {
+  return fieldRules[field](value.trim());
+}
+
 export function validateContact(
   input: Record<ContactField, string>,
 ): ValidationResult<ContactField, ContactMessage> {
   const errors: FieldErrors<ContactField> = {};
-
-  if (input.name.length < 2) errors.name = "Please enter your name.";
-  else if (input.name.length > 80) errors.name = "Name must be 80 characters or fewer.";
-
-  if (!input.email) errors.email = "Please enter your email address.";
-  else if (!isEmail(input.email)) errors.email = "Enter an email address like name@example.com.";
+  for (const field of contactFields) {
+    const error = fieldRules[field](input[field]);
+    if (error) errors[field] = error;
+  }
 
   const service = contactServices.find((option) => option.value === input.service);
-  if (!service) errors.service = "Please choose the service you need.";
-
-  const phone = input.phone ? normalizePakistaniMobile(input.phone) : null;
-  if (input.phone && !phone) errors.phone = "Enter a Pakistani mobile number, e.g. 0300 1234567 or +92 300 1234567.";
-
-  if (input.message.length < 10) errors.message = "Please tell us a little more (at least 10 characters).";
-  else if (input.message.length > 2000) errors.message = "Message must be 2,000 characters or fewer.";
-
-  if (input.consent !== "on") errors.consent = "Please agree to the privacy policy so we can reply.";
-
   if (hasErrors(errors) || !service) return { ok: false, fieldErrors: errors };
 
   return {
@@ -53,7 +81,7 @@ export function validateContact(
       name: input.name,
       email: input.email,
       service: service.value,
-      phone,
+      phone: input.phone ? normalizePakistaniMobile(input.phone) : null,
       message: input.message,
     },
   };

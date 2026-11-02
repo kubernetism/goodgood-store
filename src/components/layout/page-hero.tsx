@@ -22,15 +22,27 @@ type PageHeroProps = {
  * Brown title band used by every inner page, continuing the dark header.
  * The image retains its proportions so both lines of the verse stay in frame.
  */
-export function PageHeroBackground() {
+export function PageHeroBackground({ prioritize = false }: { prioritize?: boolean } = {}) {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <Image src={navbarBackground} alt="" fill sizes="100vw" className="scale-110 object-cover object-center opacity-25 blur-2xl" />
+      {/* With `prioritize`, the 40px-blurred wash loads as a tiny thumbnail
+          (it looks identical, and is too low-detail to count as the LCP) and
+          the sharp verse is fetched eagerly at high priority. No <link
+          rel=preload>: that competed with the CSS on slow phones. */}
+      <Image
+        src={navbarBackground}
+        alt=""
+        fill
+        sizes={prioritize ? "48px" : "100vw"}
+        className="scale-110 object-cover object-center opacity-25 blur-2xl"
+      />
       <div className="mt-20 flex h-full items-start justify-center md:mt-0 md:items-center">
         <Image
           src={navbarBackground}
           alt=""
           sizes="100vw"
+          loading={prioritize ? "eager" : undefined}
+          fetchPriority={prioritize ? "high" : undefined}
           className="h-auto w-full md:h-full md:w-auto md:max-w-full md:object-contain"
           style={{ maskImage: "linear-gradient(to right, transparent, black 5%, black 95%, transparent)" }}
         />
@@ -58,38 +70,45 @@ export function PageHero({
             {title}
           </Title>
         </div>
-        <nav aria-label="Breadcrumb">
-          <ol className="flex flex-wrap items-center gap-3 font-display text-sm font-semibold">
-            <li>
-              <Link href="/" className="rounded-sm text-on-dark transition-colors duration-200 hover:text-primary">
-                Home
-              </Link>
-            </li>
-            {crumbs.map((crumb, index) => {
-              const isCurrent = index === crumbs.length - 1;
-              return (
-                <li key={crumb.label} className="flex items-center gap-3">
-                  <span aria-hidden="true" className="text-on-dark-muted">
-                    /
-                  </span>
-                  {isCurrent || !crumb.href ? (
-                    <span aria-current={isCurrent ? "page" : undefined} className="text-primary">
-                      {crumb.label}
-                    </span>
-                  ) : (
-                    <Link
-                      href={crumb.href}
-                      className="rounded-sm text-on-dark transition-colors duration-200 hover:text-primary"
-                    >
-                      {crumb.label}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        </nav>
+        <Breadcrumbs crumbs={crumbs} />
       </Container>
     </section>
+  );
+}
+
+/** "Home / …" trail for brown hero bands; the last crumb is the current page. */
+export function Breadcrumbs({ crumbs, className }: { crumbs: ReadonlyArray<Crumb>; className?: string }) {
+  return (
+    <nav aria-label="Breadcrumb" className={className}>
+      <ol className="flex flex-wrap items-center gap-3 font-display text-sm font-semibold">
+        <li>
+          <Link href="/" className="rounded-sm text-on-dark transition-colors duration-200 hover:text-primary">
+            Home
+          </Link>
+        </li>
+        {crumbs.map((crumb, index) => {
+          const isCurrent = index === crumbs.length - 1;
+          return (
+            <li key={crumb.label} className="flex items-center gap-3">
+              <span aria-hidden="true" className="text-on-dark-muted">
+                /
+              </span>
+              {isCurrent || !crumb.href ? (
+                <span aria-current={isCurrent ? "page" : undefined} className="text-primary">
+                  {crumb.label}
+                </span>
+              ) : (
+                <Link
+                  href={crumb.href}
+                  className="rounded-sm text-on-dark transition-colors duration-200 hover:text-primary"
+                >
+                  {crumb.label}
+                </Link>
+              )}
+            </li>
+          );
+        })}
+      </ol>
+    </nav>
   );
 }

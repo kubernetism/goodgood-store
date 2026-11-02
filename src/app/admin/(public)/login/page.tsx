@@ -7,6 +7,7 @@ import { PasswordField } from "@/features/admin/password-field";
 import { BrandLogo } from "@/features/admin/shell";
 import { SubmitButton } from "@/features/admin/submit-button";
 import { Notice } from "@/features/admin/ui";
+import { HoneycombLoader } from "@/components/ui/honeycomb-mark";
 
 export const instant = false;
 export const metadata: Metadata = { title: "Sign in" };
@@ -40,6 +41,6 @@ async function LoginForm({ searchParams }: { searchParams: Promise<{ error?: str
 
 export default function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   return <LoginShell>
-    <Suspense fallback={<div className="admin-login-card" role="status"><span className="sr-only">Loading…</span></div>}><LoginForm searchParams={searchParams} /></Suspense>
+    <Suspense fallback={<div className="admin-login-card"><HoneycombLoader size={48} /></div>}><LoginForm searchParams={searchParams} /></Suspense>
   </LoginShell>;
 }

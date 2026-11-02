@@ -8,9 +8,20 @@
   grid-template-rows: 1fr;
 }
 
+/* position: relative makes the inner the containing block for absolutely
+   positioned descendants (e.g. Tailwind's `sr-only`), so overflow: hidden clips
+   them too. Without it, a collapsed panel's `sr-only` text keeps its static
+   position below the panel, escapes the clip and adds blank scroll height
+   under the footer.
+   The inline padding/negative margin pair widens the clip box by the global
+   focus ring's reach (2px offset + 2px width) without moving the content, so
+   rings on links flush with the panel's edge are not cut off. */
 .footer-disclosure-panel__inner {
+  position: relative;
   min-height: 0;
   overflow: hidden;
+  margin-inline: -4px;
+  padding-inline: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {

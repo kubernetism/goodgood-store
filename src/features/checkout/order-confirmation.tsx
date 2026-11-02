@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { buttonClasses } from "@/components/ui/button";
+import { HoneycombMark, HoneycombSparks } from "@/components/ui/honeycomb-mark";
+import { CELEBRATION_MS, RISE_DELAYS } from "@/components/ui/honeycomb-geometry";
 import { formatPrice } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
 import { cx } from "@/lib/cx";
 import type { CheckoutState } from "./actions";
+import { browserSession, initialCelebrationPhase, markCelebrated, type CelebrationPhase } from "./celebration";
 import { DELIVERY_ESTIMATE, itemCountLabel } from "./messages";
 import { formatPakistaniMobile } from "./validation";
 
@@ -18,6 +21,8 @@ export function OrderConfirmation({ state }: { state: Extract<CheckoutState, { s
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
   const resetTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const trackHref = `/track-order?order=${encodeURIComponent(state.orderNumber)}`;
+  // Plays once per order; a remount for the same order shows the resting comb.
+  const [celebration, setCelebration] = useState<CelebrationPhase>(() => initialCelebrationPhase(browserSession, state.orderNumber));
 
   // The form above is gone: start the reader (and screen reader) at the top of the receipt.
   useEffect(() => {
@@ -25,6 +30,16 @@ export function OrderConfirmation({ state }: { state: Extract<CheckoutState, { s
     headingRef.current?.focus({ preventScroll: true });
     return () => clearTimeout(resetTimer.current);
   }, []);
+
+  // Once it has played, settle on the resting comb so nothing replays when the
+  // hidden route is shown again (Back after "Track this order").
+  useEffect(() => {
+    if (celebration !== "play") return;
+    markCelebrated(browserSession, state.orderNumber);
+    const timer = setTimeout(() => setCelebration("rest"), CELEBRATION_MS);
+    return () => clearTimeout(timer);
+  }, [celebration, state.orderNumber]);
+  const rise = (step: number) => ({ animationDelay: `${RISE_DELAYS[step]}s` });
 
   async function copyOrderNumber() {
     clearTimeout(resetTimer.current);
@@ -46,15 +61,17 @@ export function OrderConfirmation({ state }: { state: Extract<CheckoutState, { s
   ];
 
   return (
-    <div className="mx-auto max-w-2xl overflow-hidden rounded-lg border border-border bg-surface">
+    <div data-celebrate={celebration} className="mx-auto max-w-2xl overflow-hidden rounded-lg border border-border bg-surface">
       <div className="on-dark relative isolate overflow-hidden bg-brown-950 px-6 py-10 text-center text-on-dark sm:px-10">
         <span aria-hidden="true" className="mask-honeycomb-fade absolute inset-0 -z-10 text-primary/20" />
-        <p className="font-script text-cta leading-none text-primary" aria-hidden="true">Thank you</p>
-        <h2 ref={headingRef} tabIndex={-1} className="mt-3 font-heading text-h2-sm font-semibold text-on-dark outline-none md:text-h3">
-          Your order is placed
+        {celebration === "play" && <HoneycombSparks />}
+        <HoneycombMark variant="celebrate" playing={celebration === "play"} size={176} className="mx-auto size-36 sm:size-44" />
+        <p className="hc-rise mt-5 font-script text-cta leading-none text-primary" style={rise(0)} aria-hidden="true">Thank you</p>
+        <h2 ref={headingRef} tabIndex={-1} className="hc-rise mt-3 font-heading text-h2-sm font-semibold text-on-dark outline-none md:text-h3" style={rise(1)}>
+          Thank you for your purchase
         </h2>
 
-        <div className="mt-6 flex flex-col items-center gap-3">
+        <div className="hc-rise mt-6 flex flex-col items-center gap-3" style={rise(2)}>
           <p className="text-eyebrow font-semibold text-on-dark-muted uppercase">Order number</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <p className="font-heading text-promo-lg font-semibold tracking-wide text-on-dark select-all">{state.orderNumber}</p>
@@ -73,12 +90,12 @@ export function OrderConfirmation({ state }: { state: Extract<CheckoutState, { s
           </p>
         </div>
 
-        <p className="mt-5 text-copy text-on-dark">
+        <p className="hc-rise mt-5 text-copy text-on-dark" style={rise(3)}>
           Pay <strong className="text-primary tabular-nums">{formatPrice(state.total)}</strong> in cash on delivery · {itemCountLabel(state.itemCount)}
         </p>
       </div>
 
-      <div className="px-6 py-8 sm:px-10">
+      <div className="hc-rise px-6 py-8 sm:px-10" style={rise(4)}>
         <h3 className="font-heading text-h4 font-semibold text-strong">What happens next</h3>
         <ol className="mt-4 space-y-4">
           {steps.map((step, index) => (

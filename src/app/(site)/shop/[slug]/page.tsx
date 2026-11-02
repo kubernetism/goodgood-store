@@ -7,6 +7,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { SocialIcon } from "@/components/icons/social-icons";
 import { HoneycombPattern } from "@/components/motifs/honeycomb-pattern";
 import { Container } from "@/components/ui/container";
+import { HoneycombLoader } from "@/components/ui/honeycomb-mark";
 import { PaymentBadges } from "@/components/ui/payment-badges";
 import { Price, discountPercent } from "@/components/ui/price";
 import { RatingStars } from "@/components/ui/rating-stars";
@@ -268,9 +269,12 @@ function GiftPromoCard() {
 
 function ProductSkeleton() {
   return (
-    <Container className="py-16 lg:py-24" aria-busy="true" aria-label="Loading product">
+    <Container className="py-16 lg:py-24" aria-busy="true">
       <div className="grid gap-6 md:grid-cols-2 lg:w-2/3">
-        <div className="aspect-[4/5] animate-pulse rounded-lg bg-tile" />
+        <div className="relative">
+          <div className="aspect-[4/5] animate-pulse rounded-lg bg-tile" />
+          <HoneycombLoader label="Loading this honey…" showLabel className="absolute inset-0 justify-center" />
+        </div>
         <div className="space-y-4">
           <div className="h-5 w-32 animate-pulse rounded-sm bg-tile" />
           <div className="h-7 w-2/3 animate-pulse rounded-sm bg-tile" />

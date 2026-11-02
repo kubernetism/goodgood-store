@@ -3,6 +3,7 @@ import type { banners, products } from "@/db/schema";
 import { deleteBanner, saveBanner } from "@/features/admin/actions";
 import { bannerPlacements } from "@/features/banners/model";
 import { dateToPktLocal } from "@/lib/pk-time";
+import { BannerPlacementFields } from "./banner-placement-fields";
 import type { ImageOption } from "./image-options";
 import { ImageSelect } from "./image-select";
 import { MediaOptionsProvider } from "./media-options";
@@ -11,15 +12,12 @@ import { DangerZone, Field } from "./ui";
 
 export function BannerEditor({ banner, images, products: choices }: { banner?: typeof banners.$inferSelect; images: ImageOption[]; products: Pick<typeof products.$inferSelect, "id" | "name">[] }) {
   return <MediaOptionsProvider images={images}>
-    <form action={saveBanner} className="admin-panel admin-form">
+    <form action={saveBanner} className="admin-panel admin-form admin-banner-form">
       {banner && <input type="hidden" name="id" value={banner.id} />}
       <p className="admin-form-note">All fields are required unless marked optional.</p>
       <fieldset className="admin-section">
         <legend>Placement and order</legend>
-        <div className="admin-columns">
-          <Field label="Placement"><select name="placement" defaultValue={banner?.placement ?? "hero"}>{bannerPlacements.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}</select></Field>
-          <Field label="Display order" hint="The live banner with the lowest number is shown."><input name="sortOrder" type="number" inputMode="numeric" min="0" max="9999" defaultValue={banner?.sortOrder ?? 0} /></Field>
-        </div>
+        <BannerPlacementFields placements={bannerPlacements} defaultPlacement={banner?.placement ?? "hero"} defaultSortOrder={banner?.sortOrder ?? 0} defaultYoutubeId={banner?.youtubeId ?? null} />
       </fieldset>
       <fieldset className="admin-section">
         <legend>Message</legend>
@@ -30,7 +28,8 @@ export function BannerEditor({ banner, images, products: choices }: { banner?: t
           <Field label="Button link" optional hint="A site path like /shop or a full https:// link."><input name="ctaHref" maxLength={500} placeholder="/shop" defaultValue={banner?.ctaHref ?? ""} /></Field>
         </div>
       </fieldset>
-      <fieldset className="admin-section">
+      {/* Pop-ups show the video instead (hidden by CSS while "Video pop-up" is chosen). */}
+      <fieldset className="admin-section admin-banner-media">
         <legend>Image and product</legend>
         <div className="admin-columns">
           <ImageSelect label="Image" name="imageId" defaultValue={banner?.imageId ?? ""} emptyLabel="Use the fallback image" />
