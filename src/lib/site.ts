@@ -4,7 +4,7 @@ const contactPeople = [
   { name: "Mubashir Khan", phoneDisplay: "0315-9021627", phoneHref: "tel:+923159021627" },
 ] as const;
 
-/** Site-wide configuration. Social profile URLs still await confirmation. */
+/** Site-wide configuration. Social profile links are managed in Admin > Settings. */
 export const siteConfig = {
   /** Short brand name for tight spaces (title template, social labels). */
   name: "Abdul Sami Honey",
@@ -32,6 +32,10 @@ export const siteConfig = {
     openingHours: { days: [1, 2, 3, 4, 5], opens: 9 * 60, closes: 17 * 60 },
     onlineOrders: "Online orders anytime",
   },
+  /**
+   * Fallback only: the live links are set in Admin > Settings. Bare network
+   * home pages like these are treated as placeholders and never shown.
+   */
   socials: [
     { network: "facebook", label: "Facebook", href: "https://facebook.com" },
     { network: "instagram", label: "Instagram", href: "https://instagram.com" },
@@ -40,7 +44,7 @@ export const siteConfig = {
   ],
 } as const;
 
-export type SocialNetwork = "facebook" | "x" | "instagram" | "linkedin" | "dribbble" | "youtube";
+export type SocialNetwork = "facebook" | "x" | "instagram" | "linkedin" | "dribbble" | "youtube" | "tiktok" | "whatsapp";
 
 export type NavLink = { label: string; href: string };
 

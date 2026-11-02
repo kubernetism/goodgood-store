@@ -1,5 +1,8 @@
 import { z } from "zod";
+import { normalizeProfileUrl } from "@/lib/social-profiles";
 import { normalizeWhatsappNumber } from "./whatsapp-settings";
+
+export { normalizeProfileUrl };
 
 /*
  * Team member form (pure, unit tested). Optional fields arrive as "" from the
@@ -19,25 +22,6 @@ export const socialNetworks = [facebook, instagram, linkedin, x] as const;
 type SocialNetworkField = (typeof socialNetworks)[number];
 
 export type SocialField = (typeof socialNetworks)[number]["field"];
-
-/**
- * Profile link as an https URL on one of `hosts` (or a subdomain such as
- * www. or pk.), with any fragment dropped. "facebook.com/page" gains https://.
- * Null when the input cannot be used.
- */
-export function normalizeProfileUrl(input: string, hosts: ReadonlyArray<string>): string | null {
-  const value = input.trim();
-  if (!value || /\s/.test(value)) return null;
-  const withScheme = /^[a-z][a-z\d+.-]*:/i.test(value) ? value : `https://${value.replace(/^\/+/, "")}`;
-  let url: URL;
-  try { url = new URL(withScheme); } catch { return null; }
-  if (url.protocol === "http:") url.protocol = "https:";
-  if (url.protocol !== "https:" || url.username || url.password || url.port) return null;
-  const host = url.hostname.toLowerCase();
-  if (!hosts.some((allowed) => host === allowed || host.endsWith(`.${allowed}`))) return null;
-  url.hash = "";
-  return url.toString();
-}
 
 /** Pakistani mobiles and international numbers (as for WhatsApp), plus Pakistani landlines such as 091-1234567. */
 export function normalizePhone(input: string): string | null {

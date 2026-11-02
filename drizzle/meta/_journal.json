@@ -71,6 +71,13 @@
       "when": 1793549710674,
       "tag": "0009_team_members",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793552422557,
+      "tag": "0010_site_social_links",
+      "breakpoints": true
     }
   ]
 }

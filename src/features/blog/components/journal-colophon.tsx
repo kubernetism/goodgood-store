@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { User } from "lucide-react";
-import { SocialLinks } from "@/components/layout/social-links";
+import { SiteSocialLinks } from "@/components/layout/social-links";
 import { MediaImage } from "@/components/ui/media-image";
 import { Eyebrow } from "@/components/ui/section-heading";
 import type { ImageAsset } from "@/features/products/types";
@@ -35,7 +35,7 @@ export function JournalColophon({
             </h2>
             <p className="font-display text-meta font-semibold text-primary-ink">{blogAuthor.role}</p>
             <p className="journal-standfirst mt-3 text-lg text-body">{blogAuthor.bio}</p>
-            <SocialLinks className="mt-3 -ml-3 text-muted" iconClassName="size-4" />
+            <SiteSocialLinks className="mt-3 -ml-3 text-muted" iconClassName="size-4" />
           </div>
         </div>
       </section>

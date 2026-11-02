@@ -1292,3 +1292,16 @@
   opacity: 0.6;
   cursor: progress;
 }
+
+/* ── Settings: social links ─────────────────────────────────────────── */
+/* One row per network: link field, then its Show switch level with the input. */
+.admin-social-list {
+  display: grid;
+  gap: var(--ad-space-4);
+}
+.admin-social-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--ad-space-4);
+}

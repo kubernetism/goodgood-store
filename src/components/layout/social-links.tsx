@@ -1,9 +1,10 @@
 import { SocialIcon } from "@/components/icons/social-icons";
+import { getSiteSocialLinks } from "@/features/settings/social-links-data";
 import { siteConfig, type SocialNetwork } from "@/lib/site";
 import { cx } from "@/lib/cx";
 
 type SocialLinksProps = {
-  networks?: ReadonlyArray<{ network: SocialNetwork; label: string; href: string }>;
+  networks: ReadonlyArray<{ network: SocialNetwork; label: string; href: string }>;
   /** `plain` = bare icons; `boxed` = tinted squares (blog sidebar). */
   variant?: "plain" | "boxed";
   className?: string;
@@ -13,12 +14,13 @@ type SocialLinksProps = {
 };
 
 export function SocialLinks({
-  networks = siteConfig.socials,
+  networks,
   variant = "plain",
   className,
   iconClassName = "size-3.5",
   labelPrefix = `${siteConfig.name} on`,
 }: SocialLinksProps) {
+  if (!networks.length) return null;
   return (
     <ul className={cx("flex items-center", variant === "boxed" ? "gap-4" : "gap-1", className)}>
       {networks.map((social) => (
@@ -43,4 +45,10 @@ export function SocialLinks({
       ))}
     </ul>
   );
+}
+
+/** The site's own profiles, as set in Admin > Settings. Renders nothing when none are shown. */
+export async function SiteSocialLinks(props: Omit<SocialLinksProps, "networks">) {
+  const networks = await getSiteSocialLinks();
+  return <SocialLinks networks={networks} {...props} />;
 }

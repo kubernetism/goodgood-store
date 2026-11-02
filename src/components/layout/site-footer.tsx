@@ -8,7 +8,7 @@ import { siteConfig } from "@/lib/site";
 import { getCatalog } from "@/features/products/catalog-data";
 import { getCategoryCounts } from "@/features/products/catalog";
 import { FeaturesStrip } from "./features-strip";
-import { SocialLinks } from "./social-links";
+import { SiteSocialLinks } from "./social-links";
 import { FooterDisclosure } from "./footer-disclosure";
 
 const otherLinkColumns = [
@@ -69,7 +69,7 @@ export async function SiteFooter({ showFeatures = true }: { showFeatures?: boole
             <div className="sm:col-span-2 lg:col-span-3">
               <Logo tone="dark" className="[&_img]:size-11" />
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-on-dark-muted">{siteConfig.tagline}</p>
-              <SocialLinks className="mt-1 -ml-3 text-on-dark [&_a:hover]:text-honey-300" />
+              <SiteSocialLinks className="mt-1 -ml-3 text-on-dark [&_a:hover]:text-honey-300" />
             </div>
 
             <div className="lg:col-span-6">

@@ -16,6 +16,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { CategoryHighlight } from "@/features/products/types";
 import type { BlogBlock } from "@/features/blog/data";
+import type { StoredSocialLinks } from "@/features/settings/site-socials";
 
 /*
  * Database schema. Money is integer paisa (Rs 1 = 100 paisa), timestamps are
@@ -40,6 +41,12 @@ export const bannerPlacement = pgEnum("banner_placement", ["hero", "deal", "anno
 export const storeSettings = pgTable("store_settings", {
   id: integer("id").primaryKey().default(1),
   orderWhatsappNumber: text("order_whatsapp_number"),
+  /**
+   * Site-wide social links from Admin > Settings, validated on write and read
+   * (features/settings/site-socials). Null until first saved, which means
+   * "use site config"; nullable so adding it is a zero-downtime change.
+   */
+  socialLinks: jsonb("social_links").$type<StoredSocialLinks>(),
   ...timestamps,
 }, (t) => [check("store_settings_singleton", sql`${t.id} = 1`)]);
 

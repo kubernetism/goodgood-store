@@ -31,3 +31,8 @@ export function isForeignKeyViolation(error: unknown): boolean {
 export function isUndefinedTable(error: unknown): boolean {
   return findPgError(error)?.code === "42P01";
 }
+
+/** 42703: undefined_column (e.g. a column whose migration has not been applied yet). */
+export function isUndefinedColumn(error: unknown): boolean {
+  return findPgError(error)?.code === "42703";
+}

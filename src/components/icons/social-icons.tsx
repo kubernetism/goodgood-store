@@ -55,6 +55,15 @@ function LinkedinIcon(props: IconProps) {
   );
 }
 
+function TiktokIcon(props: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {...strokeProps} {...props}>
+      <path d="M14.5 3v11.25a3.75 3.75 0 1 1-3.75-3.75" />
+      <path d="M14.5 3c.4 2.8 2.3 4.7 5 5" />
+    </svg>
+  );
+}
+
 function DribbbleIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" {...strokeProps} {...props}>
@@ -92,6 +101,8 @@ const icons: Record<SocialNetwork, (props: IconProps) => React.JSX.Element> = {
   linkedin: LinkedinIcon,
   dribbble: DribbbleIcon,
   youtube: YoutubeIcon,
+  tiktok: TiktokIcon,
+  whatsapp: WhatsAppIcon,
 };
 
 export function SocialIcon({ network, ...props }: IconProps & { network: SocialNetwork }) {
