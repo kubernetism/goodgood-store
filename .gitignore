@@ -46,3 +46,4 @@ next-env.d.ts
 
 # env files: example is committed, real ones are not
 !.env.example
+/screenshots
