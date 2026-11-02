@@ -39,7 +39,7 @@ export default async function AboutPage() {
     <>
       <AboutHero />
 
-      <AboutStory apiaries={slotImage(content, SLOT_KEYS.aboutApiaries)} team={slotImage(content, SLOT_KEYS.aboutTeam)} />
+      <AboutStory founder={slotImage(content, SLOT_KEYS.aboutFounder)} />
 
       <HiveToJar />
 

@@ -33,6 +33,17 @@
       0 24px 48px rgb(0 0 0 / 0.35);
   }
 
+  /* Story: founder portrait sits on an offset amber rule (decorative). */
+  .about-portrait__frame {
+    border: 1.5px solid rgb(138 90 0 / 0.45);
+    translate: 0.875rem 0.875rem;
+  }
+  @media (min-width: 40rem) {
+    .about-portrait__frame {
+      translate: 1.25rem 1.25rem;
+    }
+  }
+
   /* Story: drop cap in the display face; honey fill, brown ink (9.42:1). */
   .about-dropcap::first-letter {
     float: left;

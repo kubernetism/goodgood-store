@@ -1,4 +1,3 @@
-import { User } from "lucide-react";
 import { BeeIcon } from "@/components/icons/honey-icons";
 import { Container } from "@/components/ui/container";
 import { MediaImage } from "@/components/ui/media-image";
@@ -7,37 +6,30 @@ import type { ImageAsset } from "@/features/products/types";
 import { siteConfig } from "@/lib/site";
 import { aboutStats, foundedYear } from "./about-content";
 
-type AboutStoryProps = { apiaries: ImageAsset | null; team: ImageAsset | null };
+type AboutStoryProps = { founder: ImageAsset | null };
 
-/** Origin story: offset photo pair (admin slots) beside editorial copy with a drop cap and the founder's signature. */
-export function AboutStory({ apiaries, team }: AboutStoryProps) {
+/** Origin story: the founder's portrait (admin slot) beside editorial copy with a drop cap and his signature. */
+export function AboutStory({ founder }: AboutStoryProps) {
   return (
     <section id="story" aria-labelledby="story-heading" className="pt-10 pb-16 lg:pt-16 lg:pb-28">
-      <Container className="grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
-        <div className="relative mx-auto grid w-full max-w-[34rem] grid-cols-[1.15fr_1fr] gap-4 sm:gap-6 lg:col-span-6 lg:mr-6 lg:max-w-none">
+      <Container className="grid items-center gap-14 lg:grid-cols-12 lg:gap-12">
+        <div className="relative mx-auto w-[calc(100%-1.5rem)] max-w-[20rem] -translate-x-2 sm:w-full sm:max-w-[26rem] sm:translate-x-0 lg:col-span-5 lg:max-w-none">
+          {/* Offset honey rule behind the photo, like a mount around a framed print. */}
+          <span aria-hidden="true" className="about-portrait__frame absolute inset-0 rounded-lg" />
           <MediaImage
-            image={apiaries}
-            sizes="(min-width: 1024px) 300px, 55vw"
+            image={founder}
+            sizes="(min-width: 1024px) 460px, (min-width: 640px) 416px, 320px"
             icon={BeeIcon}
             iconSize="lg"
             rounded="lg"
-            aspect="aspect-[3/5]"
-            caption="Our apiaries"
+            aspect="aspect-[4/5]"
+            caption="Abdul Sami"
+            className="relative shadow-card"
           />
-          <MediaImage
-            image={team}
-            sizes="(min-width: 1024px) 260px, 45vw"
-            icon={User}
-            iconSize="lg"
-            rounded="lg"
-            aspect="aspect-[3/5]"
-            caption="Our team"
-            className="mt-14 sm:mt-20"
-          />
-          {/* Hexagon seal straddling the two photos. */}
+          {/* Hexagon seal pinned to the portrait's lower corner. */}
           <span
             aria-hidden="true"
-            className="about-hex absolute top-[38%] left-[53%] flex size-20 -translate-x-1/2 flex-col items-center justify-center bg-primary text-strong sm:size-24"
+            className="about-hex absolute -right-3 -bottom-8 flex size-20 flex-col items-center justify-center bg-primary text-strong sm:-right-6 sm:size-24"
           >
             {foundedYear ? (
               <>
@@ -50,7 +42,7 @@ export function AboutStory({ apiaries, team }: AboutStoryProps) {
           </span>
         </div>
 
-        <div className="lg:col-span-6">
+        <div className="lg:col-span-7">
           <Eyebrow decorated="leading">How it started</Eyebrow>
           <h2 id="story-heading" className="mt-3 text-h2-sm font-semibold lg:text-cta">
             It began with a handful of hives

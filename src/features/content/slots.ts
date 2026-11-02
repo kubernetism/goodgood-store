@@ -31,8 +31,8 @@ export const SLOT_KEYS = {
   homeHero: "home.hero",
   homeDeal: "home.deal",
   homeStory: "home.story",
-  aboutApiaries: "about.apiaries",
-  aboutTeam: "about.team",
+  // Key kept from the old "Our apiaries" slot so the portrait already uploaded there stays put.
+  aboutFounder: "about.apiaries",
   aboutFaq: "about.faq",
   contactMap: "contact.map",
   blogAuthor: "blog.author",
@@ -61,17 +61,10 @@ export const slotDefinitions: ReadonlyArray<SlotDefinition> = [
     kind: "video",
   },
   {
-    key: SLOT_KEYS.aboutApiaries,
+    key: SLOT_KEYS.aboutFounder,
     group: "About page",
-    label: "Our apiaries",
-    hint: "Tall portrait photo (3:5) at the top of the About page.",
-    kind: "image",
-  },
-  {
-    key: SLOT_KEYS.aboutTeam,
-    group: "About page",
-    label: "Our team",
-    hint: "Tall portrait photo (3:5) beside “Our apiaries”.",
+    label: "Founder portrait (Abdul Sami)",
+    hint: "Portrait photo (4:5) beside “How it started”. Keep the face in the upper middle; a small badge overlaps the lower-right corner.",
     kind: "image",
   },
   ...teamMembers.map(
