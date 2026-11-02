@@ -43,7 +43,7 @@ export function QuantityStepper({ id, value, onChange, min = 1, max, label, size
           onChange(Number.isNaN(next) ? min : clamp(next));
         }}
         className={cx(
-          "border-x border-border-strong text-center font-display font-semibold text-strong [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+          "border-x border-border-strong text-center font-semibold text-strong [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
           size === "md" ? "w-12" : "w-10 text-sm",
         )}
       />

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { and, asc, desc, eq, ilike } from "drizzle-orm";
-import { Megaphone, Pencil } from "lucide-react";
+import { ArrowRight, Megaphone, Pencil } from "lucide-react";
 import { db } from "@/db/client";
 import { banners } from "@/db/schema";
 import { bannerScheduleStatus, bannerStatusDisplay } from "@/features/admin/status-display";
@@ -41,7 +41,7 @@ export default async function BannersPage({ searchParams }: { searchParams: Prom
             <Td slot="title"><Link href={`/admin/banners/${banner.id}`}>{banner.title}</Link></Td>
             <Td slot="badge"><StatusPill tone={status.tone} label={status.label} /></Td>
             <Td label="Placement">{placementLabel(banner.placement)}</Td>
-            <Td label="Window"><span className="admin-num">{banner.startsAt ? formatPktDateTime(banner.startsAt) : "Any time"} → {banner.endsAt ? formatPktDateTime(banner.endsAt) : "No end"}</span></Td>
+            <Td label="Window"><span className="admin-banner-window">{banner.startsAt ? formatPktDateTime(banner.startsAt) : "Any time"}<ArrowRight aria-label="to" />{banner.endsAt ? formatPktDateTime(banner.endsAt) : "No end"}</span></Td>
             <Td slot="actions"><div className="admin-row-actions"><Link className="admin-button quiet sm" href={`/admin/banners/${banner.id}`} aria-label={`Edit ${banner.title}`}><Pencil aria-hidden="true" />Edit</Link></div></Td>
           </Tr>;
         })}</TBody>

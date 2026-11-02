@@ -36,7 +36,7 @@ export function ContactSuccess({ sent, fallbackMessage, headingRef, onSendAnothe
         <span aria-hidden="true" className="hex-clip mx-auto flex size-16 items-center justify-center bg-primary text-strong sm:mx-0">
           <Check className="size-7" strokeWidth={2.5} />
         </span>
-        <h3 ref={headingRef} tabIndex={-1} className="mt-5 font-heading text-h2-sm font-semibold text-strong outline-none lg:text-h3">
+        <h3 ref={headingRef} tabIndex={-1} className="mt-5 text-h2-sm font-semibold text-strong outline-none lg:text-h3">
           {firstName ? `Thank you, ${firstName}. Your message is with us.` : "Thank you. Your message is with us."}
         </h3>
         {sent ? (

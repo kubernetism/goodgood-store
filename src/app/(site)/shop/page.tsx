@@ -73,7 +73,7 @@ async function ShopContent({ searchParams }: Pick<PageProps<"/shop">, "searchPar
             <ViewLink query={query} view="list" />
           </div>
           <SortSelect value={query.sort} preserved={shopParams(query, ["sort"])} />
-          <p aria-live="polite" className="w-full font-display text-sm font-semibold text-strong sm:w-auto sm:text-base">
+          <p aria-live="polite" className="w-full text-sm font-semibold text-strong sm:w-auto sm:text-base">
             {result.total === 0
               ? "No results"
               : `Showing ${result.start}–${result.end} of ${result.total} results`}
@@ -154,7 +154,7 @@ function EmptyResults() {
   return (
     <div className="flex flex-col items-center rounded-lg border border-dashed border-border-strong/50 bg-ivory px-6 py-16 text-center">
       <SearchX className="size-10 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
-      <h3 className="mt-4 font-heading text-promo font-semibold">No honey matches those filters</h3>
+      <h3 className="mt-4 text-promo font-semibold">No honey matches those filters</h3>
       <p className="mt-2 max-w-sm">Try another variety or widen the price range.</p>
       <Link href="/shop" className={buttonClasses({ className: "mt-6" })}>
         View all honey

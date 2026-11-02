@@ -251,7 +251,7 @@ export function ContactForm({ whatsappHref, call }: ContactFormProps) {
             <div ref={summaryRef} tabIndex={-1} role="alert" className="mb-6 scroll-mt-28 rounded-md border-2 border-danger bg-danger/5 p-4 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus">
               {showSummary ? (
                 <>
-                  <h3 className="font-subtitle text-h4 font-semibold text-danger">
+                  <h3 className="text-h4 font-semibold text-danger">
                     Please fix {errorEntries.length === 1 ? "1 field" : `${errorEntries.length} fields`} to send your message
                   </h3>
                   <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-danger">
@@ -274,12 +274,12 @@ export function ContactForm({ whatsappHref, call }: ContactFormProps) {
                 </>
               ) : serverNotice === CONTACT_RATE_LIMIT_MESSAGE ? (
                 <>
-                  <h3 className="font-subtitle text-h4 font-semibold text-danger">Please wait a few minutes</h3>
+                  <h3 className="text-h4 font-semibold text-danger">Please wait a few minutes</h3>
                   <p className="mt-1 text-sm text-strong">{serverNotice}</p>
                 </>
               ) : (
                 <>
-                  <h3 className="font-subtitle text-h4 font-semibold text-danger">We couldn&apos;t send your message just now</h3>
+                  <h3 className="text-h4 font-semibold text-danger">We couldn&apos;t send your message just now</h3>
                   <p className="mt-1 text-sm text-strong">
                     Nothing you typed was lost. Try again, or reach us directly:{" "}
                     {whatsappHref && (
@@ -306,7 +306,7 @@ export function ContactForm({ whatsappHref, call }: ContactFormProps) {
             aria-describedby={errors.service ? "contact-service-error" : undefined}
             className={cx(errors.service && "border-l-2 border-danger pl-3")}
           >
-            <legend className="font-display text-meta font-semibold text-strong">What&apos;s your message about?</legend>
+            <legend className="text-meta font-semibold text-strong">What&apos;s your message about?</legend>
             {errors.service && (
               <p id="contact-service-error" className="mt-1.5 text-meta font-medium text-danger">
                 {errors.service}
@@ -420,7 +420,7 @@ export function ContactForm({ whatsappHref, call }: ContactFormProps) {
               <p
                 id="contact-message-count"
                 className={cx(
-                  "ml-auto shrink-0 text-right tabular-nums",
+                  "ml-auto shrink-0 text-right",
                   messageLength >= MESSAGE_MAX_LENGTH - 200 ? "font-semibold text-primary-ink" : "text-muted",
                 )}
               >

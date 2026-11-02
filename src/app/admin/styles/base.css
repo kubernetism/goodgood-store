@@ -7,7 +7,6 @@
   min-height: 100dvh;
   background: var(--ad-canvas);
   color: var(--ad-ink);
-  font-family: var(--ad-font-ui);
   font-size: var(--ad-text-base);
   line-height: var(--ad-text-base-lh);
   -webkit-font-smoothing: antialiased;
@@ -28,27 +27,22 @@
 .admin-app h3 {
   margin: 0;
   color: var(--ad-ink);
-  font-family: var(--ad-font-display);
-  font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 50;
   text-wrap: balance;
 }
 .admin-app h1 {
   font-size: var(--ad-text-xl);
   line-height: var(--ad-text-xl-lh);
-  font-weight: 600;
+  font-weight: 700;
 }
 .admin-app h2 {
   font-size: var(--ad-text-lg);
   line-height: var(--ad-text-lg-lh);
-  font-weight: 560;
+  font-weight: 700;
 }
 .admin-app h3 {
   font-size: var(--ad-text-md);
   line-height: var(--ad-text-md-lh);
-  font-weight: 600;
-  font-family: var(--ad-font-ui);
-  font-variation-settings: normal;
+  font-weight: 700;
 }
 @media (min-width: 768px) {
   .admin-app h1 {
@@ -71,7 +65,7 @@
   text-decoration-thickness: 2px;
 }
 .admin-app strong {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Focus: ink on light surfaces (15.5:1), honey on comb surfaces (10:1). */
@@ -96,21 +90,17 @@
   line-height: var(--ad-text-xs-lh);
   text-wrap: pretty;
 }
-.admin-num {
-  font-variant-numeric: tabular-nums lining-nums;
-}
-.admin-mono {
-  font-family: var(--ad-font-mono);
-  font-size: 0.875em;
-  font-weight: 500;
-  letter-spacing: 0;
+/* Order numbers, slugs, phones, SKUs. */
+.admin-ident {
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
 }
 .admin-eyebrow {
   margin: 0;
   color: var(--ad-muted);
   font-size: var(--ad-text-2xs);
   line-height: var(--ad-text-2xs-lh);
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }

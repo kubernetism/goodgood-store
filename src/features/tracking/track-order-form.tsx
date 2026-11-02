@@ -50,7 +50,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder: string }) {
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
       <section aria-labelledby="track-form-heading" className="lg:col-span-5">
         <div className="rounded-lg border border-border bg-ivory p-6 sm:p-8">
-          <h2 id="track-form-heading" className="font-heading text-h4 font-bold text-strong">Find your order</h2>
+          <h2 id="track-form-heading" className="text-h4 font-bold text-strong">Find your order</h2>
           <p className="mt-2 text-sm text-body">
             Enter the order number from your confirmation and the mobile number you used at checkout.
           </p>
@@ -105,7 +105,7 @@ export function TrackOrderForm({ defaultOrder }: { defaultOrder: string }) {
         ) : (
           <div className="flex h-full min-h-64 flex-col items-center justify-center rounded-lg border border-dashed border-border-strong/50 bg-tile px-6 py-12 text-center">
             {isPending ? <HoneycombMark size={48} /> : <PackageSearch className="size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />}
-            <p className="mt-4 font-heading text-lg font-bold text-strong">Your order&apos;s journey appears here</p>
+            <p className="mt-4 text-lg font-bold text-strong">Your order&apos;s journey appears here</p>
             <p className="mt-2 max-w-sm text-sm text-body">From the moment we confirm it to the day it reaches your door.</p>
           </div>
         )}
@@ -121,8 +121,8 @@ function TrackingResult({ order, headingRef }: { order: TrackedOrder; headingRef
     <article className="rounded-lg border border-border bg-surface p-6 shadow-card sm:p-8">
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
         <div className="min-w-0">
-          <p className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">Order {order.orderNumber}</p>
-          <h2 ref={headingRef} tabIndex={-1} className="mt-1 font-heading text-h4 font-bold text-balance text-strong outline-none">
+          <p className="text-eyebrow font-bold text-primary-ink uppercase">Order {order.orderNumber}</p>
+          <h2 ref={headingRef} tabIndex={-1} className="mt-1 text-h4 font-bold text-balance text-strong outline-none">
             Hi {order.firstName}, {order.hint.charAt(0).toLowerCase()}{order.hint.slice(1)}
           </h2>
           <p className="mt-1 text-meta text-muted">
@@ -161,28 +161,28 @@ function TrackingResult({ order, headingRef }: { order: TrackedOrder; headingRef
             {order.courier.name ? <>Sent with <strong>{order.courier.name}</strong></> : "Sent by courier"}
             {order.courier.trackingNumber && (
               <>
-                {" "}· Tracking number <strong className="font-mono tracking-wide">{order.courier.trackingNumber}</strong>
+                {" "}· Tracking number <strong className="tracking-wide">{order.courier.trackingNumber}</strong>
               </>
             )}
           </p>
         </div>
       )}
 
-      <h3 className="mt-8 font-heading text-base font-bold text-strong">Items</h3>
+      <h3 className="mt-8 text-base font-bold text-strong">Items</h3>
       <ul className="mt-2 divide-y divide-border">
         {order.items.map((item, index) => (
           <li key={`${item.name}-${index}`} className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
             <span className="min-w-0 text-strong">
               {item.name} <span className="text-muted">· {item.unit} × {item.quantity}</span>
             </span>
-            <span className="tabular-nums text-strong">{formatPrice(item.lineTotal)}</span>
+            <span className="text-strong">{formatPrice(item.lineTotal)}</span>
           </li>
         ))}
       </ul>
       <dl className="mt-3 space-y-1 border-t border-border pt-3 text-sm">
-        <div className="flex justify-between gap-4 text-body"><dt>Subtotal</dt><dd className="tabular-nums">{formatPrice(order.subtotal)}</dd></div>
-        <div className="flex justify-between gap-4 text-body"><dt>Delivery</dt><dd className="tabular-nums">{order.shipping === 0 ? "Free" : formatPrice(order.shipping)}</dd></div>
-        <div className="flex justify-between gap-4 font-semibold text-strong"><dt>{cancelled ? "Total" : delivered ? "Total paid on delivery" : "To pay on delivery"}</dt><dd className="tabular-nums">{formatPrice(order.total)}</dd></div>
+        <div className="flex justify-between gap-4 text-body"><dt>Subtotal</dt><dd>{formatPrice(order.subtotal)}</dd></div>
+        <div className="flex justify-between gap-4 text-body"><dt>Delivery</dt><dd>{order.shipping === 0 ? "Free" : formatPrice(order.shipping)}</dd></div>
+        <div className="flex justify-between gap-4 font-semibold text-strong"><dt>{cancelled ? "Total" : delivered ? "Total paid on delivery" : "To pay on delivery"}</dt><dd>{formatPrice(order.total)}</dd></div>
       </dl>
     </article>
   );

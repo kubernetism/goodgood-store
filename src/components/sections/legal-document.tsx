@@ -23,7 +23,7 @@ export function LegalDocument({ intro, updatedOn, sections }: LegalDocumentProps
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
       <nav aria-label="On this page" className="lg:col-span-4">
         <div className="rounded-sm border border-border bg-cream p-6 lg:sticky lg:top-28">
-          <h2 className="font-subtitle text-base font-bold">On this page</h2>
+          <h2 className="text-base font-bold">On this page</h2>
           <ol className="mt-4 space-y-1 text-sm">
             {sections.map((section, index) => (
               <li key={section.id}>
@@ -31,7 +31,7 @@ export function LegalDocument({ intro, updatedOn, sections }: LegalDocumentProps
                   href={`#${section.id}`}
                   className="flex min-h-9 items-center gap-2 text-strong transition-colors duration-200 hover:text-primary-ink"
                 >
-                  <span className="w-5 text-muted tabular-nums">{index + 1}.</span>
+                  <span className="w-5 text-muted">{index + 1}.</span>
                   {section.title}
                 </a>
               </li>
@@ -68,7 +68,7 @@ export function LegalDocument({ intro, updatedOn, sections }: LegalDocumentProps
         </div>
 
         <div className="mt-12 rounded-sm bg-primary-tint p-6 text-strong">
-          <p className="font-display font-semibold">Questions about this policy?</p>
+          <p className="font-semibold">Questions about this policy?</p>
           <p className="mt-1">
             Email{" "}
             <a href={`mailto:${siteConfig.contact.email}`} className="break-all font-semibold text-primary-ink underline underline-offset-2">

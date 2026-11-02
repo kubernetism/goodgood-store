@@ -58,12 +58,12 @@ export function MobileNav({ items }: { items: ReadonlyArray<NavItem> }) {
                     <Link
                       href={item.href}
                       onClick={close}
-                      className="flex min-h-11 items-center rounded-sm font-display text-base font-semibold hover:text-primary-ink"
+                      className="flex min-h-11 items-center rounded-sm text-base font-semibold hover:text-primary-ink"
                     >
                       {item.label}
                     </Link>
                   ) : (
-                    <p className="flex min-h-11 items-center font-display text-base font-semibold">{item.label}</p>
+                    <p className="flex min-h-11 items-center text-base font-semibold">{item.label}</p>
                   )}
                   {item.children && (
                     <ul className="mb-2 border-l-2 border-primary pl-4">

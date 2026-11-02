@@ -55,10 +55,10 @@ export function ProductCard({ product, headingLevel: Heading = "h3", imageSizes 
       </div>
       <div className="flex flex-1 flex-col gap-1 px-4 pt-4 pb-5">
         {product.images[0]?.caption && <p className="text-xs text-muted">Representative range image</p>}
-        <p className="font-display text-eyebrow font-semibold text-primary-ink uppercase">
+        <p className="text-eyebrow font-semibold text-primary-ink uppercase">
           {product.categoryName}
         </p>
-        <Heading className="font-subtitle text-sm leading-snug font-bold text-strong sm:text-base">
+        <Heading className="text-sm leading-snug font-bold text-strong sm:text-base">
           <Link href={href} className="rounded-sm transition-colors duration-200 group-hover:text-primary-ink">
             {product.name}
           </Link>

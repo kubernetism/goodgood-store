@@ -30,6 +30,13 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "4.5mb",
     },
   },
+  // The link-preview cards read these at request time through computed paths,
+  // which file tracing cannot see.
+  outputFileTracingIncludes: {
+    "/brand-card.jpg": ["./src/features/social-card/assets/*"],
+    "/shop/*/card.jpg": ["./src/features/social-card/assets/*", "./images/products/*.png"],
+    "/blog/*/cover.jpg": ["./src/features/social-card/assets/*", "./images/products/*.png"],
+  },
   cacheComponents: true,
   partialPrefetching: true,
   reactCompiler: true,

@@ -25,7 +25,7 @@ const proofPoints = [
 const DEFAULT_SUBTITLE =
   "Small-batch Sidr, Acacia and wildflower honey from apiaries we know by name. Cold-extracted, never blended, jarred in Pakistan.";
 
-const headingClass = "mt-5 font-heading text-[2.25rem] leading-[1.12] font-semibold text-balance text-on-dark sm:text-[2.875rem] lg:text-[3.5rem]";
+const headingClass = "mt-5 text-[2.25rem] leading-[1.12] font-semibold text-balance text-on-dark sm:text-[2.875rem] lg:text-[3.5rem]";
 
 type HomeHeroProps = {
   /** Active hero banner from the admin; null keeps the default copy. */
@@ -58,7 +58,7 @@ export function HomeHero({ banner, slotImage, product }: HomeHeroProps) {
         <HoneycombParallax tone="dark" />
         <Container className="grid items-center gap-12 pt-28 pb-14 sm:pt-32 lg:grid-cols-12 lg:gap-8 lg:pt-40 lg:pb-24">
           <div className="home-hero__copy lg:col-span-7">
-            <p className="inline-flex items-center gap-2 rounded-full border border-honey-300/40 bg-on-dark/5 px-3.5 py-1.5 font-subtitle text-meta font-bold text-on-dark">
+            <p className="inline-flex items-center gap-2 rounded-full border border-honey-300/40 bg-on-dark/5 px-3.5 py-1.5 text-meta font-bold text-on-dark">
               <BeeIcon className="size-4 text-honey-300" strokeWidth={1.75} />
               Raw honey from Pakistani beekeepers
             </p>
@@ -69,11 +69,11 @@ export function HomeHero({ banner, slotImage, product }: HomeHeroProps) {
             ) : (
               <h1 id="hero-heading" className={headingClass}>
                 Golden by nature,{" "}
-                <span className="font-script text-[1.3em] leading-none font-normal text-honey-300">raw</span> by choice.
+                <span className="text-honey-300">raw</span> by choice.
               </h1>
             )}
             {subtitle && (
-              <p className="mt-5 max-w-[34rem] font-subtitle text-base leading-relaxed text-on-dark-muted sm:text-lg">{subtitle}</p>
+              <p className="mt-5 max-w-[34rem] text-base leading-relaxed text-on-dark-muted sm:text-lg">{subtitle}</p>
             )}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {banner?.ctaLabel && banner.ctaHref ? (
@@ -92,7 +92,7 @@ export function HomeHero({ banner, slotImage, product }: HomeHeroProps) {
                 </ButtonLink>
               )}
             </div>
-            <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 font-display text-sm font-semibold text-on-dark">
+            <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2.5 text-sm font-semibold text-on-dark">
               {proofPoints.map(({ icon: Icon, label }) => (
                 <li key={label} className="flex items-center gap-2">
                   <Icon className="size-4 text-honey-300" strokeWidth={2} aria-hidden="true" />
@@ -130,7 +130,7 @@ function Stamp() {
       <circle cx="50" cy="50" r="49" fill="#e5b45a" />
       <circle cx="50" cy="50" r="45.5" fill="none" stroke="#2b1d0e" strokeOpacity="0.45" strokeWidth="0.75" />
       <g className="home-stamp__ring">
-        <text className="font-subtitle" fill="#2b1d0e" fontSize="8.4" fontWeight="700" letterSpacing="1.4">
+        <text fill="#2b1d0e" fontSize="8.4" fontWeight="700" letterSpacing="1.4">
           <textPath href="#home-stamp-ring" textLength="230" lengthAdjust="spacing">
             RAW HONEY · CASH ON DELIVERY · PAKISTAN ·
           </textPath>
@@ -162,11 +162,11 @@ function JarLabel({ product }: { product: Product }) {
           className="home-arch"
         />
         <div className="px-1 pt-4">
-          <p className="flex items-center gap-2 font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+          <p className="flex items-center gap-2 text-eyebrow font-bold text-primary-ink uppercase">
             <span aria-hidden="true" className="home-hex inline-block size-2.5 bg-primary-ink" />
             Our pick · {product.categoryName}
           </p>
-          <p className="mt-1.5 font-heading text-xl leading-snug font-semibold text-pretty">
+          <p className="mt-1.5 text-xl leading-snug font-semibold text-pretty">
             <Link href={`/shop/${product.slug}`} className="rounded-sm underline-offset-4 hover:underline">
               {product.name}
             </Link>

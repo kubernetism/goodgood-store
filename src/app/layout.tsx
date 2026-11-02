@@ -1,52 +1,48 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter, Parisienne, Sansation } from "next/font/google";
+import { Sansation } from "next/font/google";
+import { metadataBaseUrl } from "@/lib/metadata-base";
+import { baseOpenGraph } from "@/lib/social-metadata";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
-// Sansation titles and subtitles. Keep Inter for body/UI, Parisienne
-// for the logo, and Fraunces only for existing editorial quotes.
-// next/font serves these locally; visitors don't request Google stylesheets.
+// Sansation is the only typeface on the site and in the admin. next/font serves
+// it locally, so visitors never request a Google stylesheet.
+//
+// Each call preloads every file it declares, hence two: the upright regular and
+// bold are preloaded because nearly all text uses them, and the italic (quotes
+// only) downloads when a page actually renders it. Weight 300 is not used.
 const sansation = Sansation({
   subsets: ["latin"],
-  weight: ["300", "400", "700"],
-  style: ["normal", "italic"],
+  weight: ["400", "700"],
+  style: "normal",
   variable: "--font-sansation",
   display: "swap",
-  // This Next version has no automatic fallback metrics for Sansation.
+  // This Next version has no metrics for Sansation; globals.css declares a
+  // size-adjusted "Sansation Fallback" by hand instead.
   adjustFontFallback: false,
-  fallback: ["Arial"],
-  // Load only the weights/styles actually rendered, rather than preloading six files.
-  preload: false,
+  fallback: ["Sansation Fallback", "Arial", "sans-serif"],
 });
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  axes: ["SOFT", "opsz"],
-  variable: "--font-fraunces",
-  display: "swap",
-  preload: false,
-});
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const parisienne = Parisienne({
+const sansationItalic = Sansation({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-parisienne",
+  style: "italic",
+  variable: "--font-sansation-italic",
   display: "swap",
+  adjustFontFallback: false,
+  fallback: ["Sansation Fallback", "Arial", "sans-serif"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
+  metadataBase: metadataBaseUrl(),
   title: {
     default: `${siteConfig.legalName} | ${siteConfig.titleTagline}`,
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
   applicationName: siteConfig.legalName,
-  openGraph: {
-    type: "website",
-    siteName: siteConfig.legalName,
-    locale: "en_PK",
-  },
-  twitter: { card: "summary" },
+  openGraph: baseOpenGraph,
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
@@ -60,7 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${sansation.variable} ${fraunces.variable} ${inter.variable} ${parisienne.variable} antialiased`}
+      className={`${sansation.variable} ${sansationItalic.variable} antialiased`}
     >
       <body className="flex min-h-dvh flex-col">
         <a

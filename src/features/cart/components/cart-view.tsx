@@ -139,7 +139,7 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_23.75rem] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_25rem] xl:gap-14">
             <section aria-labelledby={HEADING_ID} className="min-w-0">
               <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-                <h2 id={HEADING_ID} tabIndex={-1} className="font-heading text-h4 font-semibold text-strong outline-offset-4 sm:text-promo">
+                <h2 id={HEADING_ID} tabIndex={-1} className="text-h4 font-semibold text-strong outline-offset-4 sm:text-promo">
                   {itemCountLabel(totals.itemCount)} in your basket
                 </h2>
                 {confirmingClear ? (
@@ -197,7 +197,7 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
             <aside aria-labelledby="cart-summary-heading" className="self-start lg:sticky lg:top-26">
               <div className="cart-summary-card rounded-md border border-border bg-surface p-5 sm:p-6">
                 <div className="flex items-baseline justify-between gap-4">
-                  <h2 id="cart-summary-heading" className="font-heading text-h4 font-semibold text-strong sm:text-promo">
+                  <h2 id="cart-summary-heading" className="text-h4 font-semibold text-strong sm:text-promo">
                     Order summary
                   </h2>
                   <span className="text-meta text-muted">{itemCountLabel(totals.itemCount)}</span>
@@ -237,7 +237,7 @@ export function CartView({ catalog }: { catalog: ReadonlyArray<CartProduct> }) {
                 <p className="text-meta text-on-dark-muted">
                   {itemCountLabel(totals.itemCount)} · cash on delivery
                 </p>
-                <p className="font-heading text-h4 font-semibold text-on-dark tabular-nums">{formatPrice(totals.total)}</p>
+                <p className="text-h4 font-semibold text-on-dark">{formatPrice(totals.total)}</p>
               </div>
               <Link href="/checkout" className={buttonClasses({ className: "ml-auto" })}>
                 Checkout
@@ -285,14 +285,14 @@ function CartLineItem({ line, index, onQuantityChange, onRemove }: CartLineItemP
       <div className="flex min-w-0 flex-col gap-3">
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="font-subtitle text-base font-bold text-strong">
+            <h3 className="text-base font-bold text-strong">
               <Link href={href} className="rounded-sm transition-colors duration-200 hover:text-primary-ink">
                 {product.name}
               </Link>
             </h3>
             <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-meta text-muted">
               <span className="rounded-full bg-tile px-2 py-0.5 font-semibold text-body">{product.unit}</span>
-              <span className="tabular-nums">{formatPrice(product.price)} each</span>
+              <span>{formatPrice(product.price)} each</span>
             </p>
           </div>
           <button
@@ -321,7 +321,7 @@ function CartLineItem({ line, index, onQuantityChange, onRemove }: CartLineItemP
             max={Math.max(1, Math.min(MAX_LINE_QUANTITY, product.stock))}
             size="sm"
           />
-          <p className="font-heading text-price font-semibold text-strong tabular-nums">{formatPrice(line.lineTotal)}</p>
+          <p className="text-price font-semibold text-strong">{formatPrice(line.lineTotal)}</p>
         </div>
       </div>
     </li>
@@ -343,7 +343,7 @@ function FreeDeliveryMeter({ subtotal, className }: { subtotal: number; classNam
           </span>
         ) : (
           <span>
-            Add <strong className="tabular-nums">{formatPrice(progress.remaining)}</strong> more for free delivery.{" "}
+            Add <strong>{formatPrice(progress.remaining)}</strong> more for free delivery.{""}
             <Link href="/shop" className={linkClass}>
               Add more honey
             </Link>
@@ -354,7 +354,7 @@ function FreeDeliveryMeter({ subtotal, className }: { subtotal: number; classNam
         <span className="cart-meter__fill" style={fill} />
       </div>
       {!progress.qualified && (
-        <p className="mt-1.5 text-right text-meta text-muted tabular-nums">Free at {formatPrice(FREE_SHIPPING_THRESHOLD)}</p>
+        <p className="mt-1.5 text-right text-meta text-muted">Free at {formatPrice(FREE_SHIPPING_THRESHOLD)}</p>
       )}
     </div>
   );
@@ -399,8 +399,8 @@ function EmptyBasket({ hasUnavailable }: { hasUnavailable: boolean }) {
         <HoneyJarIcon className="size-12" strokeWidth={1.25} />
         <ShoppingBasket className="absolute -right-1 -bottom-1 size-9 rounded-full bg-surface p-1.5 text-strong shadow-card" strokeWidth={1.5} />
       </span>
-      <p className="mt-6 font-script text-promo-lg leading-none text-primary-ink">Nothing here yet</p>
-      <h2 id={HEADING_ID} tabIndex={-1} className="mt-2 font-heading text-h4 font-semibold text-strong outline-offset-4 sm:text-promo">
+      <p className="mt-6 text-kicker text-primary-ink">Nothing here yet</p>
+      <h2 id={HEADING_ID} tabIndex={-1} className="mt-2 text-h4 font-semibold text-strong outline-offset-4 sm:text-promo">
         {hasUnavailable ? "Nothing in your basket can be ordered right now" : "Your basket is waiting for honey"}
       </h2>
       <p className="mx-auto mt-2 max-w-md text-pretty">{siteConfig.tagline} Add a jar or two and it will be here when you are ready.</p>

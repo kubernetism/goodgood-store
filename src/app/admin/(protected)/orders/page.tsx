@@ -94,10 +94,10 @@ export default async function OrdersPage({ searchParams }: { searchParams: Promi
           const whatsapp = waLink(order.phone);
           const address = shippingAddress(order);
           return <Tr key={order.id}>
-            <Td slot="title"><Link href={href} className="admin-mono">{orderNumber}</Link></Td>
+            <Td slot="title"><Link href={href} className="admin-ident">{orderNumber}</Link></Td>
             <Td label="Customer">
               <span className="admin-row-title admin-nowrap">{order.firstName} {order.lastName}</span>
-              <span className="admin-cell-sub admin-mono admin-nowrap">{order.phone}</span>
+              <span className="admin-cell-sub admin-ident admin-nowrap">{order.phone}</span>
               {(tel || whatsapp) && <span className="admin-contact-actions">
                 {tel && <a className="admin-button quiet sm" href={tel} aria-label={`Call ${order.firstName} about ${orderNumber}`} title="Call"><Phone aria-hidden="true" /><span className="admin-button-text">Call</span></a>}
                 {whatsapp && <a className="admin-button quiet sm" href={whatsapp} target="_blank" rel="noopener noreferrer" aria-label={`WhatsApp ${order.firstName} about ${orderNumber} (opens WhatsApp)`} title="WhatsApp"><MessageCircle aria-hidden="true" /><span className="admin-button-text">WhatsApp</span></a>}

@@ -22,7 +22,7 @@ export function BlogCard({ post, cover }: { post: BlogPost; cover: ImageAsset | 
         />
       </div>
       <div className="flex flex-1 flex-col p-5">
-        <ul className="flex flex-wrap gap-x-5 gap-y-1 font-display text-meta font-semibold text-strong">
+        <ul className="flex flex-wrap gap-x-5 gap-y-1 text-meta font-semibold text-strong">
           <li className="flex items-center gap-1.5">
             <User className="size-3.5 text-primary-ink" aria-hidden="true" />
             <span className="sr-only">Author: </span>
@@ -43,11 +43,11 @@ export function BlogCard({ post, cover }: { post: BlogPost; cover: ImageAsset | 
           </Link>
         </h3>
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-border pt-4">
-          <p className="flex items-center gap-1.5 font-display text-meta font-semibold text-strong">
+          <p className="flex items-center gap-1.5 text-meta font-semibold text-strong">
             <Calendar className="size-3.5 text-primary-ink" aria-hidden="true" />
             <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>
           </p>
-          <Link href={`/blog/${post.slug}`} className="relative z-10 font-display text-meta font-semibold text-primary-ink uppercase">
+          <Link href={`/blog/${post.slug}`} className="relative z-10 text-meta font-semibold text-primary-ink uppercase">
             Read more<span className="sr-only">: {post.title}</span>
           </Link>
         </div>

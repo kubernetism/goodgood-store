@@ -37,8 +37,8 @@ export function ShopCta({ category }: { category: BlogCategorySlug }) {
           <div className="flex gap-5">
             <HoneyJarIcon className="hidden size-14 shrink-0 sm:block" strokeWidth={1.25} />
             <div>
-              <p className="font-subtitle text-eyebrow font-bold uppercase">From the journal to your jar</p>
-              <h2 id="shop-cta-heading" className="mt-2 font-heading text-h2-sm font-semibold text-pretty lg:text-h3">
+              <p className="text-eyebrow font-bold uppercase">From the journal to your jar</p>
+              <h2 id="shop-cta-heading" className="mt-2 text-h2-sm font-semibold text-pretty lg:text-h3">
                 {pitch.title}
               </h2>
               <p className="mt-2 max-w-xl text-strong">{pitch.text}</p>

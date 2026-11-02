@@ -11,7 +11,7 @@ type Size = "md" | "sm" | "pill";
  * `dark` (brown fill, cream text, 15.48:1) is the primary CTA on honey surfaces.
  */
 const base =
-  "inline-flex shrink-0 items-center justify-center gap-2 font-sans font-semibold whitespace-nowrap transition-colors duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60";
+  "inline-flex shrink-0 items-center justify-center gap-2 font-semibold whitespace-nowrap transition-colors duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
   primary: "bg-primary text-strong hover:bg-primary-hover",

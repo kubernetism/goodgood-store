@@ -76,7 +76,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
         back={{ href: backHref, label: "Back to orders" }}
         eyebrow="Order"
         title={orderNumber}
-        mono
+        identifier
         meta={<><OrderStatusPill status={order.status} /><span className="admin-muted">Placed {formatPktDateTime(order.createdAt)} PKT</span></>}
       />
       <AdminNotice error={notice.error} saved={notice.saved || notice.courier} message={notice.courier ? "Courier details saved." : `Order ${orderNumber} is now ${orderStatusDescriptions[order.status]}.`} clear="saved,error,courier" />
@@ -151,7 +151,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
             <dl className="admin-dl">
               <div><dt>Customer name</dt><dd>{order.firstName} {order.lastName}</dd></div>
               <div><dt>Phone</dt><dd>
-                <span className="admin-mono">{order.phone}</span>
+                <span className="admin-ident">{order.phone}</span>
                 {(tel || whatsapp) && <span className="admin-contact-actions">
                   {tel && <a className="admin-button secondary" href={tel}><Phone aria-hidden="true" />Call</a>}
                   {whatsapp && <a className="admin-button secondary" href={whatsapp} target="_blank" rel="noopener noreferrer"><MessageCircle aria-hidden="true" />WhatsApp<span className="sr-only"> (opens WhatsApp)</span></a>}
@@ -159,7 +159,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
               </dd></div>
               <div><dt>Email</dt><dd>{order.email ? <a href={`mailto:${order.email}`}>{order.email}</a> : "Not provided"}</dd></div>
               <div><dt>Delivery address</dt><dd className="admin-pre">{addressLines.join("\n")}</dd></div>
-              {withCourier && <div><dt>Courier</dt><dd>{courierLine ? <span className="admin-mono">{courierLine}</span> : "Not recorded"}</dd></div>}
+              {withCourier && <div><dt>Courier</dt><dd>{courierLine ? <span className="admin-ident">{courierLine}</span> : "Not recorded"}</dd></div>}
               <div><dt>Order notes</dt><dd className="admin-pre">{order.notes || "None"}</dd></div>
             </dl>
           </section>
@@ -229,7 +229,7 @@ function CourierFields({ courierName, trackingNumber }: { courierName: string | 
     </Field>
     <datalist id="admin-courier-options">{courierSuggestions.map((name) => <option key={name} value={name} />)}</datalist>
     <Field label="Tracking number" optional hint="Shown to the customer on the Track your order page.">
-      <input name="trackingNumber" maxLength={40} defaultValue={trackingNumber ?? ""} autoComplete="off" spellCheck={false} className="admin-mono" />
+      <input name="trackingNumber" maxLength={40} defaultValue={trackingNumber ?? ""} autoComplete="off" spellCheck={false} className="admin-ident" />
     </Field>
   </>;
 }

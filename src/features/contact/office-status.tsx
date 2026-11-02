@@ -67,11 +67,11 @@ export function OfficeSign({ hours }: OfficeStatusProps) {
         </svg>
         <div className="office-sign__card on-light min-h-[11rem] rounded-md border-t-4 border-primary bg-ivory p-5 text-strong lg:p-6">
           <div className="office-sign__content" key={live ? "live" : "static"}>
-            <p className="flex items-center gap-2 font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+            <p className="flex items-center gap-2 text-eyebrow font-bold text-primary-ink uppercase">
               <StatusDot status={status} tone="light" />
               {live ? `Peshawar · ${formatClock(status.now)}` : "Office hours"}
             </p>
-            <p className="mt-2 font-heading text-[2.25rem] leading-none font-bold tracking-[0.06em] text-strong uppercase">
+            <p className="mt-2 text-[2.25rem] leading-none font-bold tracking-[0.06em] text-strong uppercase">
               {live ? (status.state === "closed" ? "Closed" : "Open") : "Mon–Fri"}
             </p>
             <p className="mt-2 text-meta text-body">

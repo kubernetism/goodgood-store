@@ -20,7 +20,7 @@ export default function NotFound() {
           <PageHeroBackground />
           <Container>
             <HoneyJarIcon className="mx-auto size-14 text-primary" strokeWidth={1.25} />
-            <p className="mt-4 font-display text-eyebrow font-semibold text-primary">Error 404</p>
+            <p className="mt-4 text-eyebrow font-semibold text-primary">Error 404</p>
             <h1 className="mt-2 text-display-sm font-semibold text-on-dark lg:text-display">Page not found</h1>
             <p className="mx-auto mt-4 max-w-md text-on-dark-muted">
               This page may have moved, or the link might be mistyped. Let&apos;s get you back to something sweeter.

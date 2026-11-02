@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ArrowUpRight } from "lucide-react";
 import { eq } from "drizzle-orm";
 import { db } from "@/db/client";
 import { storeSettings } from "@/db/schema";
@@ -39,7 +40,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     <AdminNotice {...notice} message={notice.saved === "social" ? "Social links saved. The website shows them now." : "WhatsApp number saved."} />
     <section className="admin-panel admin-stack" aria-labelledby="account-title">
       <h2 id="account-title">Admin account</h2>
-      <dl className="admin-dl"><div><dt>Signed in as</dt><dd className="admin-mono">{admin.email}</dd></div></dl>
+      <dl className="admin-dl"><div><dt>Signed in as</dt><dd className="admin-ident">{admin.email}</dd></div></dl>
       <details className="admin-stack-sm">
         <summary className="admin-button quiet">How to change the password</summary>
         <p className="admin-hint">Update ADMIN_PASSWORD in your private environment and run the admin setup script. Existing sessions will be signed out.</p>
@@ -54,7 +55,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
         </Field>
         <div className="admin-actions">
           <SubmitButton>Save WhatsApp number</SubmitButton>
-          {testLink && <a className="admin-button quiet" href={testLink} target="_blank" rel="noopener noreferrer">Test on WhatsApp<span aria-hidden="true"> ↗</span><span className="sr-only"> (opens WhatsApp)</span></a>}
+          {testLink && <a className="admin-button quiet" href={testLink} target="_blank" rel="noopener noreferrer">Test on WhatsApp<ArrowUpRight aria-hidden="true" /><span className="sr-only"> (opens WhatsApp)</span></a>}
         </div>
       </form>
     </section>

@@ -54,7 +54,7 @@ export default async function MessagePage({ params, searchParams }: { params: Pr
         <div><dt>Name</dt><dd>{message.name}</dd></div>
         <div><dt>Email</dt><dd><a href={`mailto:${encodeURIComponent(message.email)}`}>{message.email}</a></dd></div>
         <div><dt>Service</dt><dd>{service}</dd></div>
-        <div><dt>Mobile number</dt><dd>{message.phone && tel ? <a href={tel} className="admin-mono">{formatPakistaniMobile(message.phone)}</a> : "Not provided"}</dd></div>
+        <div><dt>Mobile number</dt><dd>{message.phone && tel ? <a href={tel} className="admin-ident">{formatPakistaniMobile(message.phone)}</a> : "Not provided"}</dd></div>
         <div><dt>Consent</dt><dd>{message.consent ? "Agreed to the privacy policy and being contacted" : "Not recorded"}</dd></div>
         <div><dt>Received</dt><dd>{formatPktDateTime(message.createdAt)} PKT</dd></div>
       </dl>

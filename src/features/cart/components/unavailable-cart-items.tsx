@@ -17,7 +17,7 @@ export function UnavailableCartItems({ lines }: { lines: ReadonlyArray<CartLine>
         <PackageX className="size-5" strokeWidth={1.75} />
       </span>
       <div className="min-w-0 flex-1">
-        <h2 id="unavailable-items-heading" className="font-subtitle text-base font-bold text-strong">
+        <h2 id="unavailable-items-heading" className="text-base font-bold text-strong">
           {lines.length === 1 ? "1 item is no longer available" : `${lines.length} items are no longer available`}
         </h2>
         <p className="mt-1 text-sm">
@@ -30,7 +30,7 @@ export function UnavailableCartItems({ lines }: { lines: ReadonlyArray<CartLine>
               className="inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-meta text-strong capitalize"
             >
               <span className="line-through decoration-border-strong">{line.slug.replace(/[-_]+/g, " ")}</span>
-              <span className="text-muted normal-case tabular-nums">× {line.quantity}</span>
+              <span className="text-muted normal-case">× {line.quantity}</span>
             </li>
           ))}
         </ul>

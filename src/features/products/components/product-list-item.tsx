@@ -33,10 +33,10 @@ export function ProductListItem({ product }: { product: Product }) {
       </div>
       <div className="flex flex-col gap-1.5 p-5">
         {product.images[0]?.caption && <p className="text-xs text-muted">Representative range image</p>}
-        <p className="font-display text-eyebrow font-semibold text-primary-ink uppercase">
+        <p className="text-eyebrow font-semibold text-primary-ink uppercase">
           {product.categoryName} · {product.unit}
         </p>
-        <h3 className="font-subtitle text-h4 font-bold">
+        <h3 className="text-h4 font-bold">
           <Link href={href} className="rounded-sm transition-colors duration-200 hover:text-primary-ink">
             {product.name}
           </Link>

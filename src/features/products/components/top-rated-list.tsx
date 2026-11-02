@@ -22,7 +22,7 @@ export function TopRatedList({ products }: { products: ReadonlyArray<Product> })
           />
           <div className="min-w-0">
             <RatingStars rating={product.rating} />
-            <h3 className="mt-0.5 truncate font-subtitle text-sm font-bold text-strong">
+            <h3 className="mt-0.5 truncate text-sm font-bold text-strong">
               {/* Stretched link: the whole row is clickable. */}
               <Link
                 href={`/shop/${product.slug}`}

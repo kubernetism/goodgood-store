@@ -36,7 +36,7 @@ const stretched =
 const lift =
   "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-card-hover motion-reduce:transition-none motion-reduce:hover:translate-y-0";
 
-const eyebrow = "font-subtitle text-eyebrow font-bold uppercase";
+const eyebrow = "text-eyebrow font-bold uppercase";
 const [emailLocal, emailDomain] = contact.email.split("@");
 
 /** Initials for the hex monogram: "M.D Basit Khan" -> "BK". */
@@ -58,13 +58,13 @@ function WhatsappCard({ whatsapp }: { whatsapp: WhatsappRoute }) {
       </HexBadge>
       <div className="mt-5 md:mt-0 lg:mt-5 lg:pb-6">
         <p className={cx(eyebrow, "text-brown-800")}>Message us</p>
-        <h3 className="mt-1 font-heading text-h3 font-semibold text-strong">
+        <h3 className="mt-1 text-h3 font-semibold text-strong">
           <a href={whatsapp.href} target="_blank" rel="noopener noreferrer" className={stretched}>
             WhatsApp
             <span className="sr-only"> {whatsapp.display} (opens WhatsApp)</span>
           </a>
         </h3>
-        <p aria-hidden="true" className="mt-1 font-display text-lg font-semibold tabular-nums">
+        <p aria-hidden="true" className="mt-1 text-lg font-semibold">
           {whatsapp.display}
         </p>
         <p className="mt-3 max-w-[30ch] text-brown-800">Send a question, your order number or a photo of your parcel.</p>
@@ -80,7 +80,7 @@ function WhatsappCard({ whatsapp }: { whatsapp: WhatsappRoute }) {
 function CallCard({ wide }: { wide: boolean }) {
   return (
     <article className={cx("rounded-lg border border-border bg-ivory p-6 md:col-span-2 lg:p-8", wide ? "lg:col-span-3" : "lg:col-span-2")}>
-      <h3 className="font-heading text-h3 font-semibold">Call our team</h3>
+      <h3 className="text-h3 font-semibold">Call our team</h3>
       <p className="mt-1 text-meta text-muted">Three of us take calls during office hours.</p>
       <ul className="mt-5 divide-y divide-border md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
         {contact.people.map((person) => (
@@ -89,13 +89,13 @@ function CallCard({ wide }: { wide: boolean }) {
               href={person.phoneHref}
               className="group flex min-h-16 items-center gap-4 rounded-sm py-3 md:flex-col md:items-start md:gap-3 md:py-1"
             >
-              <span aria-hidden="true" className="hex-clip flex size-11 shrink-0 items-center justify-center bg-primary font-heading text-sm font-bold text-strong">
+              <span aria-hidden="true" className="hex-clip flex size-11 shrink-0 items-center justify-center bg-primary text-sm font-bold text-strong">
                 {initials(person.name)}
               </span>
               <span className="min-w-0">
                 <span className="sr-only">Call </span>
-                <span className="block font-subtitle text-h4 font-semibold text-strong">{person.name}</span>
-                <span className="block font-display text-lg font-semibold text-strong underline-offset-4 transition-colors duration-200 group-hover:text-primary-ink group-hover:underline">
+                <span className="block text-h4 font-semibold text-strong">{person.name}</span>
+                <span className="block text-lg font-semibold text-strong underline-offset-4 transition-colors duration-200 group-hover:text-primary-ink group-hover:underline">
                   {person.phoneDisplay}
                 </span>
               </span>
@@ -121,8 +121,8 @@ function EmailCard() {
         <Mail className="size-[1.375rem]" strokeWidth={1.75} />
       </HexBadge>
       <p className={cx(eyebrow, "mt-5 text-primary-ink")}>Write to us</p>
-      <h3 className="mt-1 font-heading text-h3 font-semibold">Email</h3>
-      <p className="mt-1 font-display text-base font-semibold [overflow-wrap:anywhere] text-strong">
+      <h3 className="mt-1 text-h3 font-semibold">Email</h3>
+      <p className="mt-1 text-base font-semibold [overflow-wrap:anywhere] text-strong">
         {/* Wrap after the @ rather than mid-word in narrow columns. */}
         {emailLocal}@<wbr />
         {emailDomain}
@@ -157,7 +157,7 @@ function VisitCard({ image, mapsUrl }: { image: ImageAsset | null; mapsUrl: stri
       </div>
       <div className="flex flex-col p-6 lg:p-8">
         <p className={cx(eyebrow, "text-primary")}>Visit the shop</p>
-        <h3 className="mt-1 font-heading text-h3 font-semibold text-on-dark">
+        <h3 className="mt-1 text-h3 font-semibold text-on-dark">
           {contact.branch}, {contact.shortAddress.replace(/, Peshawar$/, "")}
         </h3>
         <address className="mt-3 text-on-dark-muted not-italic">{contact.address}</address>
@@ -195,7 +195,7 @@ function TrackStrip() {
           <Truck className="size-[1.375rem]" strokeWidth={1.75} />
         </HexBadge>
         <div>
-          <h3 className="font-subtitle text-h4 font-semibold text-strong">Already ordered?</h3>
+          <h3 className="text-h4 font-semibold text-strong">Already ordered?</h3>
           <p>Track your parcel with your order number and mobile number.</p>
         </div>
       </div>
@@ -218,7 +218,7 @@ export function ContactChannels({ whatsapp, shopImage, mapsUrl }: ContactChannel
     <section aria-labelledby="routes-heading" className="pt-6 pb-16 lg:pt-10 lg:pb-24">
       <Container>
         <div className="mb-6 flex flex-col gap-2 lg:mb-8 lg:flex-row lg:items-end lg:justify-between">
-          <h2 id="routes-heading" className="shrink-0 font-heading text-h2-sm font-semibold lg:text-h3">
+          <h2 id="routes-heading" className="shrink-0 text-h2-sm font-semibold lg:text-h3">
             Talk to us directly
           </h2>
           <p className="flex items-start gap-2 text-meta text-muted">

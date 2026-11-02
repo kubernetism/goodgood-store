@@ -46,12 +46,12 @@ export function VarietyRow({ catalog }: { catalog: Catalog }) {
                   />
                   <span
                     aria-hidden="true"
-                    className="home-hex absolute -bottom-5 left-1/2 flex size-11 -translate-x-1/2 items-center justify-center bg-strong font-serif text-sm text-honey-300 italic"
+                    className="home-hex absolute -bottom-5 left-1/2 flex size-11 -translate-x-1/2 items-center justify-center bg-strong text-sm font-bold text-honey-300"
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </span>
-                <span className="mt-8 font-heading text-lg leading-tight font-semibold text-strong sm:text-xl">{variety.name}</span>
+                <span className="mt-8 text-lg leading-tight font-semibold text-strong sm:text-xl">{variety.name}</span>
                 {variety.blurb && (
                   <span className="mt-1.5 line-clamp-2 hidden px-2 text-meta text-body sm:block">{variety.blurb}</span>
                 )}

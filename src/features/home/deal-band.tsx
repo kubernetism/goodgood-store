@@ -59,16 +59,16 @@ export function DealBand({ catalog, banner, fallbackImage }: DealBandProps) {
           {percent !== null && <DiscountBadge percent={percent} className="absolute bottom-5 left-5" />}
         </div>
         <div>
-          <p aria-hidden="true" className="font-script text-[2.25rem] leading-none text-honey-300 sm:text-[2.75rem]">
+          <p aria-hidden="true" className="text-kicker text-honey-300">
             While it lasts
           </p>
           <Eyebrow tone="dark" decorated="leading" className="mt-4">
             {banner ? "Limited-time deal" : "Limited gift edition"}
           </Eyebrow>
-          <h2 id="deal-heading" className="mt-3 font-heading text-h3 font-semibold text-on-dark lg:text-cta">
+          <h2 id="deal-heading" className="mt-3 text-h3 font-semibold text-on-dark lg:text-cta">
             {title}
           </h2>
-          {description && <p className="mt-4 max-w-md font-subtitle text-on-dark-muted">{description}</p>}
+          {description && <p className="mt-4 max-w-md text-on-dark-muted">{description}</p>}
           {product && (
             <Price price={product.price} compareAtPrice={product.compareAtPrice} tone="dark" size="lg" className="mt-6" />
           )}

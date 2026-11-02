@@ -26,7 +26,7 @@ export default async function CategoriesPage({ searchParams }: { searchParams: P
         <AdminTable label="Categories">
           <THead><Th>Category</Th><Th>Status</Th><Th num>Products</Th><Th num>Order</Th><Th><span className="sr-only">Actions</span></Th></THead>
           <TBody>{rows.map(({ category, productCount }) => <Tr key={category.id}>
-            <Td slot="title"><Link href={`/admin/categories/${category.id}`}>{category.name}</Link><span className="admin-cell-sub admin-mono">{category.slug}</span></Td>
+            <Td slot="title"><Link href={`/admin/categories/${category.id}`}>{category.name}</Link><span className="admin-cell-sub admin-ident">{category.slug}</span></Td>
             <Td slot="badge">{category.isActive ? <StatusPill tone="positive" label="Shown" /> : <StatusPill tone="neutral" label="Hidden" />}</Td>
             <Td label="Products" num>{productCount}</Td>
             <Td label="Order" num>{category.sortOrder}</Td>

@@ -14,7 +14,7 @@ import { BlogMetricsDisplay } from "./blog-metrics";
 
 type FeaturedStoryProps = { post: BlogPost; cover: ImageAsset | null; authorPhoto: ImageAsset | null };
 
-/** Lead story on the journal's first page: large photo, serif standfirst, byline and live reader stats. */
+/** Lead story on the journal's first page: large photo, italic standfirst, byline and live reader stats. */
 export function FeaturedStory({ post, cover, authorPhoto }: FeaturedStoryProps) {
   const href = `/blog/${post.slug}`;
   return (
@@ -35,18 +35,18 @@ export function FeaturedStory({ post, cover, authorPhoto }: FeaturedStoryProps) 
             aspect="aspect-[4/3] lg:aspect-[5/4]"
           />
         </div>
-        <p className="absolute top-4 left-4 inline-flex h-8 items-center gap-2 rounded-full bg-primary px-3.5 font-subtitle text-eyebrow font-bold text-strong uppercase shadow-card">
+        <p className="absolute top-4 left-4 inline-flex h-8 items-center gap-2 rounded-full bg-primary px-3.5 text-eyebrow font-bold text-strong uppercase shadow-card">
           <span aria-hidden="true" className="journal-hex inline-block size-2.5 bg-strong" />
           Lead story
         </p>
       </div>
 
       <div className="px-5 py-7 sm:px-8 sm:py-9 lg:col-span-5 lg:px-10 lg:py-12">
-        <p className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+        <p className="text-eyebrow font-bold text-primary-ink uppercase">
           <span className="sr-only">Category: </span>
           {getBlogCategoryName(post.category)}
         </p>
-        <h2 id="lead-story-title" className="mt-3 font-heading text-h2-sm font-semibold text-pretty lg:text-h3 xl:text-h2">
+        <h2 id="lead-story-title" className="mt-3 text-h2-sm font-semibold text-pretty lg:text-h3 xl:text-h2">
           <Link href={href} className="decoration-primary decoration-2 underline-offset-4 hover:underline">
             {post.title}
           </Link>
@@ -59,7 +59,7 @@ export function FeaturedStory({ post, cover, authorPhoto }: FeaturedStoryProps) 
           ) : (
             <ImagePlaceholder icon={User} iconSize="sm" rounded="full" className="size-11 shrink-0" />
           )}
-          <div className="font-display text-meta">
+          <div className="text-meta">
             <p className="font-semibold text-strong">By {post.author}</p>
             <p className="text-muted">
               <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>
@@ -69,7 +69,7 @@ export function FeaturedStory({ post, cover, authorPhoto }: FeaturedStoryProps) 
           </div>
         </div>
 
-        <ul aria-label="Reader stats" className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 font-display text-meta font-medium text-body">
+        <ul aria-label="Reader stats" className="mt-4 flex flex-wrap gap-x-5 gap-y-1.5 text-meta font-medium text-body">
           <BlogMetricsDisplay slug={post.slug} />
         </ul>
 

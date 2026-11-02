@@ -8,7 +8,7 @@ import { blogHref, getBlogCategoryCounts, type BlogQuery } from "../queries";
 const emptyQuery: BlogQuery = { category: null, tag: null, q: "", page: 1 };
 
 const tab =
-  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 font-display text-sm font-semibold whitespace-nowrap transition-colors duration-200";
+  "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold whitespace-nowrap transition-colors duration-200";
 
 /**
  * The journal's sections (categories) as tabs, plus keyword search. Same
@@ -80,7 +80,7 @@ function Count({ value, active }: { value: number; active: boolean }) {
   return (
     <span
       className={cx(
-        "inline-flex min-w-6 items-center justify-center rounded-full px-1.5 text-badge tabular-nums",
+        "inline-flex min-w-6 items-center justify-center rounded-full px-1.5 text-badge",
         active ? "bg-primary text-strong" : "bg-cream text-body",
       )}
     >

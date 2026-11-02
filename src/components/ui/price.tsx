@@ -17,7 +17,7 @@ export function Price({ price, compareAtPrice, size = "md", tone = "light", clas
   const isDiscounted = compareAtPrice !== undefined && compareAtPrice > price;
 
   return (
-    <p className={cx("flex flex-wrap items-baseline gap-x-2 font-display font-semibold tabular-nums", className)}>
+    <p className={cx("flex flex-wrap items-baseline gap-x-2 font-semibold", className)}>
       <span
         className={cx(
           tone === "dark" ? "text-primary" : "text-primary-ink",
@@ -52,7 +52,7 @@ export function DiscountBadge({ percent, className }: { percent: number; classNa
   return (
     <span
       className={cx(
-        "inline-flex h-6 items-center rounded-full bg-primary px-2.5 font-display text-badge font-bold text-strong",
+        "inline-flex h-6 items-center rounded-full bg-primary px-2.5 text-badge font-bold text-strong",
         className,
       )}
     >
@@ -67,7 +67,7 @@ export function SoldOutBadge({ className }: { className?: string }) {
   return (
     <span
       className={cx(
-        "inline-flex h-7 items-center rounded-full bg-strong px-3 font-display text-badge font-bold tracking-wide text-on-dark uppercase",
+        "inline-flex h-7 items-center rounded-full bg-strong px-3 text-badge font-bold tracking-wide text-on-dark uppercase",
         className,
       )}
     >

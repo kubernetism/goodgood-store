@@ -35,7 +35,7 @@ export function PriceFilter({ bounds, step, minPrice, maxPrice, preserved }: Pri
         <input key={name} type="hidden" name={name} value={value} />
       ))}
 
-      <p className="flex items-center justify-between font-display text-sm font-semibold text-strong">
+      <p className="flex items-center justify-between text-sm font-semibold text-strong">
         <span>Your Range</span>
         <output htmlFor="price-min price-max" aria-live="polite">
           {formatRupees(low)} – {formatRupees(high)}

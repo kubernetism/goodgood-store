@@ -41,10 +41,10 @@ export default async function AdminBlog({ searchParams }: { searchParams: Promis
           <TBody>{shown.map((post) => {
             const stats = metrics.get(post.id) ?? EMPTY_BLOG_METRICS;
             return <Tr key={post.id}>
-              <Td slot="title"><Link href={`/admin/blog/${post.id}`}>{post.title}</Link><span className="admin-cell-sub admin-mono">{post.slug}</span></Td>
+              <Td slot="title"><Link href={`/admin/blog/${post.id}`}>{post.title}</Link><span className="admin-cell-sub admin-ident">{post.slug}</span></Td>
               <Td slot="badge">{post.isPublished ? <StatusPill tone="positive" label="Published" /> : <StatusPill tone="neutral" label="Draft" />}</Td>
               <Td label="Category">{blogCategories.find((category) => category.slug === post.category)?.name ?? post.category}</Td>
-              <Td label="Date"><span className="admin-num">{formatDate(post.publishedOn)}</span></Td>
+              <Td label="Date">{formatDate(post.publishedOn)}</Td>
               <Td label="Views" num>{stats.views}</Td>
               <Td label="Avg. read" num>{formatReadingTime(stats.averageSeconds)}</Td>
               <Td label="Total read" num>{formatReadingTime(stats.totalSeconds)}</Td>

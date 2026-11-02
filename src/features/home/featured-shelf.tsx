@@ -24,7 +24,7 @@ export function FeaturedShelf({ products }: { products: ReadonlyArray<Product> }
         <div className="reveal">
           <Eyebrow decorated="leading">Most loved</Eyebrow>
           <h2 id="shelf-heading" className="mt-3 text-h2-sm font-semibold lg:text-h2">
-            Honey worth <span className="font-script text-[1.3em] leading-none font-normal text-primary-ink">reaching</span> for
+            Honey worth <span className="text-primary-ink">reaching</span> for
           </h2>
           <HoneyDivider className="mt-4" />
         </div>
@@ -83,11 +83,11 @@ function ShelfCard({ product }: { product: Product }) {
         )}
       </div>
       <div className="flex flex-1 flex-col px-2 pt-4 pb-1">
-        <p className="flex items-center gap-2 font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+        <p className="flex items-center gap-2 text-eyebrow font-bold text-primary-ink uppercase">
           <span aria-hidden="true" className="home-hex inline-block size-2 bg-primary-ink" />
           {product.categoryName}
         </p>
-        <h3 className="mt-1.5 font-subtitle text-base leading-snug font-bold text-pretty">
+        <h3 className="mt-1.5 text-base leading-snug font-bold text-pretty">
           <Link href={href} className="rounded-sm underline-offset-4 hover:underline">
             {product.name}
           </Link>

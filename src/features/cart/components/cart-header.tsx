@@ -22,8 +22,8 @@ export function CartHeader() {
               <li aria-hidden="true" className="text-on-dark-muted">›</li>
               <li className="text-on-dark-muted">Done</li>
             </ol>
-            <p className="mt-3 font-script text-promo-lg leading-none text-primary">Almost yours</p>
-            <h1 className="mt-1 font-heading text-h2-sm font-semibold text-on-dark md:text-h3">Your basket</h1>
+            <p className="mt-3 text-kicker text-primary">Almost yours</p>
+            <h1 className="mt-1 text-h2-sm font-semibold text-on-dark md:text-h3">Your basket</h1>
           </div>
           <p className="flex items-center gap-2 text-meta text-on-dark-muted">
             <Banknote className="size-4 text-primary" aria-hidden="true" />

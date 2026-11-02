@@ -17,7 +17,7 @@ type FieldShellProps = {
 function FieldShell({ id, label, error, hint, optional, className, children }: FieldShellProps) {
   return (
     <div className={className}>
-      <label htmlFor={id} className="mb-1.5 block font-display text-meta font-semibold text-strong">
+      <label htmlFor={id} className="mb-1.5 block text-meta font-semibold text-strong">
         {label}
         {optional && <span className="font-normal text-muted"> (optional)</span>}
       </label>

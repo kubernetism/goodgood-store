@@ -66,7 +66,7 @@ export function PageHero({
           <Eyebrow tone="dark" decorated="leading" className="mb-3">
             {eyebrow}
           </Eyebrow>
-          <Title className="font-heading text-display-sm font-semibold text-balance text-on-dark lg:text-display">
+          <Title className="text-display-sm font-semibold text-balance text-on-dark lg:text-display">
             {title}
           </Title>
         </div>
@@ -80,7 +80,7 @@ export function PageHero({
 export function Breadcrumbs({ crumbs, className }: { crumbs: ReadonlyArray<Crumb>; className?: string }) {
   return (
     <nav aria-label="Breadcrumb" className={className}>
-      <ol className="flex flex-wrap items-center gap-3 font-display text-sm font-semibold">
+      <ol className="flex flex-wrap items-center gap-3 text-sm font-semibold">
         <li>
           <Link href="/" className="rounded-sm text-on-dark transition-colors duration-200 hover:text-primary">
             Home

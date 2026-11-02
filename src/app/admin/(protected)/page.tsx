@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { and, count, eq, lte } from "drizzle-orm";
 import { connection } from "next/server";
 import type { CSSProperties } from "react";
-import { CalendarDays, Crown, ImagePlus, Inbox, PackageCheck, PackageOpen, Plus, Store } from "lucide-react";
+import { ArrowDown, ArrowUpRight, CalendarDays, Crown, ImagePlus, Inbox, PackageCheck, PackageOpen, Plus, Store } from "lucide-react";
 import { db } from "@/db/client";
 import { products } from "@/db/schema";
 import { barPercent, dashboardHref, dashboardRanges, formatPktLongDay, formatRatio, formatShare, outcomeRatios, parseDashboardRange, parseProductSort, type ProductSort } from "@/features/admin/dashboard-stats";
@@ -98,7 +98,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       actions={<>
         <Link className="admin-button" href="/admin/products/new"><Plus aria-hidden="true" />Add product</Link>
         <Link className="admin-button secondary" href="/admin/media"><ImagePlus aria-hidden="true" />Upload image</Link>
-        <Link className="admin-button quiet" href="/"><Store aria-hidden="true" />View store<span aria-hidden="true"> ↗</span></Link>
+        <Link className="admin-button quiet" href="/"><Store aria-hidden="true" />View store<ArrowUpRight aria-hidden="true" /></Link>
       </>} />
 
     <div className="admin-dash">
@@ -152,8 +152,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             <THead>
               <Th>Product</Th>
               <Th num>Orders</Th>
-              <Th num sort={sort === "units" ? "descending" : "none"}><Link href={sortHref("units")} className="admin-sort-link" aria-current={sort === "units" ? "true" : undefined}>Units sold{sort === "units" && <span aria-hidden="true"> ↓</span>}</Link></Th>
-              <Th num sort={sort === "revenue" ? "descending" : "none"}><Link href={sortHref("revenue")} className="admin-sort-link" aria-current={sort === "revenue" ? "true" : undefined}>Revenue{sort === "revenue" && <span aria-hidden="true"> ↓</span>}</Link></Th>
+              <Th num sort={sort === "units" ? "descending" : "none"}><Link href={sortHref("units")} className="admin-sort-link" aria-current={sort === "units" ? "true" : undefined}>Units sold{sort === "units" && <ArrowDown aria-hidden="true" className="admin-sort-icon" />}</Link></Th>
+              <Th num sort={sort === "revenue" ? "descending" : "none"}><Link href={sortHref("revenue")} className="admin-sort-link" aria-current={sort === "revenue" ? "true" : undefined}>Revenue{sort === "revenue" && <ArrowDown aria-hidden="true" className="admin-sort-icon" />}</Link></Th>
             </THead>
             <TBody>{shownProducts.map((row) => <Tr key={row.key}>
               <Td slot="title">
@@ -192,7 +192,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           </div>
           {waiting.length ? <ul className="admin-worklist">{waiting.map((order) => <li key={order.id}>
             <span className="admin-worklist-main">
-              <span className="admin-worklist-title"><span className="admin-mono">{formatOrderNumber(order.number)}</span> · {order.firstName} {order.lastName}</span>
+              <span className="admin-worklist-title"><span className="admin-ident">{formatOrderNumber(order.number)}</span> · {order.firstName} {order.lastName}</span>
               <span className="admin-worklist-meta">{order.city} · <span title={`${formatPktDateTime(order.createdAt)} PKT`}>{formatRelativeAge(order.createdAt, now)}</span></span>
             </span>
             <span className="admin-worklist-value">{formatPrice(order.total)}</span>

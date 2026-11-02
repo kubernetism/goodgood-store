@@ -54,7 +54,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
             return <Tr key={product.id}>
               <Td slot="title"><div className="admin-with-thumb">
                 <span className="admin-thumb">{imageUrl && <Image src={imageUrl} alt={imageAlt ?? ""} fill sizes="40px" />}</span>
-                <div><Link href={`/admin/products/${product.id}`}>{product.name}</Link><span className="admin-cell-sub admin-mono">{product.slug}</span></div>
+                <div><Link href={`/admin/products/${product.id}`}>{product.name}</Link><span className="admin-cell-sub admin-ident">{product.slug}</span></div>
               </div></Td>
               <Td label="Category">{category}{!categoryActive && <> <StatusPill tone="attention" label="Category hidden" /></>}</Td>
               <Td label="Website"><ProductVisibility id={product.id} name={product.name} active={product.status === "active"} archived={product.status === "archived"} /></Td>

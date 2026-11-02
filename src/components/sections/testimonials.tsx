@@ -45,12 +45,12 @@ export async function Testimonials({ background }: { background?: React.ReactNod
               <figcaption className="mt-6 flex items-center gap-3">
                 <span
                   aria-hidden="true"
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary font-display text-sm font-bold text-strong"
+                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-strong"
                 >
                   {initialsOf(testimonial.name)}
                 </span>
                 <span>
-                  <span className="block font-display text-base font-semibold text-strong">{testimonial.name}</span>
+                  <span className="block text-base font-semibold text-strong">{testimonial.name}</span>
                   {testimonial.role && <span className="block text-meta text-muted">{testimonial.role}</span>}
                 </span>
               </figcaption>

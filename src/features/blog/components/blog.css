@@ -57,15 +57,13 @@
   margin-top: 1.4em;
 }
 
-/* Drop cap on the opening paragraph, in the editorial serif. */
+/* Drop cap on the opening paragraph. */
 .journal-prose > p:first-child::first-letter {
   float: left;
   margin: 0.06em 0.12em 0 0;
   color: var(--color-primary-ink);
-  font-family: var(--font-serif);
   font-size: 4.4em;
-  font-variation-settings: "SOFT" 100, "opsz" 144;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 0.82;
 }
 
@@ -118,7 +116,7 @@
   clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
 }
 
-/* Pull quote: warm tint, large serif, a honey quotation mark. */
+/* Pull quote: warm tint, large italic, a honey quotation mark. */
 .journal-quote {
   position: relative;
   margin-block: 2.2em;
@@ -137,8 +135,8 @@
   top: 0.2rem;
   left: 1.25rem;
   color: var(--color-primary-ink);
-  font-family: var(--font-serif);
   font-size: 4.5rem;
+  font-weight: 700;
   line-height: 1;
 }
 @media (min-width: 640px) {
@@ -149,10 +147,9 @@
 }
 .journal-quote blockquote {
   color: var(--color-strong);
-  font-family: var(--font-serif);
+  font-family: var(--font-quote);
   font-size: 1.375rem;
   font-style: italic;
-  font-variation-settings: "SOFT" 100;
   line-height: 1.45;
   text-wrap: pretty;
 }
@@ -164,9 +161,8 @@
 
 /* Standfirst under titles. */
 .journal-standfirst {
-  font-family: var(--font-serif);
+  font-family: var(--font-quote);
   font-style: italic;
-  font-variation-settings: "SOFT" 100;
   text-wrap: pretty;
 }
 

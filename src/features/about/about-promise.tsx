@@ -12,14 +12,14 @@ export function AboutPromise() {
         <HoneycombPattern fade className="text-strong/[0.07]" />
         <Container className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-8">
           <div className="lg:col-span-5">
-            <p className="inline-flex items-center gap-3 font-subtitle text-eyebrow font-bold text-strong uppercase">
+            <p className="inline-flex items-center gap-3 text-eyebrow font-bold text-strong uppercase">
               <span aria-hidden="true" className="h-px w-6 bg-current opacity-60" />
               Our promise
             </p>
             <h2 id="promise-heading" className="mt-3 text-h2-sm font-semibold lg:text-cta">
-              Only <span className="font-script text-[1.35em] leading-none font-normal">honey</span> goes in the jar.
+              Only honey goes in the jar.
             </h2>
-            <p className="mt-5 max-w-md font-subtitle text-base text-strong">
+            <p className="mt-5 max-w-md text-base text-strong">
               Raw, traceable and tested, every batch. Turned solid in winter? That&apos;s natural for raw honey, and a good
               sign it hasn&apos;t been heated.
             </p>
@@ -33,11 +33,11 @@ export function AboutPromise() {
           </div>
 
           <div className="lg:col-span-7 lg:pl-10">
-            <h3 className="font-subtitle text-eyebrow font-bold text-strong uppercase">What we never do</h3>
+            <h3 className="text-eyebrow font-bold text-strong uppercase">What we never do</h3>
             <ul className="mt-4 border-t-2 border-strong">
               {neverList.map((item) => (
                 <li key={item} className="border-b border-strong/25 py-3 sm:py-4">
-                  <span className="about-strike font-heading text-promo font-semibold text-strong sm:text-promo-lg lg:text-cta">{item}</span>
+                  <span className="about-strike text-promo font-semibold text-strong sm:text-promo-lg lg:text-cta">{item}</span>
                 </li>
               ))}
             </ul>

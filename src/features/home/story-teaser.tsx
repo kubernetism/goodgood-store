@@ -38,14 +38,14 @@ export function StoryTeaser({ image, video }: StoryTeaserProps) {
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
             <div className="reveal lg:col-span-6">
               {/* Brown, not the amber eyebrow ink: amber on this honey fill is under 4.5:1. */}
-              <p className="inline-flex items-center gap-3 font-subtitle text-eyebrow font-bold text-strong uppercase">
+              <p className="inline-flex items-center gap-3 text-eyebrow font-bold text-strong uppercase">
                 <span aria-hidden="true" className="h-px w-6 bg-current opacity-60" />
                 Our story
               </p>
               <h2 id="story-heading" className="mt-3 text-h2-sm font-semibold lg:text-cta">
-                From the hive to your <span className="font-script text-[1.3em] leading-none font-normal">table</span>
+                From the hive to your table
               </h2>
-              <p className="mt-5 max-w-lg font-subtitle text-base text-strong">
+              <p className="mt-5 max-w-lg text-base text-strong">
                 {siteConfig.legalName} works with beekeepers across Pakistan to bring you honey that is raw, tested and
                 traceable to the hive it came from.
               </p>
@@ -60,7 +60,7 @@ export function StoryTeaser({ image, video }: StoryTeaserProps) {
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <h3 className="font-subtitle text-base font-bold text-strong sm:text-lg">{step.title}</h3>
+                    <h3 className="text-base font-bold text-strong sm:text-lg">{step.title}</h3>
                     <p className="mt-0.5 text-sm text-strong">{step.text}</p>
                   </div>
                 </li>

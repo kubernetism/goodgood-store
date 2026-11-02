@@ -13,13 +13,13 @@ export function HomeNewsletter() {
       <HoneycombPattern fade className="text-honey-300/15" />
       <Container className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-10">
         <div className="reveal lg:col-span-6">
-          <p aria-hidden="true" className="font-script text-[2.5rem] leading-none text-honey-300 sm:text-[3rem]">
+          <p aria-hidden="true" className="text-kicker text-honey-300">
             The Hive Letter
           </p>
           <h2 id="newsletter-heading" className="mt-3 text-h2-sm font-semibold text-on-dark lg:text-h2">
             First to hear when the harvest lands
           </h2>
-          <p className="mt-4 max-w-lg font-subtitle text-base text-on-dark-muted">
+          <p className="mt-4 max-w-lg text-base text-on-dark-muted">
             Harvest news, limited releases and honey recipes, about once a month.
           </p>
         </div>

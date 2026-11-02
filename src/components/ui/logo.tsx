@@ -27,7 +27,7 @@ export function Logo({ tone = "light", className, compact = false }: LogoProps) 
       )}
     >
       <Image src={brandLogo} alt="" sizes="56px" className="h-14 w-14 shrink-0 object-contain" />
-      <span aria-hidden="true" className={cx("font-heading leading-tight", compact && "hidden sm:block")}>
+      <span aria-hidden="true" className={cx("leading-tight", compact && "hidden sm:block")}>
         <span className="block text-lg font-bold">Abdul Sami</span>
         <span className="block text-xs font-semibold">Honey Enterprises</span>
       </span>

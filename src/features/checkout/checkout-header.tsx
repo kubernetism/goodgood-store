@@ -27,7 +27,7 @@ export function CheckoutHeader({ step }: { step: "details" | "done" }) {
               <li aria-hidden="true" className="text-on-dark-muted">›</li>
               <li aria-current={step === "done" ? "step" : undefined} className={stepClass(step === "done")}>Done</li>
             </ol>
-            <h1 className="mt-1 font-heading text-h2-sm font-semibold text-on-dark md:text-h3">Checkout</h1>
+            <h1 className="mt-1 text-h2-sm font-semibold text-on-dark md:text-h3">Checkout</h1>
           </div>
           <p className="flex items-center gap-2 text-meta text-on-dark-muted">
             <Banknote className="size-4 text-primary" aria-hidden="true" />

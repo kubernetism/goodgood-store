@@ -22,7 +22,7 @@ export function SidebarPanel({ title, children, variant = "bar", className }: Si
   if (variant === "accent") {
     return (
       <section className={cx("rounded-md border border-border p-5", className)}>
-        <h2 className="mb-5 flex items-center gap-3 font-subtitle text-sm font-bold">
+        <h2 className="mb-5 flex items-center gap-3 text-sm font-bold">
           <HexBullet />
           {title}
         </h2>
@@ -33,7 +33,7 @@ export function SidebarPanel({ title, children, variant = "bar", className }: Si
 
   return (
     <section className={cx("overflow-hidden rounded-md border border-border bg-surface", className)}>
-      <h2 className="flex items-center gap-3 bg-panel px-5 py-3 font-subtitle text-base font-bold">
+      <h2 className="flex items-center gap-3 bg-panel px-5 py-3 text-base font-bold">
         <HexBullet />
         {title}
       </h2>

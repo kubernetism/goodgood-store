@@ -30,11 +30,11 @@ export function ContactHero({ whatsappHref }: { whatsappHref: string | null }) {
         <Container className="grid gap-8 pt-[calc(100vw/3+6rem)] pb-12 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:pt-36 md:pb-20 lg:grid-cols-12 lg:pt-44 lg:pb-24">
           <div className="contact-hero__copy lg:col-span-7">
             <Breadcrumbs crumbs={[{ label: "Contact Us" }]} className="mb-6" />
-            <h1 id="contact-title" className="font-heading text-display-sm font-semibold text-balance text-on-dark lg:text-display">
-              <span className="mb-3 block font-subtitle text-eyebrow font-bold text-primary uppercase">Contact us</span>
-              Let&apos;s talk <span className="font-script text-[1.25em] leading-none font-normal text-primary">honey</span>.
+            <h1 id="contact-title" className="text-display-sm font-semibold text-balance text-on-dark lg:text-display">
+              <span className="mb-3 block text-eyebrow font-bold text-primary uppercase">Contact us</span>
+              Let&apos;s talk <span className="text-primary">honey</span>.
             </h1>
-            <p className="mt-5 max-w-[34rem] font-subtitle text-base leading-relaxed text-on-dark-muted lg:text-lg">
+            <p className="mt-5 max-w-[34rem] text-base leading-relaxed text-on-dark-muted lg:text-lg">
               Questions about an order, wholesale or a gift? Call, WhatsApp or visit our shop on {contact.shortAddress}.
             </p>
 

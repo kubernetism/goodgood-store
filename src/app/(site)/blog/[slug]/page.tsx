@@ -26,6 +26,8 @@ import { formatDate } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
 import { JsonLd } from "@/components/seo/json-ld";
 import "@/features/blog/components/blog.css";
+import { blogCoverCardImage } from "@/features/social-card/card-model";
+import { baseOpenGraph } from "@/lib/social-metadata";
 
 export async function generateStaticParams() {
   return (await getPublishedBlogPosts()).map((post) => ({ slug: post.slug }));
@@ -42,12 +44,15 @@ export async function generateMetadata({ params }: PageProps<"/blog/[slug]">): P
     description: post.excerpt,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
+      ...baseOpenGraph,
       type: "article",
       title: post.title,
       description: post.excerpt,
+      url: `/blog/${post.slug}`,
       publishedTime: post.publishedOn,
       authors: [post.author],
-      ...(cover ? { images: [{ url: cover.url, alt: cover.alt }] } : {}),
+      // A post's cover is its preview; without one the shared brand card stands in.
+      ...(cover ? { images: [blogCoverCardImage(post.slug, cover.alt)] } : {}),
     },
   };
 }
@@ -106,14 +111,14 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
               />
               <Link
                 href={categoryHref}
-                className="mb-4 inline-flex min-h-8 items-center gap-2 rounded-full border border-primary/60 px-3.5 font-subtitle text-eyebrow font-bold text-primary uppercase transition-colors duration-200 hover:bg-primary hover:text-strong"
+                className="mb-4 inline-flex min-h-8 items-center gap-2 rounded-full border border-primary/60 px-3.5 text-eyebrow font-bold text-primary uppercase transition-colors duration-200 hover:bg-primary hover:text-strong"
               >
                 <span className="sr-only">More in </span>
                 {categoryName}
               </Link>
-              <h1 className="font-heading text-h2-sm font-semibold text-balance text-on-dark sm:text-display-sm lg:text-display">{post.title}</h1>
+              <h1 className="text-h2-sm font-semibold text-balance text-on-dark sm:text-display-sm lg:text-display">{post.title}</h1>
               <p className="journal-standfirst mt-5 max-w-2xl text-lg text-on-dark-muted lg:text-xl">{post.excerpt}</p>
-              <ul className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 font-display text-sm font-semibold text-on-dark">
+              <ul className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm font-semibold text-on-dark">
                 <li className="flex items-center gap-2.5">
                   {isHouseAuthor ? (
                     <MediaImage image={authorPhoto} alt="" sizes="36px" icon={User} iconSize="sm" tone="dark" rounded="full" className="size-9 ring-2 ring-primary/70" />
@@ -155,8 +160,8 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
               <div className="space-y-8 lg:sticky lg:top-28">
                 <PostContents body={post.body} className="hidden lg:block" />
                 <div>
-                  <p className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">Reader stats</p>
-                  <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 font-display text-meta font-medium text-body lg:flex-col">
+                  <p className="text-eyebrow font-bold text-primary-ink uppercase">Reader stats</p>
+                  <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-meta font-medium text-body lg:flex-col">
                     <BlogMetricsDisplay slug={post.slug} />
                   </ul>
                 </div>
@@ -168,13 +173,13 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
 
               {post.tags.length > 0 && (
                 <div className="mt-12 flex journal-measure flex-wrap items-center gap-3 border-t border-border pt-6">
-                  <span className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">Tagged</span>
+                  <span className="text-eyebrow font-bold text-primary-ink uppercase">Tagged</span>
                   <ul className="flex flex-wrap gap-2">
                     {post.tags.map((tag) => (
                       <li key={tag}>
                         <Link
                           href={blogHref(emptyQuery, { tag })}
-                          className="inline-flex min-h-9 items-center rounded-full bg-primary-tint px-3.5 font-display text-meta font-semibold text-strong transition-colors duration-200 hover:bg-primary"
+                          className="inline-flex min-h-9 items-center rounded-full bg-primary-tint px-3.5 text-meta font-semibold text-strong transition-colors duration-200 hover:bg-primary"
                         >
                           <span aria-hidden="true" className="mr-0.5 text-primary-ink">#</span>
                           {tag}
@@ -191,9 +196,9 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
                     <MediaImage image={authorPhoto} alt="" sizes="80px" icon={User} className="journal-hex size-20" />
                   </span>
                   <div>
-                    <p className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">Written by</p>
-                    <h2 id="author-heading" className="mt-1 font-subtitle text-promo font-bold">{blogAuthor.name}</h2>
-                    <p className="font-display text-meta font-semibold text-muted">{blogAuthor.role}</p>
+                    <p className="text-eyebrow font-bold text-primary-ink uppercase">Written by</p>
+                    <h2 id="author-heading" className="mt-1 text-promo font-bold">{blogAuthor.name}</h2>
+                    <p className="text-meta font-semibold text-muted">{blogAuthor.role}</p>
                     <p className="mt-3 text-body">{blogAuthor.bio}</p>
                   </div>
                 </aside>
@@ -203,10 +208,10 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
                 <nav aria-label="More posts" className="mt-10 grid journal-measure gap-4 sm:grid-cols-2">
                   {previous && (
                     <Link href={`/blog/${previous.slug}`} className="group rounded-lg border border-border p-5 transition-colors duration-200 hover:border-primary hover:bg-primary-tint">
-                      <span className="flex items-center gap-2 font-display text-meta font-semibold text-primary-ink">
+                      <span className="flex items-center gap-2 text-meta font-semibold text-primary-ink">
                         <ArrowLeft className="size-4 transition-transform duration-200 motion-safe:group-hover:-translate-x-1" aria-hidden="true" /> Previous story
                       </span>
-                      <span className="mt-2 block font-subtitle font-bold text-pretty text-strong">{previous.title}</span>
+                      <span className="mt-2 block font-bold text-pretty text-strong">{previous.title}</span>
                     </Link>
                   )}
                   {next && (
@@ -214,10 +219,10 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
                       href={`/blog/${next.slug}`}
                       className="group rounded-lg border border-border p-5 text-right transition-colors duration-200 hover:border-primary hover:bg-primary-tint sm:col-start-2"
                     >
-                      <span className="flex items-center justify-end gap-2 font-display text-meta font-semibold text-primary-ink">
+                      <span className="flex items-center justify-end gap-2 text-meta font-semibold text-primary-ink">
                         Next story <ArrowRight className="size-4 transition-transform duration-200 motion-safe:group-hover:translate-x-1" aria-hidden="true" />
                       </span>
-                      <span className="mt-2 block font-subtitle font-bold text-pretty text-strong">{next.title}</span>
+                      <span className="mt-2 block font-bold text-pretty text-strong">{next.title}</span>
                     </Link>
                   )}
                 </nav>
@@ -233,9 +238,9 @@ async function PostContent({ params }: Pick<PageProps<"/blog/[slug]">, "params">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
                 <Eyebrow decorated="leading">Keep reading</Eyebrow>
-                <h2 id="related-heading" className="mt-3 font-heading text-h2-sm font-semibold lg:text-h2">More from the hive</h2>
+                <h2 id="related-heading" className="mt-3 text-h2-sm font-semibold lg:text-h2">More from the hive</h2>
               </div>
-              <Link href="/blog" className="inline-flex min-h-11 items-center gap-2 font-display text-sm font-semibold text-primary-ink underline-offset-4 hover:underline">
+              <Link href="/blog" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary-ink underline-offset-4 hover:underline">
                 All stories <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
             </div>

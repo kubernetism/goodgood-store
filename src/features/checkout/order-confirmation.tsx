@@ -66,15 +66,15 @@ export function OrderConfirmation({ state }: { state: Extract<CheckoutState, { s
         <span aria-hidden="true" className="mask-honeycomb-fade absolute inset-0 -z-10 text-primary/20" />
         {celebration === "play" && <HoneycombSparks />}
         <HoneycombMark variant="celebrate" playing={celebration === "play"} size={176} className="mx-auto size-36 sm:size-44" />
-        <p className="hc-rise mt-5 font-script text-cta leading-none text-primary" style={rise(0)} aria-hidden="true">Thank you</p>
-        <h2 ref={headingRef} tabIndex={-1} className="hc-rise mt-3 font-heading text-h2-sm font-semibold text-on-dark outline-none md:text-h3" style={rise(1)}>
+        <p className="hc-rise mt-5 text-kicker text-primary" style={rise(0)} aria-hidden="true">Thank you</p>
+        <h2 ref={headingRef} tabIndex={-1} className="hc-rise mt-3 text-h2-sm font-semibold text-on-dark outline-none md:text-h3" style={rise(1)}>
           Thank you for your purchase
         </h2>
 
         <div className="hc-rise mt-6 flex flex-col items-center gap-3" style={rise(2)}>
           <p className="text-eyebrow font-semibold text-on-dark-muted uppercase">Order number</p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <p className="font-heading text-promo-lg font-semibold tracking-wide text-on-dark select-all">{state.orderNumber}</p>
+            <p className="text-promo-lg font-semibold tracking-wide text-on-dark select-all">{state.orderNumber}</p>
             <button
               type="button"
               onClick={copyOrderNumber}
@@ -91,16 +91,16 @@ export function OrderConfirmation({ state }: { state: Extract<CheckoutState, { s
         </div>
 
         <p className="hc-rise mt-5 text-copy text-on-dark" style={rise(3)}>
-          Pay <strong className="text-primary tabular-nums">{formatPrice(state.total)}</strong> in cash on delivery · {itemCountLabel(state.itemCount)}
+          Pay <strong className="text-primary">{formatPrice(state.total)}</strong> in cash on delivery · {itemCountLabel(state.itemCount)}
         </p>
       </div>
 
       <div className="hc-rise px-6 py-8 sm:px-10" style={rise(4)}>
-        <h3 className="font-heading text-h4 font-semibold text-strong">What happens next</h3>
+        <h3 className="text-h4 font-semibold text-strong">What happens next</h3>
         <ol className="mt-4 space-y-4">
           {steps.map((step, index) => (
             <li key={index} className="flex gap-3 text-sm text-body">
-              <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full bg-brown-950 font-sans text-sm font-semibold text-on-dark tabular-nums">
+              <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full bg-brown-950 text-sm font-semibold text-on-dark">
                 {index + 1}
               </span>
               <span className="pt-1.5">{step}</span>

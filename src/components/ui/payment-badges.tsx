@@ -10,7 +10,7 @@ export function PaymentBadges({ className }: { className?: string }) {
       {methods.map((method) => (
         <li
           key={method}
-          className="inline-flex h-7 items-center rounded-sm border border-border bg-ivory px-2 font-display text-badge font-bold text-strong"
+          className="inline-flex h-7 items-center rounded-sm border border-border bg-ivory px-2 text-badge font-bold text-strong"
         >
           {method}
         </li>

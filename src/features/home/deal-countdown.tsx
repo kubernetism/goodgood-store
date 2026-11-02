@@ -55,7 +55,7 @@ export function DealCountdown({ endsAt, endsAtLabel, tone = "light" }: DealCount
     <div>
       <p className="sr-only">{hasEnded ? "This deal has ended." : `Deal ends ${endsAtLabel}.`}</p>
       {hasEnded ? (
-        <p aria-hidden="true" className={`font-display text-h4 font-semibold ${isDark ? "text-on-dark" : "text-strong"}`}>
+        <p aria-hidden="true" className={`text-h4 font-semibold ${isDark ? "text-on-dark" : "text-strong"}`}>
           Deal ended
         </p>
       ) : (
@@ -65,8 +65,8 @@ export function DealCountdown({ endsAt, endsAtLabel, tone = "light" }: DealCount
               <span
                 className={
                   isDark
-                    ? "flex size-16 items-center justify-center rounded-full border border-primary/40 bg-brown-900 font-display text-xl font-bold text-on-dark tabular-nums"
-                    : "flex size-16 items-center justify-center rounded-full border border-border bg-surface font-display text-xl font-bold text-strong tabular-nums"
+                    ? "flex size-16 items-center justify-center rounded-full border border-primary/40 bg-brown-900 text-xl font-bold text-on-dark"
+                    : "flex size-16 items-center justify-center rounded-full border border-border bg-surface text-xl font-bold text-strong"
                 }
               >
                 {unit.value === undefined ? "00" : pad(unit.value)}

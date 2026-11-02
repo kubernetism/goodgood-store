@@ -20,9 +20,9 @@ export function JournalHero() {
         <Container className="pt-[calc(100vw/3+6rem)] pb-12 md:pt-36 md:pb-20 lg:pt-44 lg:pb-24">
           <div className="journal-hero__copy max-w-3xl">
             <Breadcrumbs crumbs={[{ label: "Journal" }]} className="mb-6" />
-            <h1 id="journal-title" className="font-heading text-display-sm font-semibold text-balance text-on-dark lg:text-display">
-              <span className="mb-3 block font-subtitle text-eyebrow font-bold text-primary uppercase">Stories from the hive</span>
-              The Honey <span className="font-script text-[1.3em] leading-none font-normal text-primary">Journal</span>
+            <h1 id="journal-title" className="text-display-sm font-semibold text-balance text-on-dark lg:text-display">
+              <span className="mb-3 block text-eyebrow font-bold text-primary uppercase">Stories from the hive</span>
+              The Honey <span className="text-primary">Journal</span>
             </h1>
             <p className="journal-standfirst mt-5 max-w-xl text-lg text-on-dark-muted lg:text-xl">
               Field notes from Pakistan&apos;s beekeepers, recipes from our kitchen, and honest guides to buying real honey.

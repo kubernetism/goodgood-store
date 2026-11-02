@@ -77,12 +77,12 @@ function Reviewer({ testimonial, compact = false }: { testimonial: Testimonial; 
     <span className="flex items-center gap-3 text-left">
       <span
         aria-hidden="true"
-        className={`home-hex flex shrink-0 items-center justify-center bg-primary font-display font-bold text-strong ${compact ? "size-10 text-xs" : "size-12 text-sm"}`}
+        className={`home-hex flex shrink-0 items-center justify-center bg-primary font-bold text-strong ${compact ? "size-10 text-xs" : "size-12 text-sm"}`}
       >
         {initialsOf(testimonial.name)}
       </span>
       <span>
-        <span className="block font-display text-base font-semibold text-strong">{testimonial.name}</span>
+        <span className="block text-base font-semibold text-strong">{testimonial.name}</span>
         <span className="flex flex-wrap items-center gap-x-2 text-meta text-muted">
           <RatingStars rating={testimonial.rating} />
           {testimonial.role && <span>{testimonial.role}</span>}

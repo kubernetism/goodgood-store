@@ -63,7 +63,7 @@ export function AboutTeam({ content, members }: { content: SiteContent; members:
               </div>
               <div className="mt-4 text-center">
                 <h3 className="text-base font-semibold sm:text-h4">{member.name}</h3>
-                <p className="mt-1 font-subtitle text-eyebrow font-bold text-primary-ink uppercase">{member.role}</p>
+                <p className="mt-1 text-eyebrow font-bold text-primary-ink uppercase">{member.role}</p>
                 {member.bio && <p className="mx-auto mt-3 max-w-prose text-sm text-pretty text-muted">{member.bio}</p>}
                 {member.links.length > 0 && (
                   <ul className="mt-3 flex flex-wrap items-center justify-center gap-1" aria-label={`Contact ${member.name}`}>

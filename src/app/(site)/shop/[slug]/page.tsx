@@ -26,6 +26,8 @@ import { formatPrice } from "@/lib/format";
 import { siteConfig } from "@/lib/site";
 import { JsonLd } from "@/components/seo/json-ld";
 import { productStructuredData } from "@/features/products/product-structured-data";
+import { productCardImage } from "@/features/social-card/card-model";
+import { baseOpenGraph } from "@/lib/social-metadata";
 
 export async function generateStaticParams() {
   const { products } = await getCatalog();
@@ -38,17 +40,17 @@ export async function generateMetadata({ params }: PageProps<"/shop/[slug]">): P
   const [{ slug }, catalog] = await Promise.all([params, getCatalog()]);
   const product = getProductBySlug(catalog, slug);
   if (!product) return { title: "Product not found" };
-  const image = product.images[0];
 
   return {
     title: product.name,
     description: product.summary,
     alternates: { canonical: `/shop/${product.slug}` },
     openGraph: {
+      ...baseOpenGraph,
       title: product.name,
       description: product.summary,
-      type: "website",
-      ...(image ? { images: [{ url: image.url, alt: image.alt }] } : {}),
+      url: `/shop/${product.slug}`,
+      images: [productCardImage(product)],
     },
   };
 }
@@ -101,24 +103,24 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
               <div className="space-y-5">
                 <Link
                   href={shopHref(defaultShopQuery, { category: product.category })}
-                  className="inline-block rounded-sm font-display text-eyebrow font-semibold text-primary-ink uppercase hover:underline"
+                  className="inline-block rounded-sm text-eyebrow font-semibold text-primary-ink uppercase hover:underline"
                 >
                   {product.categoryName} honey
                 </Link>
-                <h1 className="font-heading text-h3 font-semibold lg:text-[2.5rem] lg:leading-tight">{product.name}</h1>
+                <h1 className="text-h3 font-semibold lg:text-[2.5rem] lg:leading-tight">{product.name}</h1>
                 <p className="flex items-center gap-3 text-meta">
                   <RatingStars rating={product.rating} size="md" />
                   <span>({product.reviewCount} reviews)</span>
                 </p>
                 <Price price={product.price} compareAtPrice={product.compareAtPrice} size="lg" />
-                <p className="font-subtitle">{product.summary}</p>
+                <p>{product.summary}</p>
 
                 <ul aria-label="Product qualities" className="flex flex-wrap gap-2">
                   {product.tags.map((tag) => (
                     <li key={tag}>
                       <Link
                         href={shopHref(defaultShopQuery, { tag })}
-                        className="inline-flex min-h-8 items-center rounded-full border border-border bg-ivory px-3 font-display text-meta font-medium text-strong transition-colors duration-200 hover:border-strong hover:bg-primary-tint"
+                        className="inline-flex min-h-8 items-center rounded-full border border-border bg-ivory px-3 text-meta font-medium text-strong transition-colors duration-200 hover:border-strong hover:bg-primary-tint"
                       >
                         {tag}
                       </Link>
@@ -153,7 +155,7 @@ async function ProductDetails({ params }: Pick<PageProps<"/shop/[slug]">, "param
                 </div>
 
                 <div>
-                  <p className="mb-3 font-display text-sm font-semibold text-strong">Safe, simple checkout</p>
+                  <p className="mb-3 text-sm font-semibold text-strong">Safe, simple checkout</p>
                   <PaymentBadges />
                 </div>
               </div>
@@ -194,7 +196,7 @@ function HoneyProfile({ product }: { product: Product }) {
 
   return (
     <section aria-labelledby="profile-heading" className="mt-16">
-      <h2 id="profile-heading" className="font-heading text-promo font-semibold">
+      <h2 id="profile-heading" className="text-promo font-semibold">
         Honey profile
       </h2>
       <dl className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -204,8 +206,8 @@ function HoneyProfile({ product }: { product: Product }) {
               <Icon className="size-5" strokeWidth={1.75} aria-hidden="true" />
             </span>
             <div>
-              <dt className="font-display text-meta font-semibold text-muted">{term}</dt>
-              <dd className="font-display text-sm font-semibold text-strong">{value}</dd>
+              <dt className="text-meta font-semibold text-muted">{term}</dt>
+              <dd className="text-sm font-semibold text-strong">{value}</dd>
             </div>
           </div>
         ))}
@@ -218,7 +220,7 @@ function ProductDescription({ product, category }: { product: Product; category:
   const highlights = category?.highlights ?? [];
   return (
     <section aria-labelledby="description-heading" className="mt-16">
-      <h2 id="description-heading" className="font-heading text-promo font-semibold">
+      <h2 id="description-heading" className="text-promo font-semibold">
         About this honey
       </h2>
       <div className="mt-6 space-y-4 text-strong">
@@ -254,7 +256,7 @@ function GiftPromoCard() {
       <Gift aria-hidden="true" strokeWidth={1} className="absolute top-1/2 right-4 -z-10 size-28 -translate-y-1/2 text-primary/40" />
       <div className="relative max-w-[65%]">
         <Eyebrow tone="dark">Gift sets</Eyebrow>
-        <p className="mt-2 font-heading text-h3 leading-tight font-semibold">Give something golden</p>
+        <p className="mt-2 text-h3 leading-tight font-semibold">Give something golden</p>
         <p className="mt-1 text-sm text-on-dark-muted">Boxed jars, comb and dippers for Eid and weddings.</p>
         <Link
           href={shopHref(defaultShopQuery, { category: "gift-sets" })}

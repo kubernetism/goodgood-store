@@ -18,7 +18,7 @@ export function FaqAccordion({ items }: FaqAccordionProps) {
         const buttonId = `${id}-question-${index}`;
         const panelId = `${id}-answer-${index}`;
         return <div key={item.question}>
-          <h3><button id={buttonId} type="button" aria-expanded={open} aria-controls={panelId} onClick={() => setOpenIndex(open ? null : index)} className="flex min-h-14 w-full cursor-pointer items-center justify-between gap-4 px-5 py-3 text-left font-display text-sm font-semibold text-strong transition-colors duration-200 hover:text-primary-ink">
+          <h3><button id={buttonId} type="button" aria-expanded={open} aria-controls={panelId} onClick={() => setOpenIndex(open ? null : index)} className="flex min-h-14 w-full cursor-pointer items-center justify-between gap-4 px-5 py-3 text-left text-sm font-semibold text-strong transition-colors duration-200 hover:text-primary-ink">
             {item.question}
             <span aria-hidden="true" className={`flex size-7 shrink-0 items-center justify-center rounded-sm ${open ? "bg-primary-tint text-primary-ink" : "bg-tile text-strong"}`}>
               {open ? <Minus className="size-4" /> : <Plus className="size-4" />}

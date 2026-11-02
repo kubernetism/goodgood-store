@@ -16,19 +16,36 @@
  * - Focus rings are brown on light/honey surfaces and honey on brown bands.
  * Ratios below were computed with the WCAG relative-luminance formula.
  */
+/*
+ * Stand-in while Sansation loads: local Arial scaled to Sansation's average
+ * width and line metrics, so the swap moves as little text as possible.
+ * Values come from the two fonts' tables (next/font has no metrics for it).
+ */
+@font-face {
+  font-family: "Sansation Fallback";
+  src: local("Arial");
+  size-adjust: 102.98%;
+  ascent-override: 87.91%;
+  descent-override: 20.77%;
+  line-gap-override: 0%;
+}
+
 @theme {
-  /* Fonts (wired to next/font CSS variables in app/layout.tsx).
-     heading: Sansation for page and section titles.
-     subtitle: Sansation for supporting headings and introductory subtitles.
-     sans/display: Inter for body and every UI label (nav, buttons, prices).
-     script: Parisienne, reserved for the logo wordmark and rare ≥28px accents. */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-sansation), ui-sans-serif, system-ui, sans-serif;
-  --font-subtitle: var(--font-sansation), ui-sans-serif, system-ui, sans-serif;
-  /* Keep the editorial quote treatment separate from headings. */
-  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
-  --font-script: var(--font-parisienne), cursive;
+  /* One typeface everywhere: Sansation, wired up by next/font in app/layout.tsx.
+     font-quote is the same family's italic, loaded separately so that only the
+     pages that show a quote download it. */
+  --font-sans: var(--font-sansation);
+  --font-quote: var(--font-sansation-italic);
+  /* Tailwind's reset gives <code>, <pre> and <kbd> this stack; no monospace here. */
+  --default-mono-font-family: var(--font-sansation);
+
+  /* Sansation ships only 300, 400 and 700. Point Tailwind's in-between weights
+     at the real faces so font-medium and font-semibold never ask for a weight
+     the font does not have. */
+  --font-weight-medium: 400;
+  --font-weight-semibold: 700;
+  --font-weight-extrabold: 700;
+  --font-weight-black: 700;
 
   /* Honey surfaces. primary = honey, used as a fill with brown text on it. */
   --color-primary: #ffb800; /* brown-950 on it: 9.42:1 */
@@ -109,6 +126,9 @@
   --text-logo--line-height: 1;
   --text-cta: 2.75rem;
   --text-cta--line-height: 3.25rem;
+  /* Short accent line above a section heading. */
+  --text-kicker: 1.625rem;
+  --text-kicker--line-height: 2rem;
   --text-stat: 3rem;
   --text-stat--line-height: 3.5rem;
 
@@ -171,12 +191,13 @@
   html {
     color-scheme: light;
     -webkit-text-size-adjust: 100%;
+    /* Never fake a bold or italic: a missing face should show, not smear. */
+    font-synthesis: none;
   }
 
   body {
     background-color: var(--color-surface);
     color: var(--color-body);
-    font-family: var(--font-sans);
     font-size: var(--text-copy);
     line-height: var(--text-copy--line-height);
   }
@@ -184,7 +205,6 @@
   h1,
   h2 {
     color: var(--color-strong);
-    font-family: var(--font-heading);
     text-wrap: balance;
   }
 
@@ -193,12 +213,7 @@
   h5,
   h6 {
     color: var(--color-strong);
-    font-family: var(--font-subtitle);
     text-wrap: balance;
-  }
-
-  .font-serif {
-    font-variation-settings: "SOFT" 100;
   }
 
   :focus-visible {

@@ -51,7 +51,7 @@ export default async function MediaPage({ searchParams }: { searchParams: Promis
         return <li key={image.id} className="admin-media-card">
           <div className="admin-media-tile"><Image src={image.url} alt={image.alt} fill sizes="(max-width: 768px) 50vw, 220px" /></div>
           <p className="admin-media-alt admin-clamp" title={image.alt}>{image.alt}</p>
-          <p className="admin-hint admin-num">{Math.round(image.sizeBytes / 1024)} KB · {formatPktDateTime(image.createdAt)}</p>
+          <p className="admin-hint">{Math.round(image.sizeBytes / 1024)} KB · {formatPktDateTime(image.createdAt)}</p>
           <div className="admin-media-usage">
             {unused ? <span><StatusPill tone="neutral" label="Not used" /></span> : <><span className="admin-eyebrow">Used in</span><ul>{mediaUsageGroups(usage).map((group) => <li key={group.label}><strong>{group.label}:</strong> {summariseNames(group.names)}</li>)}</ul></>}
           </div>

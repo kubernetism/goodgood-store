@@ -83,7 +83,7 @@ export function VideoPopup({ popup, onClosed }: VideoPopupProps) {
         <span aria-hidden="true" className="mask-honeycomb-fade pointer-events-none absolute inset-0 -z-10 text-primary/10" />
 
         <div className="flex items-center justify-between gap-3 md:col-start-2 md:row-start-1">
-          <p className="inline-flex items-center gap-2 ps-1 font-subtitle text-meta font-bold text-primary">
+          <p className="inline-flex items-center gap-2 ps-1 text-meta font-bold text-primary">
             <BeeIcon className="size-4" strokeWidth={1.75} />
             From the hive
           </p>
@@ -117,11 +117,11 @@ export function VideoPopup({ popup, onClosed }: VideoPopupProps) {
         </div>
 
         <div className="px-1 pb-1 md:col-start-2 md:row-start-2 md:self-end md:pb-2">
-          <h2 id={titleId} className="font-heading text-promo font-semibold text-on-dark md:text-h3">
+          <h2 id={titleId} className="text-promo font-semibold text-on-dark md:text-h3">
             {popup.title}
           </h2>
           {popup.subtitle && (
-            <p className="mt-2 line-clamp-2 font-subtitle text-copy text-on-dark-muted md:mt-3 md:line-clamp-none">
+            <p className="mt-2 line-clamp-2 text-copy text-on-dark-muted md:mt-3 md:line-clamp-none">
               {popup.subtitle}
             </p>
           )}

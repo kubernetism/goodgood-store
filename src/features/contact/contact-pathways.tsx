@@ -63,7 +63,7 @@ export function ContactPathways() {
                 <Icon className="size-5" strokeWidth={1.75} />
               </span>
               <div className="min-w-0 flex-1 md:mt-4 md:flex md:flex-1 md:flex-col">
-                <h3 className="font-subtitle text-h4 font-semibold text-on-dark">
+                <h3 className="text-h4 font-semibold text-on-dark">
                   <a
                     href={`#${topicAnchorId(service)}`}
                     className="after:absolute after:inset-0 after:rounded-lg after:content-[''] focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:-outline-offset-4 focus-visible:after:outline-focus"

@@ -120,7 +120,7 @@ export default async function ContactPage() {
             <ol className="mt-6 space-y-3 lg:mt-8 lg:space-y-5">
               {steps.map((step, index) => (
                 <li key={step.title} className="flex gap-4">
-                  <span aria-hidden="true" className="hex-clip flex size-9 shrink-0 items-center justify-center bg-primary-tint font-heading text-sm font-bold text-primary-ink">
+                  <span aria-hidden="true" className="hex-clip flex size-9 shrink-0 items-center justify-center bg-primary-tint text-sm font-bold text-primary-ink">
                     {index + 1}
                   </span>
                   <div>

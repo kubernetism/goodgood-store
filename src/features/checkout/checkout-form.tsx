@@ -203,7 +203,7 @@ export function CheckoutForm({ catalog, whatsappEnabled, help }: CheckoutFormPro
               <span className="group-open:hidden">Show order summary</span>
               <span className="hidden group-open:inline">Hide order summary</span>
               <ChevronDown className="size-4 shrink-0 text-primary-ink group-open:rotate-180 motion-safe:transition-transform motion-safe:duration-200" aria-hidden="true" />
-              <span className="ml-auto font-heading tabular-nums">{formatPrice(totals.total)}</span>
+              <span className="ml-auto">{formatPrice(totals.total)}</span>
             </summary>
             <div className="space-y-4 rounded-b-md border-t border-border bg-surface px-4 pt-3 pb-4">
               <SummaryLines totals={totals} highlighted={highlighted} />
@@ -323,7 +323,7 @@ export function CheckoutForm({ catalog, whatsappEnabled, help }: CheckoutFormPro
             >
               <CircleCheck className="mt-0.5 size-6 shrink-0 text-primary-ink" strokeWidth={1.75} aria-hidden="true" />
               <div>
-                <p className="font-heading text-base font-semibold text-strong">Cash on delivery</p>
+                <p className="text-base font-semibold text-strong">Cash on delivery</p>
                 <p className="mt-1 text-sm text-strong">Pay the courier in cash when your honey arrives. No card and no advance payment.</p>
                 <p className="mt-1 text-meta text-body">Please keep the exact amount ready.</p>
               </div>
@@ -345,14 +345,14 @@ export function CheckoutForm({ catalog, whatsappEnabled, help }: CheckoutFormPro
               defaultValue={values.notes}
               onChange={(event) => setNotesLength(event.currentTarget.value.length)}
             />
-            <p className="mt-1.5 text-right text-meta text-muted tabular-nums" aria-live={notesRemaining <= 50 ? "polite" : "off"}>
+            <p className="mt-1.5 text-right text-meta text-muted" aria-live={notesRemaining <= 50 ? "polite" : "off"}>
               {notesLength}/{NOTES_MAX}
               {notesRemaining <= 50 && <span className="sr-only"> characters used, {notesRemaining} left</span>}
             </p>
           </SectionCard>
 
           <section aria-labelledby="review-heading" className="rounded-md border border-border bg-surface p-5 sm:p-7 lg:hidden">
-            <h2 id="review-heading" className="font-heading text-h4 font-semibold text-strong sm:text-promo">Review and place order</h2>
+            <h2 id="review-heading" className="text-h4 font-semibold text-strong sm:text-promo">Review and place order</h2>
             <div className="mt-4">
               <SummaryTotals totals={totals} />
             </div>
@@ -398,7 +398,7 @@ export function CheckoutForm({ catalog, whatsappEnabled, help }: CheckoutFormPro
           <div className="mx-auto flex max-w-page items-center gap-4 px-4 py-3 sm:px-6">
             <div className="min-w-0">
               <p className="text-meta text-on-dark-muted">Total · cash on delivery</p>
-              <p className="font-heading text-h4 font-semibold text-on-dark tabular-nums">{formatPrice(totals.total)}</p>
+              <p className="text-h4 font-semibold text-on-dark">{formatPrice(totals.total)}</p>
             </div>
             <div className="ml-auto text-right">
               <PlaceOrderButton id="place-order-bar" {...buttonState} showTotal={false} tone="dark" />
@@ -424,10 +424,10 @@ function SectionCard({ number, id, title, hint, children }: { number: number; id
   return (
     <section aria-labelledby={headingId} className="rounded-md border border-border bg-surface p-5 sm:p-7">
       <div className="flex items-center gap-3">
-        <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full bg-brown-950 font-sans text-sm font-semibold text-on-dark tabular-nums">
+        <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full bg-brown-950 text-sm font-semibold text-on-dark">
           {number}
         </span>
-        <h2 id={headingId} className="font-heading text-h4 font-semibold text-strong sm:text-promo">
+        <h2 id={headingId} className="text-h4 font-semibold text-strong sm:text-promo">
           <span className="sr-only">Step {number}: </span>
           {title}
         </h2>
@@ -459,7 +459,7 @@ function EmptyBasket({ hasUnavailable }: { hasUnavailable: boolean }) {
     <div className="relative isolate overflow-hidden rounded-md border border-border bg-surface px-6 py-16 text-center">
       <span aria-hidden="true" className="mask-honeycomb-fade absolute inset-0 -z-10 text-primary/15" />
       <ShoppingBasket className="mx-auto size-12 text-primary-ink" strokeWidth={1.25} aria-hidden="true" />
-      <h2 className="mt-4 font-heading text-h4 font-semibold text-strong sm:text-promo">
+      <h2 className="mt-4 text-h4 font-semibold text-strong sm:text-promo">
         {hasUnavailable ? "Nothing in your basket can be ordered right now" : "Your basket is empty"}
       </h2>
       <p className="mx-auto mt-2 max-w-sm">Add a jar or two of honey, then come back to check out.</p>

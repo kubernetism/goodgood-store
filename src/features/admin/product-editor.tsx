@@ -112,10 +112,10 @@ export function ProductEditor({ product, categories: choices, images, selectedIm
 
 /** Slug field with its URL prefix shown as an adornment. Field passes id/aria-describedby. */
 export function SlugInput({ prefix, name, defaultValue, placeholder, id, "aria-describedby": describedBy }: { prefix: string; name: string; defaultValue?: string; placeholder?: string; id?: string; "aria-describedby"?: string }) {
-  return <span className="admin-affix"><span aria-hidden="true">{prefix}</span><input id={id} aria-describedby={describedBy} className="admin-mono-input" name={name} defaultValue={defaultValue} required maxLength={120} placeholder={placeholder} pattern={SLUG_PATTERN} title={SLUG_TITLE} autoCapitalize="none" autoCorrect="off" spellCheck={false} /></span>;
+  return <span className="admin-affix"><span aria-hidden="true">{prefix}</span><input id={id} aria-describedby={describedBy} className="admin-ident-input" name={name} defaultValue={defaultValue} required maxLength={120} placeholder={placeholder} pattern={SLUG_PATTERN} title={SLUG_TITLE} autoCapitalize="none" autoCorrect="off" spellCheck={false} /></span>;
 }
 
-/** Rupee amount with an "Rs" adornment, right-aligned tabular figures. */
+/** Rupee amount with an "Rs" adornment, right-aligned figures. */
 export function MoneyInput({ name, defaultValue, required = false, id, "aria-describedby": describedBy }: { name: string; defaultValue?: string; required?: boolean; id?: string; "aria-describedby"?: string }) {
   return <span className="admin-affix money"><span aria-hidden="true">Rs</span><input id={id} aria-describedby={describedBy} name={name} type="number" inputMode="decimal" min="0.01" max="9999999" step="0.01" defaultValue={defaultValue} required={required} /></span>;
 }

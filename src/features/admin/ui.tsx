@@ -10,7 +10,7 @@ export { pageNumber } from "./search-params";
 
 /* ── Page header ────────────────────────────────────────────────────── */
 
-export function AdminHeading({ title, description, eyebrow, back, actions, meta, href, action, mono = false }: {
+export function AdminHeading({ title, description, eyebrow, back, actions, meta, href, action, identifier = false }: {
   title: string;
   description?: string;
   /** The nav group, e.g. "Catalogue". */
@@ -22,8 +22,8 @@ export function AdminHeading({ title, description, eyebrow, back, actions, meta,
   /** Shortcut for a single primary "Add …" action. */
   href?: string;
   action?: string;
-  /** Set the title in mono (order numbers). */
-  mono?: boolean;
+  /** The title is an identifier (order numbers). */
+  identifier?: boolean;
 }) {
   const shortcut = href && action ? <Link className="admin-button" href={href}><Plus aria-hidden="true" />{action}</Link> : null;
   const headerActions = actions ?? shortcut;
@@ -31,7 +31,7 @@ export function AdminHeading({ title, description, eyebrow, back, actions, meta,
     <div className="admin-head-text">
       {back && <Link className="admin-back" href={back.href}><ArrowLeft aria-hidden="true" />{back.label}</Link>}
       {eyebrow && <p className="admin-eyebrow">{eyebrow}</p>}
-      <h1 className={mono ? "admin-order-number" : undefined}>{title}</h1>
+      <h1 className={identifier ? "admin-order-number" : undefined}>{title}</h1>
       {meta && <div className="admin-head-meta">{meta}</div>}
       {description && <p className="admin-muted">{description}</p>}
     </div>

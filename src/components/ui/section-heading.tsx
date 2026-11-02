@@ -16,7 +16,7 @@ export function Eyebrow({ children, decorated = false, tone = "light", className
   return (
     <p
       className={cx(
-        "inline-flex items-center gap-3 font-subtitle text-eyebrow font-bold uppercase",
+        "inline-flex items-center gap-3 text-eyebrow font-bold uppercase",
         tone === "dark" ? "text-primary" : "text-primary-ink",
         className,
       )}
@@ -61,7 +61,7 @@ export function SectionHeading({
       )}
       <h2
         id={id}
-        className={cx("font-heading text-h2-sm font-semibold lg:text-h2", tone === "dark" && "text-on-dark")}
+        className={cx("text-h2-sm font-semibold lg:text-h2", tone === "dark" && "text-on-dark")}
       >
         {title}
       </h2>
@@ -69,7 +69,7 @@ export function SectionHeading({
       {description && (
         <p
           className={cx(
-            "mt-4 max-w-xl font-subtitle text-pretty",
+            "mt-4 max-w-xl text-pretty",
             isCentered && "mx-auto",
             tone === "dark" ? "text-on-dark-muted" : "text-body",
           )}

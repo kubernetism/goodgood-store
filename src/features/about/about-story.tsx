@@ -34,7 +34,7 @@ export function AboutStory({ founder }: AboutStoryProps) {
             {foundedYear ? (
               <>
                 <span className="text-eyebrow font-bold uppercase">Since</span>
-                <span className="font-heading text-lg leading-none font-bold sm:text-xl">{foundedYear}</span>
+                <span className="text-lg leading-none font-bold sm:text-xl">{foundedYear}</span>
               </>
             ) : (
               <BeeIcon className="size-8 sm:size-9" strokeWidth={1.5} />
@@ -51,7 +51,7 @@ export function AboutStory({ founder }: AboutStoryProps) {
             Abdul Sami started with a few hives and a simple promise: honey that is raw, traceable and sold exactly as
             the bees made it. No shortcuts at the hive, and none in the jar.
           </p>
-          <p className="about-pullquote mt-8 border-l-2 border-primary pl-5 font-serif text-xl leading-snug text-strong italic lg:text-2xl">
+          <p className="about-pullquote mt-8 border-l-2 border-primary pl-5 font-quote text-xl leading-snug text-strong italic lg:text-2xl">
             If it isn&apos;t honest honey, it doesn&apos;t go in our jar.
           </p>
           <p className="mt-8">
@@ -63,14 +63,9 @@ export function AboutStory({ founder }: AboutStoryProps) {
             handles {siteConfig.contact.businessType.toLowerCase()} enquiries.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-end gap-x-5 gap-y-2">
-            <p aria-hidden="true" className="font-script text-[2.25rem] leading-none whitespace-nowrap text-primary-ink sm:text-[2.75rem]">
-              Abdul Sami
-            </p>
-            <div className="border-l border-border-strong/50 pb-1 pl-5">
-              <p className="font-display text-base font-semibold text-strong">Abdul Sami</p>
-              <p className="text-meta">Founder &amp; beekeeper</p>
-            </div>
+          <div className="mt-10">
+            <p className="text-base font-semibold text-strong">Abdul Sami</p>
+            <p className="text-meta">Founder &amp; beekeeper</p>
           </div>
 
           {aboutStats.length > 0 && (
@@ -78,7 +73,7 @@ export function AboutStory({ founder }: AboutStoryProps) {
               {aboutStats.map(({ value, label }) => (
                 <div key={label} className="flex flex-col-reverse gap-1">
                   <dt className="text-meta text-muted">{label}</dt>
-                  <dd className="font-heading text-stat font-bold text-strong tabular-nums">{value}</dd>
+                  <dd className="text-stat font-bold text-strong">{value}</dd>
                 </div>
               ))}
             </dl>

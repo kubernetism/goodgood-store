@@ -33,7 +33,7 @@ function PostBlock({ block, anchorId }: { block: BlogBlock; anchorId?: string })
         <figure className="journal-quote">
           <blockquote>{block.text}</blockquote>
           {block.cite && (
-            <figcaption className="mt-3 font-display text-meta font-semibold text-primary-ink">— {block.cite}</figcaption>
+            <figcaption className="mt-3 text-meta font-semibold text-primary-ink">— {block.cite}</figcaption>
           )}
         </figure>
       );
@@ -50,7 +50,7 @@ export function PostContents({ body, className }: { body: ReadonlyArray<BlogBloc
   if (entries.length < 2) return null;
   return (
     <nav aria-labelledby="post-contents-heading" className={className}>
-      <h2 id="post-contents-heading" className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+      <h2 id="post-contents-heading" className="text-eyebrow font-bold text-primary-ink uppercase">
         In this story
       </h2>
       <ol className="mt-4 space-y-1 border-l-2 border-border">
@@ -58,9 +58,9 @@ export function PostContents({ body, className }: { body: ReadonlyArray<BlogBloc
           <li key={entry.id}>
             <a
               href={`#${entry.id}`}
-              className="-ml-0.5 flex min-h-10 items-baseline gap-3 border-l-2 border-transparent py-1.5 pl-4 font-display text-sm font-semibold text-body transition-colors duration-200 hover:border-primary hover:text-strong"
+              className="-ml-0.5 flex min-h-10 items-baseline gap-3 border-l-2 border-transparent py-1.5 pl-4 text-sm font-semibold text-body transition-colors duration-200 hover:border-primary hover:text-strong"
             >
-              <span aria-hidden="true" className="font-serif text-meta text-primary-ink tabular-nums">
+              <span aria-hidden="true" className="text-meta text-primary-ink">
                 {String(index + 1).padStart(2, "0")}
               </span>
               {entry.text}

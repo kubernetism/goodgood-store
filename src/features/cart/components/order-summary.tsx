@@ -19,12 +19,12 @@ export function OrderSummary({ totals, showLines = false }: OrderSummaryProps) {
             <dt className="min-w-0">
               {line.product.name} × {line.quantity}
             </dt>
-            <dd className="tabular-nums text-strong">{formatPrice(line.lineTotal)}</dd>
+            <dd className="text-strong">{formatPrice(line.lineTotal)}</dd>
           </div>
         ))}
       <div className={rowClass}>
         <dt>Subtotal</dt>
-        <dd className="tabular-nums text-strong">{formatPrice(totals.subtotal)}</dd>
+        <dd className="text-strong">{formatPrice(totals.subtotal)}</dd>
       </div>
       <div className={rowClass}>
         <dt>
@@ -33,7 +33,7 @@ export function OrderSummary({ totals, showLines = false }: OrderSummaryProps) {
             <span className="block text-meta text-muted">Free on orders of {formatPrice(FREE_SHIPPING_THRESHOLD)} or more</span>
           )}
         </dt>
-        <dd className={totals.shipping === 0 ? "font-semibold text-primary-ink" : "tabular-nums text-strong"}>
+        <dd className={totals.shipping === 0 ? "font-semibold text-primary-ink" : "text-strong"}>
           {totals.shipping === 0 ? "Free" : formatPrice(totals.shipping)}
         </dd>
       </div>
@@ -42,7 +42,7 @@ export function OrderSummary({ totals, showLines = false }: OrderSummaryProps) {
           Total
           <span className="block text-meta font-normal text-muted">Pay in cash on delivery</span>
         </dt>
-        <dd className="font-heading text-promo font-semibold text-strong tabular-nums">{formatPrice(totals.total)}</dd>
+        <dd className="text-promo font-semibold text-strong">{formatPrice(totals.total)}</dd>
       </div>
     </dl>
   );

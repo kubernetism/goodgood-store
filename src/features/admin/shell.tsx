@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import {
-  House, Images, LogOut, Mail, MailPlus, Megaphone, Menu, NotebookPen, Package, PanelsTopLeft, Quote, ReceiptText, Settings, Store, Tags, UsersRound,
+  ArrowUpRight, House, Images, LogOut, Mail, MailPlus, Megaphone, Menu, NotebookPen, Package, PanelsTopLeft, Quote, ReceiptText, Settings, Store, Tags, UsersRound,
   type LucideIcon,
 } from "lucide-react";
 import { logout } from "./auth-actions";
@@ -72,7 +72,7 @@ function NavGroups({ badges, groups, stagger }: { badges: NavBadges; groups: typ
 }
 
 function StoreLink({ className }: { className: string }) {
-  return <Link href="/" className={className}><Store aria-hidden="true" /><span>View store</span><span aria-hidden="true"> ↗</span></Link>;
+  return <Link href="/" className={className}><Store aria-hidden="true" /><span>View store</span><ArrowUpRight aria-hidden="true" /></Link>;
 }
 
 export function AdminSidebar({ email, badges }: { email: string; badges: NavBadges }) {

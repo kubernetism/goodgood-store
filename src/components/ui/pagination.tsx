@@ -12,7 +12,7 @@ type PaginationProps = {
 };
 
 const square =
-  "flex size-11 items-center justify-center rounded-full border font-display text-sm font-semibold transition-colors duration-200";
+  "flex size-11 items-center justify-center rounded-full border text-sm font-semibold transition-colors duration-200";
 
 /** Numbered pagination with previous/next links. Renders nothing for one page. */
 export function Pagination({ page, pageCount, hrefFor, label = "Pagination", className }: PaginationProps) {

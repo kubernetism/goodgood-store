@@ -66,7 +66,7 @@ async function BlogContent({ searchParams }: Pick<PageProps<"/blog">, "searchPar
         {result.items.length === 0 ? (
           <div className="flex flex-col items-center rounded-lg border border-dashed border-border-strong/50 bg-tile px-6 py-16 text-center">
             <SearchX className="size-10 text-primary-ink" strokeWidth={1.5} aria-hidden="true" />
-            <p className="mt-4 font-subtitle text-h4 font-semibold text-strong">No stories found</p>
+            <p className="mt-4 text-h4 font-semibold text-strong">No stories found</p>
             <p className="mt-2">Try another keyword or browse every story.</p>
             <Link href="/blog" className={buttonClasses({ className: "mt-6" })}>
               View all stories
@@ -121,10 +121,10 @@ function FilterSummary({ query, total }: { query: BlogQuery; total: number }) {
 
   return (
     <p aria-live="polite" className="mb-8 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-      <span className="font-subtitle text-promo font-bold text-strong">
+      <span className="text-promo font-bold text-strong">
         {total === 1 ? "1 story" : `${total} stories`} for {labels.join(" · ")}
       </span>
-      <Link href="/blog" className="font-display text-sm font-semibold text-primary-ink underline underline-offset-2 hover:no-underline">
+      <Link href="/blog" className="text-sm font-semibold text-primary-ink underline underline-offset-2 hover:no-underline">
         Clear filters
       </Link>
     </p>

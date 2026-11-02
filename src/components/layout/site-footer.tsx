@@ -76,7 +76,7 @@ export async function SiteFooter({ showFeatures = true }: { showFeatures?: boole
               <div className="hidden gap-5 lg:grid lg:grid-cols-3">
                 {linkColumns.map((column) => (
                   <nav key={column.title} aria-label={column.title}>
-                    <h2 className="font-subtitle text-sm font-bold text-on-dark">{column.title}</h2>
+                    <h2 className="text-sm font-bold text-on-dark">{column.title}</h2>
                     <FooterLinks links={column.links} />
                   </nav>
                 ))}
@@ -96,7 +96,7 @@ export async function SiteFooter({ showFeatures = true }: { showFeatures?: boole
             </div>
 
             <div className="min-w-0 lg:col-span-3">
-              <h2 className="font-subtitle text-sm font-bold text-on-dark">The Hive Letter</h2>
+              <h2 className="text-sm font-bold text-on-dark">The Hive Letter</h2>
               <p className="mt-2 mb-3 text-sm leading-relaxed text-on-dark-muted">
                 Harvest news, limited releases and honey recipes, about once a month.
               </p>
@@ -118,7 +118,7 @@ export async function SiteFooter({ showFeatures = true }: { showFeatures?: boole
               © {siteConfig.copyrightYear} {siteConfig.legalName}. All rights reserved.
             </p>
             <nav aria-label="Legal">
-              <ul className="flex flex-wrap gap-x-4 font-display font-semibold">
+              <ul className="flex flex-wrap gap-x-4 font-semibold">
                 <li>
                   <Link href="/terms" className="inline-flex min-h-10 items-center hover:text-primary">
                     Terms & Conditions

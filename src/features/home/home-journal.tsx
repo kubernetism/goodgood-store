@@ -19,7 +19,7 @@ export async function HomeJournal() {
         <div className="reveal">
           <Eyebrow decorated="leading">From the journal</Eyebrow>
           <h2 id="journal-heading" className="mt-3 text-h2-sm font-semibold lg:text-h2">
-            Notes from the <span className="font-script text-[1.3em] leading-none font-normal text-primary-ink">hive</span>
+            Notes from the <span className="text-primary-ink">hive</span>
           </h2>
           <HoneyDivider className="mt-4" />
         </div>

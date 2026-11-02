@@ -77,7 +77,7 @@ export function MainNav({ tone, activePath, items }: { tone: Tone; activePath: s
                   href={item.href}
                   aria-current={!/[?#]/.test(item.href) && pathOf(item.href) === activePath ? "page" : undefined}
                   className={cx(
-                    "flex h-11 items-center rounded-sm px-2 font-display text-sm font-semibold transition-colors duration-200",
+                    "flex h-11 items-center rounded-sm px-2 text-sm font-semibold transition-colors duration-200",
                     isActive ? activeTone : linkTone,
                   )}
                 >
@@ -93,7 +93,7 @@ export function MainNav({ tone, activePath, items }: { tone: Tone; activePath: s
                 <Link
                   href={item.href}
                   className={cx(
-                    "flex h-11 items-center rounded-sm pl-2 font-display text-sm font-semibold transition-colors duration-200",
+                    "flex h-11 items-center rounded-sm pl-2 text-sm font-semibold transition-colors duration-200",
                     isActive ? activeTone : linkTone,
                   )}
                 >
@@ -108,7 +108,7 @@ export function MainNav({ tone, activePath, items }: { tone: Tone; activePath: s
                 aria-label={item.href ? `${item.label} submenu` : undefined}
                 onClick={() => setOpenLabel(isOpen ? null : item.label)}
                 className={cx(
-                  "flex h-11 items-center gap-1 rounded-sm pr-2 font-display text-sm font-semibold transition-colors duration-200",
+                  "flex h-11 items-center gap-1 rounded-sm pr-2 text-sm font-semibold transition-colors duration-200",
                   item.href ? "pl-1" : "pl-2",
                   isActive ? activeTone : linkTone,
                 )}

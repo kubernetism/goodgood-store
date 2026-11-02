@@ -35,7 +35,7 @@ export function SummaryLines({ totals, highlighted }: { totals: CartTotals; high
         >
           <span className="relative block size-14">
             <MediaImage image={line.product.image} alt="" sizes="56px" icon={categoryIcon(line.product.category)} iconSize="sm" rounded="sm" texture={false} className="size-14" />
-            <span aria-hidden="true" className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-brown-950 text-badge font-semibold text-on-dark tabular-nums">
+            <span aria-hidden="true" className="absolute -top-1.5 -right-1.5 grid size-5 place-items-center rounded-full bg-brown-950 text-badge font-semibold text-on-dark">
               {line.quantity}
             </span>
           </span>
@@ -46,7 +46,7 @@ export function SummaryLines({ totals, highlighted }: { totals: CartTotals; high
             </span>
             <span className="block text-meta text-muted">{line.product.unit}</span>
           </span>
-          <span className="text-sm font-semibold text-strong tabular-nums">{formatPrice(line.lineTotal)}</span>
+          <span className="text-sm font-semibold text-strong">{formatPrice(line.lineTotal)}</span>
         </li>
       ))}
     </ul>
@@ -58,15 +58,15 @@ export function SummaryTotals({ totals }: { totals: CartTotals }) {
     <dl className="space-y-2 text-sm text-body">
       <div className="flex items-baseline justify-between gap-4">
         <dt>Subtotal</dt>
-        <dd className="tabular-nums text-strong">{formatPrice(totals.subtotal)}</dd>
+        <dd className="text-strong">{formatPrice(totals.subtotal)}</dd>
       </div>
       <div className="flex items-baseline justify-between gap-4">
         <dt>Delivery</dt>
-        <dd className="tabular-nums text-strong">{totals.shipping === 0 ? "Free" : formatPrice(totals.shipping)}</dd>
+        <dd className="text-strong">{totals.shipping === 0 ? "Free" : formatPrice(totals.shipping)}</dd>
       </div>
       <div className="flex items-baseline justify-between gap-4 border-t border-border pt-3">
         <dt className="font-semibold text-strong">Total to pay on delivery</dt>
-        <dd className="font-heading text-promo font-semibold text-strong tabular-nums">{formatPrice(totals.total)}</dd>
+        <dd className="text-promo font-semibold text-strong">{formatPrice(totals.total)}</dd>
       </div>
     </dl>
   );
@@ -86,7 +86,7 @@ export function FreeDeliveryNudge({ subtotal }: { subtotal: number }) {
   return (
     <div className="rounded-sm bg-tile p-3 text-meta text-body">
       <p>
-        You&apos;re <strong className="text-strong tabular-nums">{formatPrice(progress.remaining)}</strong> away from free delivery.
+        You&apos;re <strong className="text-strong">{formatPrice(progress.remaining)}</strong> away from free delivery.
       </p>
       <svg className="mt-2 block h-1.5 w-full overflow-hidden rounded-full" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <rect width="100" height="6" rx="3" className="fill-border" />
@@ -156,7 +156,7 @@ export function PlaceOrderButton({ total, pending, blocked, id, showTotal = true
         ) : showTotal ? (
           <>
             Place order<span aria-hidden="true">·</span>
-            <span className="tabular-nums">{formatPrice(total)}</span>
+            <span>{formatPrice(total)}</span>
           </>
         ) : (
           "Place order"
@@ -190,7 +190,7 @@ export function CheckoutSummary({ totals, highlighted, help, headingId, action }
   return (
     <div className="space-y-4">
       <div className="flex items-baseline justify-between gap-4">
-        <h2 id={headingId} className="font-heading text-h4 font-semibold text-strong">Your order</h2>
+        <h2 id={headingId} className="text-h4 font-semibold text-strong">Your order</h2>
         <span className="text-meta text-muted">{itemCountLabel(totals.itemCount)}</span>
       </div>
       <SummaryLines totals={totals} highlighted={highlighted} />

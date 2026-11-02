@@ -26,12 +26,12 @@ export function AboutHero() {
         <Container className="grid gap-10 pt-[calc(100vw/3+6rem)] pb-14 md:pt-36 md:pb-20 lg:grid-cols-12 lg:items-center lg:gap-8 lg:pt-44 lg:pb-28">
           <div className="about-hero__copy lg:col-span-7">
             <Breadcrumbs crumbs={[{ label: "About Us" }]} className="mb-6" />
-            <h1 id="about-title" className="font-heading text-display-sm font-semibold text-balance text-on-dark lg:text-display">
-              <span className="mb-3 block font-subtitle text-eyebrow font-bold text-primary uppercase">Our story</span>
+            <h1 id="about-title" className="text-display-sm font-semibold text-balance text-on-dark lg:text-display">
+              <span className="mb-3 block text-eyebrow font-bold text-primary uppercase">Our story</span>
               Honey, exactly as the{" "}
-              <span className="font-script text-[1.3em] leading-none font-normal text-primary">bees</span> made it.
+              <span className="text-primary">bees</span> made it.
             </h1>
-            <p className="mt-5 max-w-[36rem] font-subtitle text-base leading-relaxed text-on-dark-muted lg:text-lg">
+            <p className="mt-5 max-w-[36rem] text-base leading-relaxed text-on-dark-muted lg:text-lg">
               {siteConfig.legalName} works with beekeepers across Pakistan to bring you honey that is raw, tested and
               traceable to the hive it came from.
             </p>
@@ -71,21 +71,21 @@ function JarLabel() {
     <aside aria-label="At a glance" className="about-label mx-auto w-full max-w-[24rem] text-strong lg:mx-0">
       <div className="about-label__card relative rounded-md bg-ivory px-6 pt-6 pb-5 sm:px-7">
         <div className="text-center">
-          <p className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+          <p className="text-eyebrow font-bold text-primary-ink uppercase">
             Raw honey{foundedYear ? ` · since ${foundedYear}` : " · Pakistan"}
           </p>
-          <p className="mt-1 font-script text-[2.5rem] leading-[1.15] text-strong">Abdul Sami</p>
+          <p className="mt-1 text-promo-lg font-bold text-strong">Abdul Sami</p>
           <HoneyDivider className="mx-auto mt-1" />
         </div>
         <dl className="mt-5 divide-y divide-dashed divide-border-strong/40 text-sm">
           {rows.map(({ term, detail }) => (
             <div key={term} className="grid grid-cols-[6.5rem_1fr] gap-3 py-2.5">
-              <dt className="font-subtitle text-eyebrow leading-5 font-bold text-muted uppercase">{term}</dt>
+              <dt className="text-eyebrow leading-5 font-bold text-muted uppercase">{term}</dt>
               <dd className="font-medium text-strong">{detail}</dd>
             </div>
           ))}
           <div className="grid grid-cols-[6.5rem_1fr] items-end gap-3 py-2.5">
-            <dt className="font-subtitle text-eyebrow leading-5 font-bold text-muted uppercase">Batch no.</dt>
+            <dt className="text-eyebrow leading-5 font-bold text-muted uppercase">Batch no.</dt>
             <dd className="text-meta text-muted">
               <span aria-hidden="true" className="mb-1 block h-px w-full border-b border-dashed border-strong/50" />
               Printed on every jar

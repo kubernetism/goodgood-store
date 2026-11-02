@@ -32,7 +32,7 @@ export function StoryCard({ post, cover, headingLevel: Heading = "h3" }: StoryCa
           rounded="md"
         />
       </div>
-      <p className="mt-5 flex items-center gap-2 font-subtitle text-eyebrow font-bold text-primary-ink uppercase">
+      <p className="mt-5 flex items-center gap-2 text-eyebrow font-bold text-primary-ink uppercase">
         <span aria-hidden="true" className="journal-hex inline-block size-2.5 bg-primary-ink" />
         <span className="sr-only">Category: </span>
         {getBlogCategoryName(post.category)}
@@ -46,7 +46,7 @@ export function StoryCard({ post, cover, headingLevel: Heading = "h3" }: StoryCa
         </Link>
       </Heading>
       <p className="mt-3 line-clamp-2 text-body">{post.excerpt}</p>
-      <p className="mt-auto flex flex-wrap items-center gap-x-2 pt-4 font-display text-meta font-semibold text-muted">
+      <p className="mt-auto flex flex-wrap items-center gap-x-2 pt-4 text-meta font-semibold text-muted">
         <time dateTime={post.publishedOn}>{formatDate(post.publishedOn)}</time>
         <span aria-hidden="true">·</span>
         <span>{formatReadingMinutes(estimateReadingMinutes(post))}</span>

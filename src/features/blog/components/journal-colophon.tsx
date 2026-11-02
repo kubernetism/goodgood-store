@@ -30,10 +30,10 @@ export function JournalColophon({
             <MediaImage image={authorPhoto} alt="" sizes="96px" icon={User} className="journal-hex size-24" />
           </span>
           <div>
-            <h2 id="editor-heading" className="font-subtitle text-promo font-bold">
+            <h2 id="editor-heading" className="text-promo font-bold">
               {blogAuthor.name}
             </h2>
-            <p className="font-display text-meta font-semibold text-primary-ink">{blogAuthor.role}</p>
+            <p className="text-meta font-semibold text-primary-ink">{blogAuthor.role}</p>
             <p className="journal-standfirst mt-3 text-lg text-body">{blogAuthor.bio}</p>
             <SiteSocialLinks className="mt-3 -ml-3 text-muted" iconClassName="size-4" />
           </div>
@@ -43,7 +43,7 @@ export function JournalColophon({
       {tags.length > 0 && (
         <section aria-labelledby="tags-heading" className="rounded-lg border border-border p-6 sm:p-8 lg:col-span-5">
           <Eyebrow decorated="leading">Index</Eyebrow>
-          <h2 id="tags-heading" className="mt-3 font-subtitle text-promo font-bold">
+          <h2 id="tags-heading" className="mt-3 text-promo font-bold">
             Browse by tag
           </h2>
           <ul className="mt-5 flex flex-wrap gap-2">
@@ -55,7 +55,7 @@ export function JournalColophon({
                     href={blogHref(emptyQuery, { tag })}
                     aria-current={isActive ? "true" : undefined}
                     className={cx(
-                      "inline-flex min-h-9 items-center rounded-full px-3.5 font-display text-meta font-semibold transition-colors duration-200",
+                      "inline-flex min-h-9 items-center rounded-full px-3.5 text-meta font-semibold transition-colors duration-200",
                       isActive ? "bg-strong text-on-dark" : "bg-primary-tint text-strong hover:bg-primary",
                     )}
                   >

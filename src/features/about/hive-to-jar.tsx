@@ -33,10 +33,10 @@ export function HiveToJar() {
                 </span>
                 <div className="about-step__card reveal">
                   <p className="flex items-baseline gap-3 about-step__meta">
-                    <span className="font-serif text-4xl leading-none text-primary-ink tabular-nums italic">
+                    <span className="text-4xl leading-none font-bold text-primary-ink">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <span className="font-subtitle text-eyebrow font-bold text-primary-ink uppercase">{label}</span>
+                    <span className="text-eyebrow font-bold text-primary-ink uppercase">{label}</span>
                   </p>
                   <h3 className="mt-3 text-h4 font-semibold lg:text-xl">{title}</h3>
                   <p className="mt-2 text-pretty">{text}</p>

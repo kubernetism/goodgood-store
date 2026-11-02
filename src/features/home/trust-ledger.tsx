@@ -23,7 +23,7 @@ export function TrustLedger() {
                 <Icon className="size-5" strokeWidth={1.75} />
               </span>
               <div>
-                <h3 className="font-subtitle text-base leading-snug font-bold text-strong">{title}</h3>
+                <h3 className="text-base leading-snug font-bold text-strong">{title}</h3>
                 <p className="mt-0.5 text-meta text-body">{text}</p>
               </div>
             </li>

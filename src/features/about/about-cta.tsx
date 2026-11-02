@@ -14,13 +14,13 @@ export function AboutCta() {
       <HoneycombPattern fade className="text-primary/15" />
       <Container className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
         <div className="lg:col-span-7">
-          <p aria-hidden="true" className="font-script text-[2.5rem] leading-none text-primary sm:text-[3rem]">
+          <p aria-hidden="true" className="text-kicker text-primary">
             Taste the season
           </p>
           <h2 id="about-cta-heading" className="mt-3 text-h2-sm font-semibold text-on-dark lg:text-cta">
             Find the honey that&apos;s right for your table
           </h2>
-          <p className="mt-4 max-w-xl font-subtitle text-base text-on-dark-muted">
+          <p className="mt-4 max-w-xl text-base text-on-dark-muted">
             Browse the shop, or ask us anything: which variety to choose, gifting in bulk, or import and export.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

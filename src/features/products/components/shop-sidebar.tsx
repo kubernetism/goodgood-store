@@ -68,7 +68,7 @@ export function ShopSidebar({ query, catalog }: { query: ShopQuery; catalog: Cat
                   href={shopHref(query, { tag: isActive ? null : tag })}
                   aria-current={isActive ? "true" : undefined}
                   className={cx(
-                    "inline-flex min-h-9 items-center rounded-full border px-3.5 font-display text-meta font-medium transition-colors duration-200",
+                    "inline-flex min-h-9 items-center rounded-full border px-3.5 text-meta font-medium transition-colors duration-200",
                     isActive
                       ? "border-strong bg-strong text-on-dark"
                       : "border-border bg-ivory text-strong hover:border-strong hover:bg-primary-tint",
