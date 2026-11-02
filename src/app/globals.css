@@ -1,4 +1,9 @@
 @import "tailwindcss";
+/* Inlined here, not imported by the component: the footer newsletter uses the
+   comb on every page, and a separate file would be one more render-blocking request. */
+@import "../components/ui/honeycomb-mark.css";
+/* The floating WhatsApp button shows on every public page, so it is inlined too. */
+@import "../features/contact/whatsapp-fab.css";
 
 /*
  * Honey by Abdul Sami Enterprises — design tokens.
@@ -234,6 +239,13 @@
 
   dialog::backdrop {
     background: rgb(43 29 14 / 0.7);
+  }
+
+  /* Opt-in scroll lock for modal dialogs (the video pop-up). The gutter stays
+     reserved, so hiding the scrollbar shifts nothing (no CLS on open). */
+  html:has(dialog[data-lock-scroll][open]) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
   }
 }
 

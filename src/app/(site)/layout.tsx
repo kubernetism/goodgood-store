@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ScrollPerformance } from "@/components/layout/scroll-performance";
+import { WhatsAppFab } from "@/features/contact/whatsapp-fab";
 
 /** Inner-page chrome: dark header that continues into each page's hero band. */
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         {children}
       </main>
       <SiteFooter />
+      <WhatsAppFab />
     </>
   );
 }

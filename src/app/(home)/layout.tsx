@@ -3,6 +3,7 @@ import { TopBar } from "@/components/layout/top-bar";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ScrollPerformance } from "@/components/layout/scroll-performance";
+import { WhatsAppFab } from "@/features/contact/whatsapp-fab";
 import "@/features/home/home-theme.css";
 
 export const viewport: Viewport = {
@@ -21,6 +22,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       </main>
       {/* The promises already appear in the trust ledger under the hero. */}
       <SiteFooter showFeatures={false} />
+      <WhatsAppFab />
     </>
   );
 }
